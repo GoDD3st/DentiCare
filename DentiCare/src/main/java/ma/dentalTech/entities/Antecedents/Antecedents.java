@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Antecedents extends BaseEntity {
+    private Long idAntecedent;
     private String nom;
     private String categorie;
     private RisqueEnum niveauDeRisque;

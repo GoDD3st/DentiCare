@@ -2,9 +2,9 @@ package ma.dentalTech.entities.CabinetMedicale;
 
 import ma.dentalTech.common.Adresse;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
-import ma.dentalTech.entities.Utilisateur.Utilisateur;
-import ma.dentalTech.entities.Statistique.Statistique;
-import java.util.List;
+import ma.dentalTech.entities.Medecin.Medecin;
+import ma.dentalTech.entities.Patient.Patient;
+import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CabinetMedicale extends BaseEntity {
+    private Long idCabinet;
     private String nom;
     private String email;
     private String logo;
@@ -25,7 +26,10 @@ public class CabinetMedicale extends BaseEntity {
     private String siteWeb;
     private String instagram;
     private String facebook;
+    private String description;
 
-    private List<Utilisateur> utilisateurs;
-    private List<Statistique> statistiques;
+    private Patient patient;
+    private SituationFinanciere situationFinanciere;
+    private Medecin medecin;
+
 }

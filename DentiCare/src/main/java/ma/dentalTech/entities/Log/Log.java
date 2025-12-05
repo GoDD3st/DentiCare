@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Log extends BaseEntity {
+    private Long idLog;
     private String action;
     private LocalDateTime dateHeure;
     private String ipAdresse;

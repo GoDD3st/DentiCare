@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Prescription extends BaseEntity {
+    private Long idPrescription;
     private Integer quantite;
     private String frequence;
     private Integer dureeEnJours;

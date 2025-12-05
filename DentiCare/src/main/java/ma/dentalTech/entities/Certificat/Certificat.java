@@ -1,8 +1,8 @@
 package ma.dentalTech.entities.Certificat;
 
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
-import ma.dentalTech.entities.Patient.Patient;
-import ma.dentalTech.entities.Medecin.Medecin;
+import ma.dentalTech.entities.Consultation.Consultation;
+import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Certificat extends BaseEntity {
+    private Long idCertif;
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private int duree;
     private String noteMedecin;
 
-    private Patient patient;
-    private Medecin medecin;
+    private DossierMedicale dossierMedicale;
+    private Consultation consultation;
 }

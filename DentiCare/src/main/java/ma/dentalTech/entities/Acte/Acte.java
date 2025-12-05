@@ -11,7 +11,9 @@ import ma.dentalTech.entities.BaseEntity.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Acte extends BaseEntity {
+    private Long idActe;
     private String libelle;
     private String categorie;
     private Double prixDeBase;
+
 }

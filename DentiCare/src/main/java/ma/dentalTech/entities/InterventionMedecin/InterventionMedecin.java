@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InterventionMedecin extends BaseEntity {
+    private Long idIntervention;
     private Double prixDePatient;
     private Integer numDent;
 

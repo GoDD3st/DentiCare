@@ -6,17 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.dentalTech.entities.enums.StatistiqueCategorieEnum;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Statistique extends BaseEntity {
-    private Integer totalPatient;
-    private Integer totalConsultation;
-    private Integer totalAnnulations;
-    private Double revenueMensuel;
-    private Double revenueAnnuel;
+    private Long idStatistique;
+    private String nom;
+    private StatistiqueCategorieEnum categorie;
+    private Double chiffre;
+    private LocalDate dateCalcul;
 
     private CabinetMedicale cabinetMedicale;
 }

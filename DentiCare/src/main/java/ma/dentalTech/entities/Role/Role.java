@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Role extends BaseEntity {
+    private Long idRole;
     private RoleEnum libelle;
     private List<String> privileges;
 
