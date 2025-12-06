@@ -2,7 +2,7 @@ package ma.dentalTech.entities.enums;
 
 public enum RisqueEnum {
     FAIBLE,
-    MODERE,
+    MOYEN,
     ELEVE,
     CRITIQUE
 }

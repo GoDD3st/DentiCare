@@ -3,6 +3,8 @@ package ma.dentalTech.entities.RDV;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
+import ma.dentalTech.entities.Medecin.Medecin;
+import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.enums.RDVStatutEnum;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,5 +26,7 @@ public class RDV extends BaseEntity {
     private String noteMedecin;
 
     private DossierMedicale dossierMedicale;
+    private Patient patient;
+    private Medecin medecin;
     private Consultation consultation;
 }

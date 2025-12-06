@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Medicament extends BaseEntity {
-    private Long idMed;
+    private Long idMedicament;
     private String nom;
     private String laboratoire;
     private String type;

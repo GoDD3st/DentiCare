@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Medecin extends Staff {
+    private Long idMedecin;
     private String specialite;
     private AgendaMensuel JoursNonDisponible;
 

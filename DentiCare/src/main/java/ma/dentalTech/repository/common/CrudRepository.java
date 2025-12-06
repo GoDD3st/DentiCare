@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CrudRepository<T, ID> {
-    Optional<T> findById(ID id);
+    Optional<T> findById(ID id) throws InterruptedException;
     List<T> findAll();
     T save(T entity);
     void deleteById(ID id);

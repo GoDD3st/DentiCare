@@ -1,8 +1,5 @@
 package ma.dentalTech.entities.enums;
 
 public enum ConsultationStatutEnum {
-    OUVERTE,
-    EN_COURS,
-    TERMINEE,
-    FACTURABLE
+    PLANIFIEE, EN_COURS, TERMINEE, ANNULEE
 }
