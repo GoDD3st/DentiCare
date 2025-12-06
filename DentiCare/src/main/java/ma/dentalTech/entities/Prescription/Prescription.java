@@ -18,6 +18,6 @@ public class Prescription extends BaseEntity {
     private String frequence;
     private Integer dureeEnJours;
 
-    private Ordonnance ordonnance;
+    private Ordonnance ordonnance; // Relation (Prescription) n--1 (Ordonnance)
     private Medicament medicament;
 }

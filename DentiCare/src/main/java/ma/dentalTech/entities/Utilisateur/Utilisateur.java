@@ -28,6 +28,6 @@ public class Utilisateur extends BaseEntity {
     private LocalDate lastLoginDate;
     private LocalDate dateNaissance;
 
-    private List<Role> roles;
-    private List<Notification> notifications;
+    private List<Role> roles; // Relation n--n
+    private List<Notification> notifications; // Relation n--n
 }

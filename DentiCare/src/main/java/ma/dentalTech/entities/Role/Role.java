@@ -18,5 +18,5 @@ public class Role extends BaseEntity {
     private RoleEnum libelle;
     private List<String> privileges;
 
-    private List<Utilisateur> utilisateurs;
+    private List<Utilisateur> utilisateurs; // Relation n--n
 }

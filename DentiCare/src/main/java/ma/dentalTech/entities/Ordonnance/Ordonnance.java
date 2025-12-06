@@ -18,6 +18,6 @@ public class Ordonnance extends BaseEntity {
     private Long idOrd;
     private LocalDate date;
 
-    private List<DossierMedicale> dossiersMedicales;
-    private List<Consultation> consultations;
+    private List<DossierMedicale> dossiersMedicales; // n--n
+    private List<Consultation> consultations; // n--n
 }

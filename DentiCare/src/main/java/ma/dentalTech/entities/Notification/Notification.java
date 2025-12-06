@@ -25,5 +25,5 @@ public class Notification extends BaseEntity {
     private NotificationTypeEnum type;
     private PrioriteEnum priorite;
 
-    private List<Utilisateur> utilisateurs;
+    private List<Utilisateur> utilisateurs; // Relation n--n
 }

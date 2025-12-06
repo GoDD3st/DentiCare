@@ -24,5 +24,5 @@ public class DossierMedicale extends BaseEntity {
     private Patient patient;
     private SituationFinanciere situationFinanciere;
     private Medecin medecin;
-    private List<RDV> rdvs;
+    private List<RDV> rdvs; // Relation n--n
 }

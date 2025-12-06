@@ -25,7 +25,7 @@ public class Patient extends BaseEntity {
     private String telephone;
     private AssuranceEnum assurance;
 
-    private DossierMedicale dossierMedicale;
-    private List<Antecedents> antecedents;
+    private DossierMedicale dossierMedicale; // Relation (Patient)n--1(dossierMedicale)
+    private List<Antecedents> antecedents; // Relation n--n
 
 }
