@@ -2,7 +2,7 @@ package ma.dentalTech.entities.enums;
 
 public enum ModeEncaissementEnum {
     ESPECES,
-    CARTE,
+    CARTE_BANCAIRE,
     CHEQUE,
     VIREMENT,
     ASSURANCE

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ordonnance extends BaseEntity {
-    private Long idOrd;
+    private Long idOrdonnance;
     private LocalDate date;
 
     private List<DossierMedicale> dossiersMedicales; // n--n

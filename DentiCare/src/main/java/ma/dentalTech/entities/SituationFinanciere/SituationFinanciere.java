@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SituationFinanciere extends BaseEntity {
+    private Long idSituation;
     private Double totaleDesActes;
     private Double totalePaye;
     private Double credit;

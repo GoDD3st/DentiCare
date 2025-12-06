@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Secretaire extends Staff {
+    private Long idSecretaire;
     private String numCNSS;
     private Double commission;
 }

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Certificat extends BaseEntity {
-    private Long idCertif;
+    private Long idCertificat;
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private int duree;

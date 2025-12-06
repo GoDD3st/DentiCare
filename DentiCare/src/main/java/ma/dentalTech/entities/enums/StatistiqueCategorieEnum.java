@@ -1,8 +1,8 @@
 package ma.dentalTech.entities.enums;
 
 public enum StatistiqueCategorieEnum {
-    REVENUS,
-    CHARGES,
+    FINANCIERE,
+    CONSULTATION,
     PATIENTS,
-    PERFORMANCE_MEDECIN
+    PERFORMANCE
 }
