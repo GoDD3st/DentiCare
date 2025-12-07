@@ -1,4 +1,4 @@
-package ma.dentalTech.repository.modules.prescription.impl.mySQL;
+package ma.dentalTech.repository.modules.prescription.impl;
 
 import ma.dentalTech.entities.Prescription.Prescription;
 import ma.dentalTech.repository.modules.prescription.api.PrescriptionRepository;

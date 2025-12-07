@@ -1,4 +1,4 @@
-package ma.dentalTech.repository.modules.notification.impl.mySQL;
+package ma.dentalTech.repository.modules.notification.impl;
 
 import ma.dentalTech.entities.Notification.Notification;
 import ma.dentalTech.repository.modules.notification.api.NotificationRepository;

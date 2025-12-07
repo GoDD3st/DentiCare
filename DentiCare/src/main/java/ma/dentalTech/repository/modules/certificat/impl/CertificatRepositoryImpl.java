@@ -1,4 +1,4 @@
-package ma.dentalTech.repository.modules.certificat.impl.mySQL;
+package ma.dentalTech.repository.modules.certificat.impl;
 
 import ma.dentalTech.entities.Certificat.Certificat;
 import ma.dentalTech.repository.modules.certificat.api.CertificatRepository;

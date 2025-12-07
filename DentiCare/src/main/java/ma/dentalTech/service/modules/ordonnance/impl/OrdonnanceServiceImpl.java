@@ -1,5 +1,7 @@
 package ma.dentalTech.service.modules.ordonnance.impl;
 
+import ma.dentalTech.entities.*;
+import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.service.modules.ordonnance.api.OrdonnanceService;
 import ma.dentalTech.repository.modules.ordonnance.api.OrdonnanceRepository;
 import ma.dentalTech.mvc.dto.OrdonnanceDTO;
@@ -60,17 +62,18 @@ public class OrdonnanceServiceImpl implements OrdonnanceService {
         consultation.setIdEntite(dto.getConsultationId());
         
         return Ordonnance.builder()
-                .idEntite(dto.getId())
+                .idOrdonnance(dto.getId())
                 .date(dto.getDate())
                 .consultation(consultation)
                 .build();
     }
     
     private OrdonnanceDTO mapToDTO(Ordonnance ordonnance) {
+        Consultation cons = new Consultation();
         return OrdonnanceDTO.builder()
                 .id(ordonnance.getIdEntite())
                 .date(ordonnance.getDate())
-                .consultationId(ordonnance.getConsultation() != null ? ordonnance.getConsultation().getIdEntite() : null)
+                .consultationId(ordonnance.getConsultations() != null ? ordonnance.getConsultations().getIdEntite() : null)
                 .build();
     }
 }

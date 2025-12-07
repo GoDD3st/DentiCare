@@ -1,4 +1,4 @@
-package ma.dentalTech.repository.modules.facture.impl.mySQL;
+package ma.dentalTech.repository.modules.facture.impl;
 
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.repository.modules.facture.api.FactureRepository;

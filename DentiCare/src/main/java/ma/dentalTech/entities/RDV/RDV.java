@@ -26,7 +26,6 @@ public class RDV extends BaseEntity {
     private String noteMedecin;
 
     private DossierMedicale dossierMedicale;
-    private Patient patient;
-    private Medecin medecin;
     private Consultation consultation;
+
 }

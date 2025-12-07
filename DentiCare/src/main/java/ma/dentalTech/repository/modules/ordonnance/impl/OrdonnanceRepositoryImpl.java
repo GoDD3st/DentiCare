@@ -1,6 +1,7 @@
-package ma.dentalTech.repository.modules.ordonnance.impl.mySQL;
+package ma.dentalTech.repository.modules.ordonnance.impl;
 
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
+import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.repository.modules.ordonnance.api.OrdonnanceRepository;
 import ma.dentalTech.conf.SessionFactory;
 import java.sql.*;
@@ -57,7 +58,13 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setDate(1, Date.valueOf(ordonnance.getDate()));
-            stmt.setLong(2, ordonnance.getConsultation().getIdEntite());
+            Consultation consultation = ordonnance.getConsultations() != null && !ordonnance.getConsultations().isEmpty() 
+                    ? ordonnance.getConsultations().get(0) : null;
+            if (consultation == null || consultation.getIdEntite() == null) {
+                throw new RuntimeException("Consultation is required for ordonnance");
+            }
+
+            stmt.setLong(2, consultation.getIdEntite());
             stmt.setDate(3, Date.valueOf(LocalDate.now()));
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
@@ -75,7 +82,12 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, Date.valueOf(ordonnance.getDate()));
-            stmt.setLong(2, ordonnance.getConsultation().getIdEntite());
+            Consultation consultation = ordonnance.getConsultations() != null && !ordonnance.getConsultations().isEmpty() 
+                    ? ordonnance.getConsultations().get(0) : null;
+            if (consultation == null || consultation.getIdEntite() == null) {
+                throw new RuntimeException("Consultation is required for ordonnance");
+            }
+            stmt.setLong(2, consultation.getIdEntite());
             stmt.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
             stmt.setLong(4, ordonnance.getIdEntite());
             stmt.executeUpdate();
@@ -131,10 +143,11 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
     }
     
     private Ordonnance mapToOrdonnance(ResultSet rs) throws SQLException {
-        return Ordonnance.builder()
-                .idEntite(rs.getLong("idEntite"))
+        Ordonnance ordonnance = Ordonnance.builder()
                 .date(rs.getDate("date").toLocalDate())
                 .build();
+        ordonnance.setIdEntite(rs.getLong("idEntite"));
+        return ordonnance;
     }
 }
 

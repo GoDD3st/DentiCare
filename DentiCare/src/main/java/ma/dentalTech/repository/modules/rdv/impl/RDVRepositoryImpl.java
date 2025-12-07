@@ -1,9 +1,10 @@
-package ma.dentalTech.repository.modules.rdv.impl.mySQL;
+package ma.dentalTech.repository.modules.rdv.impl;
 
 import ma.dentalTech.entities.RDV.RDV;
 import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.enums.RDVStatutEnum;
+import ma.dentalTech.repository.common.RowMappers;
 import ma.dentalTech.repository.modules.rdv.api.RDVRepository;
 import ma.dentalTech.conf.SessionFactory;
 
@@ -23,9 +24,13 @@ public class RDVRepositoryImpl implements RDVRepository {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return Optional.of(mapToRDV(rs));
+            if (rs.next()){
+                RDV rdv = RowMappers.mapRDV(rs);
+                return Optional.of(rdv);
+            }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur findById RDV", e);
+            throw new RuntimeException(e);
         }
         return Optional.empty();
     }
@@ -59,8 +64,8 @@ public class RDVRepositoryImpl implements RDVRepository {
             stmt.setString(3, rdv.getMotif());
             stmt.setString(4, rdv.getStatut().name());
             stmt.setString(5, rdv.getNoteMedecin());
-            stmt.setLong(6, rdv.getPatient().getIdEntite());
-            stmt.setLong(7, rdv.getMedecin().getIdEntite());
+            stmt.setLong(6, rdv.getPatient_id());
+            stmt.setLong(7, rdv.getMedecin_id());
             stmt.setDate(8, Date.valueOf(LocalDate.now()));
 
             stmt.executeUpdate();
