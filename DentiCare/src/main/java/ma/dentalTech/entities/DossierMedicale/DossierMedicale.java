@@ -5,12 +5,10 @@ import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.Patient.Patient;
 
 import java.time.LocalDate;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.dentalTech.entities.RDV.RDV;
 import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
 
 @Data

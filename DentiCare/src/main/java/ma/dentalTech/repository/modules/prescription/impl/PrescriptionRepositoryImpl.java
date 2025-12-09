@@ -138,12 +138,13 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
     }
     
     private Prescription mapToPrescription(ResultSet rs) throws SQLException {
-        return Prescription.builder()
-                .idEntite(rs.getLong("idEntite"))
+        Prescription p = Prescription.builder()
                 .quantite(rs.getInt("quantite"))
                 .frequence(rs.getString("frequence"))
                 .dureeEnJours(rs.getInt("dureeEnJours"))
                 .build();
+        p.setIdEntite(rs.getLong("idEntite"));
+        return p;
     }
 }
 

@@ -27,5 +27,7 @@ public class RDV extends BaseEntity {
 
     private DossierMedicale dossierMedicale;
     private Consultation consultation;
+    private Patient patient;
+    private Medecin medecin;
 
 }

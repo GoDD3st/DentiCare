@@ -1,6 +1,5 @@
 package ma.dentalTech.service.modules.ordonnance.impl;
 
-import ma.dentalTech.entities.*;
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.service.modules.ordonnance.api.OrdonnanceService;
 import ma.dentalTech.repository.modules.ordonnance.api.OrdonnanceRepository;
@@ -40,7 +39,12 @@ public class OrdonnanceServiceImpl implements OrdonnanceService {
     
     @Override
     public Optional<OrdonnanceDTO> findById(Long id) {
-        return ordonnanceRepository.findById(id).map(this::mapToDTO);
+        try {
+            return ordonnanceRepository.findById(id).map(this::mapToDTO);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted while fetching Ordonnance by id", e);
+        }
     }
     
     @Override
@@ -64,17 +68,16 @@ public class OrdonnanceServiceImpl implements OrdonnanceService {
         return Ordonnance.builder()
                 .idOrdonnance(dto.getId())
                 .date(dto.getDate())
-                .consultation(consultation)
+                .consultations(List.of(consultation))
                 .build();
     }
     
     private OrdonnanceDTO mapToDTO(Ordonnance ordonnance) {
-        Consultation cons = new Consultation();
         return OrdonnanceDTO.builder()
                 .id(ordonnance.getIdEntite())
                 .date(ordonnance.getDate())
-                .consultationId(ordonnance.getConsultations() != null ? ordonnance.getConsultations().getIdEntite() : null)
+                .consultationId(ordonnance.getConsultations() != null && !ordonnance.getConsultations().isEmpty() 
+                    ? ordonnance.getConsultations().getFirst().getIdEntite() : null)
                 .build();
     }
 }
-

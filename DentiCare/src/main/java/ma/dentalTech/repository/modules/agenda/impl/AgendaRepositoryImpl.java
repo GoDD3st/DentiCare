@@ -206,9 +206,7 @@ public class AgendaRepositoryImpl implements AgendaRepository {
         for (String part : parts) {
             try {
                 jours.add(JoursEnum.valueOf(part));
-            } catch (IllegalArgumentException e) {
-                // Skip invalid enum values
-            }
+            } catch (IllegalArgumentException _) {}
         }
         return jours;
     }

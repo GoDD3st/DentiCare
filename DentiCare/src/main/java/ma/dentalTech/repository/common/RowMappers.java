@@ -2,6 +2,7 @@ package ma.dentalTech.repository.common;
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import ma.dentalTech.entities.Patient.Patient;
+import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.RDV.RDV;
 import ma.dentalTech.entities.enums.*;
 import ma.dentalTech.entities.Antecedents.Antecedents;
@@ -44,28 +45,25 @@ public final class RowMappers {
     }
 
     public static RDV mapRDV(ResultSet rs) throws SQLException {
+        Patient patient = new Patient();
+        patient.setIdEntite(rs.getLong("patient_id"));
+        
+        Medecin medecin = new Medecin();
+        medecin.setIdEntite(rs.getLong("medecin_id"));
 
-        RDV rdv = new RDV();
-
-        rdv.setIdRDV(rs.getLong("id"));
-        rdv.setMotif(rs.getString("motif"));
-        rdv.setNoteMedecin(rs.getString("noteMedecin"));
-
-        var d = rs.getDate("date");
-        if (d != null) rdv.setDate(d.toLocalDate());
-
-        var h = rs.getTime("heure");
-        if (h != null) rdv.setHeure(h.toLocalTime());
-
-        rdv.setStatut(RDVStatutEnum.valueOf(rs.getString("statut")));
-
+        RDV rdv = RDV.builder()
+                .idRDV(rs.getLong("id"))
+                .motif(rs.getString("motif"))
+                .noteMedecin(rs.getString("noteMedecin"))
+                .date(rs.getDate("date") != null ? rs.getDate("date").toLocalDate() : null)
+                .heure(rs.getTime("heure") != null ? rs.getTime("heure").toLocalTime() : null)
+                .statut(RDVStatutEnum.valueOf(rs.getString("statut")))
+                .patient(patient)
+                .medecin(medecin)
+                .build();
+        
         var dc = rs.getTimestamp("dateCreation");
         if (dc != null) rdv.setDateCreation(LocalDate.from(dc.toLocalDateTime()));
-
-        // ❗ patient_id et medecin_id récupérés mais NON stockés dans l'entité
-        // ils seront utilisés ensuite dans le Repository pour fetch Patient/Medecin
-        // long patientId = rs.getLong("patient_id");
-        // long medecinId = rs.getLong("medecin_id");
 
         return rdv;
     }
@@ -89,5 +87,14 @@ public final class RowMappers {
         dossierMedical.setModifiePar(rs.getString("modifiePar"));
         dossierMedical.setCreePar(rs.getString("creePar"));
         return dossierMedical;
+    }
+
+    public static Medecin mapMedecin(ResultSet rs) throws SQLException {
+        Medecin medecin = new Medecin();
+        medecin.setIdEntite(rs.getLong("idEntite"));
+        medecin.setIdMedecin(rs.getLong("idMedecin"));
+        medecin.setSpecialite(rs.getString("specialite"));
+        // Additional Staff/Utilisateur fields can be set here if present in the result set
+        return medecin;
     }
 }
