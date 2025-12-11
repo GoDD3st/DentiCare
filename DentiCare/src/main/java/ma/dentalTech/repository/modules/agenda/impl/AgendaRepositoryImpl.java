@@ -52,7 +52,6 @@ public class AgendaRepositoryImpl implements AgendaRepository {
 
     @Override
     public AgendaMensuel save(AgendaMensuel entity) {
-        // CORRECTION 2: insert et update retournent maintenant un objet, donc ce return est valide
         if (entity.getIdEntite() == null) {
             return insert(entity);
         } else {
@@ -60,7 +59,6 @@ public class AgendaRepositoryImpl implements AgendaRepository {
         }
     }
 
-    // CORRECTION 2: Changement de 'void' à 'AgendaMensuel'
     private AgendaMensuel insert(AgendaMensuel agenda) {
         String sql = "INSERT INTO AgendaMensuel (mois, joursNonDisponible, medecin_id, dateCreation) VALUES (?, ?, ?, ?)";
         try (Connection conn = SessionFactory.getConnection();

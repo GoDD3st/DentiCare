@@ -1,7 +1,7 @@
-package ma.dentalTech.repository.modules.prescription.impl;
+package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.Prescription.Prescription;
-import ma.dentalTech.repository.modules.prescription.api.PrescriptionRepository;
+import ma.dentalTech.repository.modules.dossierMedicale.api.PrescriptionRepo;
 import ma.dentalTech.conf.SessionFactory;
 import java.sql.*;
 import java.time.LocalDate;
@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PrescriptionRepositoryImpl implements PrescriptionRepository {
+import static ma.dentalTech.repository.common.RowMappers.mapPrescription;
+
+public class PrescriptionRepositoryImpl implements PrescriptionRepo {
     
     @Override
     public Optional<Prescription> findById(Long id) {
@@ -19,7 +21,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(mapToPrescription(rs));
+                return Optional.of(mapPrescription(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la recherche de la prescription", e);
@@ -35,7 +37,7 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                prescriptions.add(mapToPrescription(rs));
+                prescriptions.add(mapPrescription(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des prescriptions", e);
@@ -101,50 +103,6 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la suppression de la prescription", e);
         }
-    }
-    
-    @Override
-    public List<Prescription> findByOrdonnanceId(Long ordonnanceId) {
-        String sql = "SELECT * FROM Prescription WHERE ordonnance_id = ?";
-        List<Prescription> prescriptions = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, ordonnanceId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                prescriptions.add(mapToPrescription(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des prescriptions", e);
-        }
-        return prescriptions;
-    }
-    
-    @Override
-    public List<Prescription> findByMedicamentId(Long medicamentId) {
-        String sql = "SELECT * FROM Prescription WHERE medicament_id = ?";
-        List<Prescription> prescriptions = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, medicamentId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                prescriptions.add(mapToPrescription(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des prescriptions", e);
-        }
-        return prescriptions;
-    }
-    
-    private Prescription mapToPrescription(ResultSet rs) throws SQLException {
-        Prescription p = Prescription.builder()
-                .quantite(rs.getInt("quantite"))
-                .frequence(rs.getString("frequence"))
-                .dureeEnJours(rs.getInt("dureeEnJours"))
-                .build();
-        p.setIdEntite(rs.getLong("idEntite"));
-        return p;
     }
 }
 

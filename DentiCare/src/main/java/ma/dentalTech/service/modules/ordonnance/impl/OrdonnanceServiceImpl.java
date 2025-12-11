@@ -2,7 +2,7 @@ package ma.dentalTech.service.modules.ordonnance.impl;
 
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.service.modules.ordonnance.api.OrdonnanceService;
-import ma.dentalTech.repository.modules.ordonnance.api.OrdonnanceRepository;
+import ma.dentalTech.repository.modules.dossierMedicale.api.OrdonnanceRepo;
 import ma.dentalTech.mvc.dto.OrdonnanceDTO;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.conf.ApplicationContext;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 public class OrdonnanceServiceImpl implements OrdonnanceService {
     
-    private final OrdonnanceRepository ordonnanceRepository;
+    private final OrdonnanceRepo ordonnanceRepository;
     
     public OrdonnanceServiceImpl() {
-        this.ordonnanceRepository = ApplicationContext.getBean(OrdonnanceRepository.class);
+        this.ordonnanceRepository = ApplicationContext.getBean(OrdonnanceRepo.class);
     }
     
     @Override

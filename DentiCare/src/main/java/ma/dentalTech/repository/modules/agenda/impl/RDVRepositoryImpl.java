@@ -1,8 +1,8 @@
-package ma.dentalTech.repository.modules.rdv.impl;
+package ma.dentalTech.repository.modules.agenda.impl;
 
 import ma.dentalTech.entities.RDV.RDV;
 import ma.dentalTech.repository.common.RowMappers;
-import ma.dentalTech.repository.modules.rdv.api.RDVRepository;
+import ma.dentalTech.repository.modules.agenda.api.RDVRepository;
 import ma.dentalTech.conf.SessionFactory;
 
 import java.sql.*;

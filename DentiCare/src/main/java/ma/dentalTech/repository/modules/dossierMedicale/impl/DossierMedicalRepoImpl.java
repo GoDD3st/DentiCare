@@ -1,7 +1,7 @@
 package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
-import ma.dentalTech.repository.modules.dossierMedicale.api.DossierMedicaleRepository;
+import ma.dentalTech.repository.modules.dossierMedicale.api.DossierMedicaleRepo;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DossierMedicalRepositoryImpl implements DossierMedicaleRepository {
+public class DossierMedicalRepoImpl implements DossierMedicaleRepo {
     @Override
     public Optional<DossierMedicale> findById(Long id) throws InterruptedException {
         String sql = "SELECT * FROM DossierMedicale WHERE idEntite = ?";
@@ -48,12 +48,10 @@ public class DossierMedicalRepositoryImpl implements DossierMedicaleRepository {
     }
 
     private DossierMedicale insert(DossierMedicale d) {
-        // TODO: implement based on your insert convention
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     private DossierMedicale update(DossierMedicale d) {
-        // TODO: implement based on your update convention
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -67,20 +65,5 @@ public class DossierMedicalRepositoryImpl implements DossierMedicaleRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la suppression du dossier médical", e);
         }
-    }
-
-    @Override
-    public List<DossierMedicale> findByPatientId(Long patientId) {
-        String sql = "SELECT * FROM DossierMedicale WHERE patient_id = ?";
-        List<DossierMedicale> list = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, patientId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) list.add(RowMappers.mapDossierMedical(rs));
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche des dossiers médicaux par patient", e);
-        }
-        return list;
     }
 }

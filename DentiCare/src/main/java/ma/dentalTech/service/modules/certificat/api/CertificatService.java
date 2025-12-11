@@ -10,7 +10,5 @@ public interface CertificatService {
     void delete(Long id);
     Optional<CertificatDTO> findById(Long id);
     List<CertificatDTO> findAll();
-    List<CertificatDTO> findByPatientId(Long patientId);
-    List<CertificatDTO> findByMedecinId(Long medecinId);
 }
 

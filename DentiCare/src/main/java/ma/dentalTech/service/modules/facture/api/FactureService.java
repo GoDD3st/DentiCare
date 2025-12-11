@@ -10,8 +10,5 @@ public interface FactureService {
     void delete(Long id);
     Optional<FactureDTO> findById(Long id);
     List<FactureDTO> findAll();
-    List<FactureDTO> findByPatientId(Long patientId);
-    List<FactureDTO> findByStatut(String statut);
-    FactureDTO enregistrerPaiement(Long factureId, Double montant);
 }
 

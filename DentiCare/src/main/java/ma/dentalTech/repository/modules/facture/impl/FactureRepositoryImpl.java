@@ -54,7 +54,7 @@ public class FactureRepositoryImpl implements FactureRepository {
     }
     
     private Facture insert(Facture facture) {
-        String sql = "INSERT INTO Facture (totaleFacture, totalePaye, reste, statut, dateFacture, patient_id, situationFinanciere_id, dateCreation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Facture (totaleFacture, totalePaye, reste, statut, dateFacture, situationFinanciere_id, dateCreation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setDouble(1, facture.getTotaleFacture());
@@ -62,7 +62,6 @@ public class FactureRepositoryImpl implements FactureRepository {
             stmt.setDouble(3, facture.getReste());
             stmt.setString(4, facture.getStatut().name());
             stmt.setTimestamp(5, Timestamp.valueOf(facture.getDateFacture()));
-            stmt.setLong(6, facture.getPatient().getIdEntite());
             stmt.setLong(7, facture.getSituationFinanciere().getIdEntite());
             stmt.setDate(8, Date.valueOf(java.time.LocalDate.now()));
             stmt.executeUpdate();
@@ -77,7 +76,7 @@ public class FactureRepositoryImpl implements FactureRepository {
     }
     
     private Facture update(Facture facture) {
-        String sql = "UPDATE Facture SET totaleFacture = ?, totalePaye = ?, reste = ?, statut = ?, dateFacture = ?, patient_id = ?, situationFinanciere_id = ?, dateDerniereModification = ? WHERE idEntite = ?";
+        String sql = "UPDATE Facture SET totaleFacture = ?, totalePaye = ?, reste = ?, statut = ?, dateFacture = ?, situationFinanciere_id = ?, dateDerniereModification = ? WHERE idEntite = ?";
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDouble(1, facture.getTotaleFacture());
@@ -85,7 +84,6 @@ public class FactureRepositoryImpl implements FactureRepository {
             stmt.setDouble(3, facture.getReste());
             stmt.setString(4, facture.getStatut().name());
             stmt.setTimestamp(5, Timestamp.valueOf(facture.getDateFacture()));
-            stmt.setLong(6, facture.getPatient().getIdEntite());
             stmt.setLong(7, facture.getSituationFinanciere().getIdEntite());
             stmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             stmt.setLong(9, facture.getIdEntite());
@@ -115,23 +113,6 @@ public class FactureRepositoryImpl implements FactureRepository {
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, patientId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                factures.add(mapToFacture(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des factures", e);
-        }
-        return factures;
-    }
-    
-    @Override
-    public List<Facture> findBySituationFinanciereId(Long situationFinanciereId) {
-        String sql = "SELECT * FROM Facture WHERE situationFinanciere_id = ?";
-        List<Facture> factures = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, situationFinanciereId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 factures.add(mapToFacture(rs));

@@ -68,6 +68,7 @@ class PatientRepositoryImplTest {
         var found = repo.findByEmail("dina@example.com");
         assertThat(found).isPresent();
         assertThat(found.get().getNom()).isEqualTo("Dina");
+
     }
 
     @Test

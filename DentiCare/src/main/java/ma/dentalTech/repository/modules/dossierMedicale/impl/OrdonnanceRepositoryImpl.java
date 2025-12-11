@@ -1,8 +1,8 @@
-package ma.dentalTech.repository.modules.ordonnance.impl;
+package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.entities.Consultation.Consultation;
-import ma.dentalTech.repository.modules.ordonnance.api.OrdonnanceRepository;
+import ma.dentalTech.repository.modules.dossierMedicale.api.OrdonnanceRepo;
 import ma.dentalTech.conf.SessionFactory;
 import java.sql.*;
 import java.time.LocalDate;
@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
+import static ma.dentalTech.repository.common.RowMappers.mapOrdonnance;
+
+public class OrdonnanceRepositoryImpl implements OrdonnanceRepo {
     
     @Override
     public Optional<Ordonnance> findById(Long id) {
@@ -20,7 +22,7 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(mapToOrdonnance(rs));
+                return Optional.of(mapOrdonnance(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la recherche de l'ordonnance", e);
@@ -36,7 +38,7 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                ordonnances.add(mapToOrdonnance(rs));
+                ordonnances.add(mapOrdonnance(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des ordonnances", e);
@@ -107,47 +109,6 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la suppression de l'ordonnance", e);
         }
-    }
-    
-    @Override
-    public Optional<Ordonnance> findByConsultationId(Long consultationId) {
-        String sql = "SELECT * FROM Ordonnance WHERE consultation_id = ? LIMIT 1";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, consultationId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapToOrdonnance(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche de l'ordonnance", e);
-        }
-        return Optional.empty();
-    }
-    
-    @Override
-    public List<Ordonnance> findAllByConsultationId(Long consultationId) {
-        String sql = "SELECT * FROM Ordonnance WHERE consultation_id = ?";
-        List<Ordonnance> ordonnances = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, consultationId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                ordonnances.add(mapToOrdonnance(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des ordonnances", e);
-        }
-        return ordonnances;
-    }
-    
-    private Ordonnance mapToOrdonnance(ResultSet rs) throws SQLException {
-        Ordonnance ordonnance = Ordonnance.builder()
-                .date(rs.getDate("date").toLocalDate())
-                .build();
-        ordonnance.setIdEntite(rs.getLong("idEntite"));
-        return ordonnance;
     }
 }
 

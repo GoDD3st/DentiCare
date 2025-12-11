@@ -1,7 +1,7 @@
-package ma.dentalTech.repository.modules.consultation.impl;
+package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.Consultation.Consultation;
-import ma.dentalTech.repository.modules.consultation.api.ConsultationRepository;
+import ma.dentalTech.repository.modules.dossierMedicale.api.ConsultationRepo;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ConsultationRepositoryImpl implements ConsultationRepository {
+public class ConsultationRepoImpl implements ConsultationRepo {
     @Override
     public Optional<Consultation> findById(Long id) throws InterruptedException {
         String sql = "SELECT * FROM Consultation WHERE idEntite = ?";
@@ -48,13 +48,11 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
     }
 
     private Consultation insert(Consultation c) {
-        // TODO implement insertion logic based on schema and OrdonnanceRepositoryImpl
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException("A faire");
     }
 
     private Consultation update(Consultation c) {
-        // TODO implement update logic based on schema and OrdonnanceRepositoryImpl
-        throw new UnsupportedOperationException("Not implemented yet");
+        throw new UnsupportedOperationException("A faire");
     }
 
     @Override
@@ -67,35 +65,6 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la suppression de la consultation", e);
         }
-    }
 
-    @Override
-    public List<Consultation> findByPatientId(Long patientId) {
-        String sql = "SELECT * FROM Consultation WHERE patient_id = ?";
-        List<Consultation> list = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, patientId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) list.add(RowMappers.mapConsultation(rs));
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche de consultations par patient", e);
-        }
-        return list;
-    }
-
-    @Override
-    public List<Consultation> findByMedecinId(Long medecinId) {
-        String sql = "SELECT * FROM Consultation WHERE medecin_id = ?";
-        List<Consultation> list = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, medecinId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) list.add(RowMappers.mapConsultation(rs));
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche de consultations par medecin", e);
-        }
-        return list;
     }
 }
