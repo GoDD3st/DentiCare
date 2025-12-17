@@ -1,14 +1,8 @@
 package ma.dentalTech.service.modules.certificat.api;
 
-import ma.dentalTech.mvc.dto.CertificatDTO;
-import java.util.List;
-import java.util.Optional;
+import ma.dentalTech.service.common.MainService;
 
-public interface CertificatService {
-    CertificatDTO create(CertificatDTO certificatDTO);
-    CertificatDTO update(CertificatDTO certificatDTO);
-    void delete(Long id);
-    Optional<CertificatDTO> findById(Long id);
-    List<CertificatDTO> findAll();
+public interface CertificatService extends MainService {
+
 }
 

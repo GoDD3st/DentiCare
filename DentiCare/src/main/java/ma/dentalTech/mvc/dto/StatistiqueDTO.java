@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
-import java.util.List;
 
+import java.time.LocalDate;
 // ====================================
 //
 // Author : Marouane
@@ -17,10 +16,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrdonnanceDTO {
+public class StatistiqueDTO {
     private Long id;
-    private LocalDate date;
-    private Long consultationId;
-    private String consultationObservation;
-    private List<PrescriptionDTO> prescriptions;
+    private String nom;
+    private String categorie; // FINANCIERE, PATIENT, CONSULTATION, PERFORMANCE
+    private Double chiffre;
+    private LocalDate dateCalcul;
+    private Long idCabinet;
 }

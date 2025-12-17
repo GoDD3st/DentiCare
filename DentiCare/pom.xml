@@ -22,8 +22,8 @@
     <version>1.0-SNAPSHOT</version>         <!-- Version du projet -->
     <packaging>jar</packaging>              <!-- Type de livrable généré -->
 
-    <name>DentalTech</name>
-    <url>http://dentalTech.ma</url>
+    <name>DentiCare</name>
+    <url>http://DentiCare.ma</url>
     <description>Application de gestion complète d’un cabinet dentaire :
         gestion des patients, consultations, rendez-vous, facturation et suivi médical.
     </description>

@@ -4,6 +4,6 @@ import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.repository.common.CrudRepository;
 
 public interface OrdonnanceRepo extends CrudRepository<Ordonnance, Long> {
-
+    //  Fonctionnalittes optionnelles  aa aajouter  apres le CRUD
 }
 

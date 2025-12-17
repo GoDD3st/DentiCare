@@ -6,52 +6,66 @@ import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ma.dentalTech.repository.common.RowMappers.mapCertificat;
+import static ma.dentalTech.repository.common.RowMappers.mapConsultation;
+
 public class ConsultationRepoImpl implements ConsultationRepo {
     @Override
-    public Optional<Consultation> findById(Long id) throws InterruptedException {
-        String sql = "SELECT * FROM Consultation WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(RowMappers.mapConsultation(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche de la consultation", e);
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Consultation> findAll() {
-        String sql = "SELECT * FROM Consultation";
+    public List<Consultation> findAll() throws SQLException{
+        String sql = "SELECT * FROM certificat";
         List<Consultation> list = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) list.add(RowMappers.mapConsultation(rs));
+        try (Connection conn = SessionFactory.getInstance().getConnection();
+             Statement ps = conn.createStatement();
+             ResultSet rs = ps.executeQuery(sql)) {
+            while (rs.next()) list.add(mapConsultation(rs));
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des consultations", e);
+            throw new RuntimeException(e);
         }
         return list;
     }
 
     @Override
-    public Consultation save(Consultation consultation) {
-        if (consultation.getIdEntite() == null) return insert(consultation);
-        else return update(consultation);
+    public Optional<Consultation> findById(Long id) throws SQLException {
+        String sql = "SELECT * FROM consultation  WHERE id_consultation = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(RowMappers.mapConsultation(rs));
+                return null;
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
-    private Consultation insert(Consultation c) {
-        throw new UnsupportedOperationException("A faire");
+
+    @Override
+    public void create(Consultation c) throws SQLException {
+        String sql = "INSERT INTO consultation (date_consultation, heure_consultation, statut, observationMedecin) VALUES (?, ?, ?, ?)";
+
+        try (Connection con = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setDate(1, Date.valueOf(c.getDateConsultation()));
+            ps.setTime(2, Time.valueOf(c.getHeureConsultation()));
+            ps.setString(3, c.getStatut().name());
+            ps.setString(4, c.getObservationMedecin());
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    c.setIdConsultation(rs.getLong(1));
+                }
+            }
+        }
     }
 
-    private Consultation update(Consultation c) {
+
+    @Override
+    public void  update(Consultation c) {
         throw new UnsupportedOperationException("A faire");
     }
 

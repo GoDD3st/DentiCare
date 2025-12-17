@@ -45,14 +45,10 @@ public class OrdonnanceRepositoryImpl implements OrdonnanceRepo {
         }
         return ordonnances;
     }
-    
+
     @Override
-    public Ordonnance save(Ordonnance ordonnance) {
-        if (ordonnance.getIdEntite() == null) {
-            return insert(ordonnance);
-        } else {
-            return update(ordonnance);
-        }
+    public void create(Ordonnance ordonnance) {
+
     }
     
     private Ordonnance insert(Ordonnance ordonnance) {

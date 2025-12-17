@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PatientRepository extends CrudRepository<Patient, Long> {
-    List<Patient> findByNom(String nom);
+    //  Fonctionnalittes optionnelles  aa aajouter  apres le CRUD
+    /*List<Patient> findByNom(String nom);
     List<Patient> findByAssurance(String assurance);
-    Optional<Patient> findByDossierMedicaleId(Long dossierId);
+    Optional<Patient> findByDossierMedicaleId(Long dossierId); */
 }
 

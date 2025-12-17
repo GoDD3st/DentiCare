@@ -7,6 +7,7 @@ import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.entities.enums.ConsultationStatutEnum;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Consultation extends BaseEntity {
     private Long idConsultation;
-    private LocalDate date;
+    private LocalDate dateConsultation;
+    private LocalTime heureConsultation;
     private ConsultationStatutEnum statut;
     private String observationMedecin;
 

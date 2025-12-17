@@ -23,8 +23,7 @@ public class MedicamentRepositoryImpl implements MedecinRepository {
     }
 
     @Override
-    public Medecin save(Medecin entity) {
-        return null;
+    public void create(Medecin entity) {
     }
 
     @Override

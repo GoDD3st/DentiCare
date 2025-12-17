@@ -47,26 +47,21 @@ public class RDVRepositoryImpl implements RDVRepository {
     }
 
     @Override
-    public RDV save(RDV rdv) {
-        if (rdv.getIdEntite() == null) return insert(rdv);
-        else return update(rdv);
-    }
-
-    private RDV insert(RDV rdv) {
+    public void create(RDV rdv) throws SQLException{
         String sql = "INSERT INTO RDV (`date`, heure, motif, statut, noteMedecin, patient_id, medecin_id, dateCreation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDate(1, Date.valueOf(rdv.getDate()));
-            stmt.setTime(2, Time.valueOf(rdv.getHeure()));
-            stmt.setString(3, rdv.getMotif());
-            stmt.setString(4, rdv.getStatut().name());
-            stmt.setString(5, rdv.getNoteMedecin());
-            stmt.setLong(6, rdv.getPatient().getIdEntite());
-            stmt.setLong(7, rdv.getMedecin().getIdEntite());
-            stmt.setDate(8, Date.valueOf(LocalDate.now()));
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setDate(1, Date.valueOf(rdv.getDate()));
+            ps.setTime(2, Time.valueOf(rdv.getHeure()));
+            ps.setString(3, rdv.getMotif());
+            ps.setString(4, rdv.getStatut().name());
+            ps.setString(5, rdv.getNoteMedecin());
+            ps.setLong(6, rdv.getPatient().getIdEntite());
+            ps.setLong(7, rdv.getMedecin().getIdEntite());
+            ps.setDate(8, Date.valueOf(LocalDate.now()));
 
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) rdv.setIdEntite(rs.getLong(1));
         } catch (SQLException e) {
             throw new RuntimeException("Erreur insert RDV", e);

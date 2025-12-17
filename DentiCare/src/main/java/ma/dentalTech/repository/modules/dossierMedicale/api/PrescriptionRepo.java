@@ -5,5 +5,6 @@ import ma.dentalTech.repository.common.CrudRepository;
 import java.util.List;
 
 public interface PrescriptionRepo extends CrudRepository<Prescription, Long> {
+    //  Fonctionnalittes optionnelles  aa aajouter  apres le CRUD
 }
 

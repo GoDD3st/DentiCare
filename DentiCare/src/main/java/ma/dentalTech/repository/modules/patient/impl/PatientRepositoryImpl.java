@@ -7,77 +7,98 @@ import ma.dentalTech.repository.common.RowMappers;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class PatientRepositoryImpl implements PatientRepository {
 
-    @Override
-    public Optional<Patient> findById(Long id) throws InterruptedException {
-        String sql = "SELECT * FROM Patients WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(RowMappers.mapPatient(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche du patient", e);
-        }
-        return Optional.empty();
-    }
 
-    @Override
-    public List<Patient> findAll() {
-        String sql = "SELECT * FROM Patients";
+    public List<Patient> findAll() throws SQLException{
+        String sql = "SELECT * FROM patients ORDER BY id";
         List<Patient> list = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) list.add(RowMappers.mapPatient(rs));
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des patients", e);
+            throw new RuntimeException(e);
         }
         return list;
     }
 
     @Override
-    public Patient save(Patient patient) {
-        if (patient.getIdEntite() == null) return insert(patient);
-        else return update(patient);
-    }
-
-    private Patient insert(Patient p) {
-        String sql = "INSERT INTO Patients (nom, dateDeNaissance, sexe, adresse, telephone, assurance, dossierMedicale_id, situationFinanciere_id, dateCreation) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, p.getNom());
-            if (p.getDateNaissance() != null) stmt.setDate(2, Date.valueOf(p.getDateNaissance())); else stmt.setNull(2, Types.DATE);
-            stmt.setString(3, p.getSexe() != null ? p.getSexe().name() : null);
-            stmt.setString(4, p.getAdresse());
-            stmt.setString(5, p.getTelephone());
-            stmt.setString(6, p.getAssurance() != null ? p.getAssurance().name() : null);
-            if (p.getDossierMedicale() != null && p.getDossierMedicale().getIdEntite() != null) {
-                stmt.setLong(7, p.getDossierMedicale().getIdEntite());
-            } else {
-                stmt.setNull(7, Types.BIGINT);
+    public Optional<Patient> findById(Long id) throws SQLException {
+        String sql = "SELECT * FROM patient WHERE idEntite = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(RowMappers.mapPatient(rs));
+                return null;
             }
-            // situationFinanciere_id not present on entity; set null
-            stmt.setNull(8, Types.BIGINT);
-            stmt.setDate(9, Date.valueOf(LocalDate.now()));
-
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) p.setIdEntite(rs.getLong(1));
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de l'insertion du patient", e);
-        }
-        return p;
+        } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
+    @Override
+    public void create(Patient p) throws SQLException {
+        String sql = "INSERT INTO (nom, sexe, adresse, telephone, dateNaissance, assurance, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1,p.getNom());
+            ps.setString(2,p.getSexe().name());
+            ps.setString(3,p.getAdresse());
+            ps.setString(4,p.getTelephone());
+            ps.setObject(5, p.getDateNaissance());
+            ps.setString(6,p.getAssurance().name());
+            ps.setObject(7, LocalDateTime.now());  // dateCreaation
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    p.setIdPatient(keys.getLong(1));}
+            }
+        } catch (SQLException e)
+        { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public void update(Patient p) throws SQLException{
+        String sql = "UPDATE patient SET nom = ?, sexe = ?, adresse = ?, telephone = ?, dateNaissance = ?," +
+                " assurance = ?, date_derniere_modification = ?  WHERE id_patient = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, p.getNom());
+            ps.setString(2, p.getSexe().name());
+            ps.setString(3, p.getAdresse());
+            ps.setString(4, p.getTelephone());
+            ps.setObject(5, p.getDateNaissance());
+            ps.setString(6, p.getAssurance().name());
+            ps.setTimestamp(7, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            ps.setLong(8, p.getIdPatient());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void delete(Patient p) throws SQLException{
+        if (p != null) deleteById(p.getIdPatient());
+    }
+
+    @Override
+    public void deleteById(Long id) throws SQLException{
+        String sql = "DELETE FROM patient WHERE id_patient = ?";
+        try (Connection conn = SessionFactory.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /*
     private Patient update(Patient p) {
         String sql = "UPDATE Patients SET nom = ?, dateDeNaissance = ?, sexe = ?, adresse = ?, telephone = ?, assurance = ?, dossierMedicale_id = ?, dateDerniereModification = ? WHERE idEntite = ?";
         try (Connection conn = SessionFactory.getConnection();
@@ -100,21 +121,12 @@ public class PatientRepositoryImpl implements PatientRepository {
             throw new RuntimeException("Erreur lors de la mise à jour du patient", e);
         }
         return p;
-    }
+    } */
 
-    @Override
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM Patients WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la suppression du patient", e);
-        }
-    }
 
-    @Override
+
+
+    /* @Override
     public List<Patient> findByNom(String nom) {
         String sql = "SELECT * FROM Patients WHERE nom LIKE ?";
         List<Patient> list = new ArrayList<>();
@@ -156,6 +168,8 @@ public class PatientRepositoryImpl implements PatientRepository {
             throw new RuntimeException("Erreur lors de la recherche du patient par dossier médical", e);
         }
         return Optional.empty();
+    */
     }
-}
+
+
 

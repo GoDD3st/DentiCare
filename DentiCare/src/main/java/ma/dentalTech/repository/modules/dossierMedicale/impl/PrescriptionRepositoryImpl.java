@@ -44,14 +44,10 @@ public class PrescriptionRepositoryImpl implements PrescriptionRepo {
         }
         return prescriptions;
     }
-    
+
     @Override
-    public Prescription save(Prescription prescription) {
-        if (prescription.getIdEntite() == null) {
-            return insert(prescription);
-        } else {
-            return update(prescription);
-        }
+    public void create(Prescription prescription) {
+
     }
     
     private Prescription insert(Prescription prescription) {

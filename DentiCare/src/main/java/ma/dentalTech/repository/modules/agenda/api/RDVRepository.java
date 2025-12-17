@@ -6,8 +6,5 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RDVRepository extends CrudRepository<RDV, Long> {
-    List<RDV> findByPatientId(Long patientId);
-    List<RDV> findByMedecinId(Long medecinId);
-    List<RDV> findByDate(LocalDate date);
-    List<RDV> findByStatut(String statut);
+    //  Fonctionnalittes optionnelles  aa aajouter  apres le CRUD
 }

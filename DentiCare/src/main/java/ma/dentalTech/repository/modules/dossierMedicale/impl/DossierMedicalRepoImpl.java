@@ -42,7 +42,7 @@ public class DossierMedicalRepoImpl implements DossierMedicaleRepo {
     }
 
     @Override
-    public DossierMedicale save(DossierMedicale d) {
+    public void create(DossierMedicale d) {
         if (d.getIdEntite() == null) return insert(d);
         else return update(d);
     }

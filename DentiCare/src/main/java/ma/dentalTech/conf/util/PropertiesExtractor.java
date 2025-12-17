@@ -1,22 +1,38 @@
 package ma.dentalTech.conf.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertiesExtractor {
-    
-    public static Properties extractProperties(String fileName) {
+
+    public static String CONFIG_PATH;
+
+    public static Properties loadConfigFile(String PROPS_PATH) {
+
+        CONFIG_PATH = PROPS_PATH;
         Properties properties = new Properties();
-        try (InputStream inputStream = PropertiesExtractor.class.getClassLoader()
-                .getResourceAsStream("config/" + fileName)) {
-            if (inputStream == null) {
-                throw new RuntimeException("Fichier de propriétés non trouvé: " + fileName);
-            }
-            properties.load(inputStream);
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du chargement du fichier de propriétés: " + fileName, e);
+
+        try (InputStream in = Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream(PROPS_PATH)) {
+            if (in == null)
+                throw new IllegalStateException("config file not found: " + PROPS_PATH);
+            properties.load(in);
+            return properties;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lecture " + PROPS_PATH, e);
         }
-        return properties;
+    }
+
+    public static String getPropertyValue(String key, Properties properties) {
+
+        String v = properties.getProperty(key);
+        if (v == null) {
+            throw new IllegalStateException("property key not found : " + CONFIG_PATH + " : " + key);
+        }
+        return v.trim();
     }
 }
 

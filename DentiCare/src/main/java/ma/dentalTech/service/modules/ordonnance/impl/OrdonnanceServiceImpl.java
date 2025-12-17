@@ -53,7 +53,32 @@ public class OrdonnanceServiceImpl implements OrdonnanceService {
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
-    
+
+    @Override
+    public Optional<Ordonnance> findByID(Long aLong) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Ordonnance create(Ordonnance item) {
+        return null;
+    }
+
+    @Override
+    public Ordonnance update(Long aLong, Ordonnance item) {
+        return null;
+    }
+
+    @Override
+    public Ordonnance delete(Ordonnance item) {
+        return null;
+    }
+
+    @Override
+    public void deleteByID(Long aLong) {
+
+    }
+
     @Override
     public List<OrdonnanceDTO> findByConsultationId(Long consultationId) {
         return ordonnanceRepository.findAllByConsultationId(consultationId).stream()

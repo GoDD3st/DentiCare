@@ -43,16 +43,16 @@ public class InterventionMedecinRepositoryImpl implements InterventionMedecinRep
         return interventionList;
         }
 
-    private InterventionMedecin insert(InterventionMedecin interventionMedecin) {
-        throw new UnsupportedOperationException("A faire");
+    @Override
+    public void create(InterventionMedecin interventionMedecin) {
     }
 
     private InterventionMedecin update(InterventionMedecin interventionMedecin) {
         throw new UnsupportedOperationException("A faire");
     }
     @Override
-    public InterventionMedecin save(InterventionMedecin interventionMedecin) {
-        if (InterventionMedecin.getIdEntite() == null) return insert(interventionMedecin);
+    public  InterventionMedecin save(InterventionMedecin interventionMedecin) {
+        if (interventionMedecin.getIdEntite() == null) return insert(interventionMedecin);
         else return update(interventionMedecin);
     }
 

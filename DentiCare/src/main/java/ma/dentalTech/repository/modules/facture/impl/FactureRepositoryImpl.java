@@ -3,12 +3,13 @@ package ma.dentalTech.repository.modules.facture.impl;
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.repository.modules.facture.api.FactureRepository;
 import ma.dentalTech.conf.SessionFactory;
-import ma.dentalTech.entities.enums.FactureStatutEnum;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static ma.dentalTech.repository.common.RowMappers.mapFacture;
 
 public class FactureRepositoryImpl implements FactureRepository {
     
@@ -20,7 +21,7 @@ public class FactureRepositoryImpl implements FactureRepository {
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return Optional.of(mapToFacture(rs));
+                return Optional.of(mapFacture(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la recherche de la facture", e);
@@ -36,21 +37,17 @@ public class FactureRepositoryImpl implements FactureRepository {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                factures.add(mapToFacture(rs));
+                factures.add(mapFacture(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des factures", e);
         }
         return factures;
     }
-    
+
     @Override
-    public Facture save(Facture facture) {
-        if (facture.getIdEntite() == null) {
-            return insert(facture);
-        } else {
-            return update(facture);
-        }
+    public void create(Facture facture) {
+
     }
     
     private Facture insert(Facture facture) {
@@ -115,7 +112,7 @@ public class FactureRepositoryImpl implements FactureRepository {
             stmt.setLong(1, patientId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                factures.add(mapToFacture(rs));
+                factures.add(mapFacture(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des factures", e);
@@ -132,7 +129,7 @@ public class FactureRepositoryImpl implements FactureRepository {
             stmt.setString(1, statut);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                factures.add(mapToFacture(rs));
+                factures.add(mapFacture(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des factures", e);
@@ -140,15 +137,6 @@ public class FactureRepositoryImpl implements FactureRepository {
         return factures;
     }
     
-    private Facture mapToFacture(ResultSet rs) throws SQLException {
-        return Facture.builder()
-                .idEntite(rs.getLong("idEntite"))
-                .totaleFacture(rs.getDouble("totaleFacture"))
-                .totalePaye(rs.getDouble("totalePaye"))
-                .reste(rs.getDouble("reste"))
-                .statut(FactureStatutEnum.valueOf(rs.getString("statut")))
-                .dateFacture(rs.getTimestamp("dateFacture").toLocalDateTime())
-                .build();
-    }
+
 }
 

@@ -45,17 +45,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         }
         return notifications;
     }
+
     
-    @Override
-    public Notification save(Notification notification) {
-        if (notification.getIdEntite() == null) {
-            return insert(notification);
-        } else {
-            return update(notification);
-        }
-    }
-    
-    private Notification insert(Notification notification) {
+    private (Notification notification) {
         String sql = "INSERT INTO Notification (titre, `message`, `date`, `time`, `type`, priorite, `description`, dateCreation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = SessionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

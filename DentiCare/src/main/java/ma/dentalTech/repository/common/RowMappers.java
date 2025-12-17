@@ -1,9 +1,11 @@
 package ma.dentalTech.repository.common;
 
 import ma.dentalTech.entities.Acte.Acte;
+import ma.dentalTech.entities.AgendaMensuel.AgendaMensuel;
 import ma.dentalTech.entities.Certificat.Certificat;
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
+import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.entities.InterventionMedecin.InterventionMedecin;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.entities.Patient.Patient;
@@ -12,8 +14,7 @@ import ma.dentalTech.entities.Prescription.Prescription;
 import ma.dentalTech.entities.RDV.RDV;
 import ma.dentalTech.entities.enums.*;
 import ma.dentalTech.entities.Antecedents.Antecedents;
-import ma.dentalTech.repository.modules.dossierMedicale.api.InterventionMedecinRepo;
-
+import ma.dentalTech.repository.modules.agenda.AgendaUtils;
 import java.sql.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,54 +100,44 @@ public final class RowMappers {
     }
 
     public static Medecin mapMedecin(ResultSet rs) throws SQLException {
-        Medecin medecin = new Medecin();
+        Medecin medecin = Medecin.builder()
+                .idMedecin(rs.getLong("idMedecin"))
+                .specialite(rs.getString("specialite"))
+                .build();
         medecin.setIdEntite(rs.getLong("idEntite"));
-        medecin.setIdMedecin(rs.getLong("idMedecin"));
-        medecin.setSpecialite(rs.getString("specialite"));
+
         return medecin;
     }
 
     public static Certificat mapCertificat(ResultSet rs) throws SQLException {
-        Certificat certificat = new Certificat();
+        Certificat certificat = Certificat.builder()
+                .idCertificat(rs.getLong("idCertificat"))
+                .idConsultation(rs.getLong("idConsultation"))
+                .idDossier(rs.getLong("idDossier"))
+                .dateDebut(rs.getDate("dateDebut")!= null  ? rs.getDate("dateDebut").toLocalDate()  : null)
+                .dateFin(rs.getDate("dateFin") !=  null ? rs.getDate("dateFin").toLocalDate()  : null)
+                .duree(rs.getInt("duree"))
+                .noteMedecin(rs.getString("noteMedecin"))
+                .build();
+
         certificat.setIdEntite(rs.getLong("idEntite"));
-        certificat.setIdCertificat(rs.getLong("idCertificat"));
-
-        Date dateDebutSql = rs.getDate("dateDebut");
-        if (dateDebutSql != null)
-            certificat.setDateDebut(dateDebutSql.toLocalDate());
-
-        Date dateFinSql = rs.getDate("dateFin");
-        if (dateFinSql != null)
-            certificat.setDateFin(dateFinSql.toLocalDate());
-
-        certificat.setDuree(rs.getInt("Duree"));
-        certificat.setNoteMedecin(rs.getString("noteMedecin"));
-
-        Long idConsult = rs.getLong("idConsultation");
-        Consultation cons = new Consultation();
-        cons.setIdConsultation(idConsult);
-        certificat.setConsultation(cons);
-
-        Long idDossier = rs.getLong("idDossier");
-        DossierMedicale dossier = new DossierMedicale();
-        dossier.setIdDossier(idDossier);
-        certificat.setDossierMedicale(dossier);
-
         return certificat;
     }
 
     public static Acte mapActe(ResultSet rs) throws SQLException{
-        Acte acte = new Acte();
+        Acte acte = Acte.builder()
+                .idActe(rs.getLong("idActe"))
+                .libelle(rs.getString("Libelle"))
+                .categorie(rs.getString("categorie"))
+                .prixDeBase(rs.getDouble("prixDeBase"))
+                .build();
         acte.setIdEntite(rs.getLong("idEntite"));
-        acte.setIdActe(rs.getLong("idActe"));
-        acte.setLibelle(rs.getString("Libelle"));
-        acte.setCategorie(rs.getString("categorie"));
-        acte.setPrixDeBase(rs.getDouble("prixDeBase"));
         return acte;
     }
 
     public static Ordonnance mapOrdonnance(ResultSet rs) throws SQLException {
         Ordonnance ordonnance = Ordonnance.builder()
+                .idOrdonnance(rs.getLong("idOrdonnance"))
                 .date(rs.getDate("date").toLocalDate())
                 .build();
         ordonnance.setIdEntite(rs.getLong("idEntite"));
@@ -155,6 +146,7 @@ public final class RowMappers {
 
     public static Prescription mapPrescription(ResultSet rs) throws SQLException {
         Prescription p = Prescription.builder()
+                .idPrescription(rs.getLong("idPrescription"))
                 .quantite(rs.getInt("quantite"))
                 .frequence(rs.getString("frequence"))
                 .dureeEnJours(rs.getInt("dureeEnJours"))
@@ -172,5 +164,42 @@ public final class RowMappers {
 
         return interventionMedecin;
     }
+    public static Facture mapFacture(ResultSet rs) throws SQLException {
+         Facture facture = Facture.builder()
+                .idFacture(rs.getLong("idFacture"))
+                .totaleFacture(rs.getDouble("totaleFacture"))
+                .totalePaye(rs.getDouble("totalePaye"))
+                .reste(rs.getDouble("reste"))
+                .statut(FactureStatutEnum.valueOf(rs.getString("statut")))
+                .dateFacture(rs.getTimestamp("dateFacture").toLocalDateTime())
+                .build();
+         facture.setIdEntite(rs.getLong("idEntite"));
+        return facture;
+    }
 
+    public static AgendaMensuel mapAgenda(ResultSet rs) throws SQLException {
+        AgendaMensuel agenda = AgendaMensuel.builder()
+                .mois(MoisEnum.valueOf(rs.getString("mois")))
+                .joursNonDisponible(AgendaUtils.deserializeJours(rs.getString("joursNonDisponible")))
+                .build();
+        agenda.setIdEntite(rs.getLong("idEntite"));
+
+        var dc = rs.getTimestamp("dateCreation");
+        if (dc != null) agenda.setDateCreation(LocalDate.from(dc.toLocalDateTime()));
+
+        var ddm = rs.getTimestamp("dateDerniereModification");
+        if (ddm != null) agenda.setDateDerniereModification(ddm.toLocalDateTime());
+
+        agenda.setModifiePar(rs.getString("modifiePar"));
+        agenda.setCreePar(rs.getString("creePar"));
+
+        long medecinId = rs.getLong("medecin_id");
+        if (!rs.wasNull()) {
+            Medecin medecin = new Medecin();
+            medecin.setIdEntite(medecinId);
+            agenda.setMedecin(medecin);
+        }
+
+        return agenda;
+    }
 }

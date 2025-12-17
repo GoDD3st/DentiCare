@@ -17,6 +17,7 @@ public class Antecedents extends BaseEntity {
     private Long idAntecedent;
     private String nom;
     private String categorie;
+    private String description;
     private RisqueEnum niveauDeRisque;
 
     private List<Patient> patients;

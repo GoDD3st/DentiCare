@@ -1,6 +1,8 @@
 package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.Certificat.Certificat;
+import ma.dentalTech.entities.Patient.Patient;
+import ma.dentalTech.repository.common.RowMappers;
 import ma.dentalTech.repository.modules.dossierMedicale.api.CertificatRepo;
 import ma.dentalTech.conf.SessionFactory;
 import java.sql.*;
@@ -12,94 +14,82 @@ import java.util.Optional;
 import static ma.dentalTech.repository.common.RowMappers.mapCertificat;
 
 public class CertificatRepoImpl implements CertificatRepo {
+    @Override
+    public List<Certificat> findAll() throws SQLException{
+        String sql = "SELECT * FROM certificat";
+        List<Certificat> list = new ArrayList<>();
+        try (Connection conn = SessionFactory.getInstance().getConnection();
+             Statement ps = conn.createStatement();
+             ResultSet rs = ps.executeQuery(sql)) {
+            while (rs.next()) list.add(mapCertificat(rs));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     @Override
-    public Optional<Certificat> findById(Long id) {
-        String sql = "SELECT * FROM Certificat WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            ResultSet rs = stmt.executeQuery();
+    public Optional<Certificat> findById(Long id) throws SQLException {
+        String sql = "SELECT * FROM certificat WHERE id_certificat = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(RowMappers.mapCertificat(rs));
+                return null;
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public void create(Certificat c) {
+        String sql = "INSERT INTO certificat (dateDebut, dateFin, duree, noteMedecin, dateCreation) VALUES (?, ?, ?, ?, ?)";
+        try (Connection con = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setDate(1, Date.valueOf(c.getDateDebut()));
+            ps.setDate(2, Date.valueOf(c.getDateFin()));
+            ps.setInt(3, c.getDuree());
+            ps.setString(4, c.getNoteMedecin());
+            ps.setDate(5, Date.valueOf(LocalDate.now()));
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
-                return Optional.of(mapCertificat(rs));
+                c.setIdCertificat(rs.getLong(1));
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la recherche du certificat", e);
-        }
-        return Optional.empty();
+        } catch (SQLException e)
+        { throw new RuntimeException(e); }
     }
 
     @Override
-    public List<Certificat> findAll() {
-        String sql = "SELECT * FROM Certificat";
-        List<Certificat> certificats = new ArrayList<>();
-        try (Connection conn = SessionFactory.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                certificats.add(mapCertificat(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la récupération des certificats", e);
-        }
-        return certificats;
-    }
-
-    @Override
-    public Certificat save(Certificat certificat) {
-        if (certificat.getIdEntite() == null) {
-            return insert(certificat);
-        } else {
-            return update(certificat);
-        }
-    }
-
-    private Certificat insert(Certificat certificat) {
-        String sql = "INSERT INTO Certificat (dateDebut, dateFin, duree, noteMedecin, dateCreation) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setDate(1, Date.valueOf(certificat.getDateDebut()));
-            stmt.setDate(2, Date.valueOf(certificat.getDateFin()));
-            stmt.setInt(3, certificat.getDuree());
-            stmt.setString(4, certificat.getNoteMedecin());
-            stmt.setDate(7, Date.valueOf(LocalDate.now()));
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                certificat.setIdEntite(rs.getLong(1));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de l'insertion du certificat", e);
-        }
-        return certificat;
-    }
-
-    private Certificat update(Certificat certificat) {
+    public void update(Certificat c) {
         String sql = "UPDATE Certificat SET dateDebut = ?, dateFin = ?, duree = ?, noteMedecin = ?, dateDerniereModification = ? WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDate(1, Date.valueOf(certificat.getDateDebut()));
-            stmt.setDate(2, Date.valueOf(certificat.getDateFin()));
-            stmt.setInt(3, certificat.getDuree());
-            stmt.setString(4, certificat.getNoteMedecin());
-            stmt.setTimestamp(7, Timestamp.valueOf(java.time.LocalDateTime.now()));
-            stmt.setLong(8, certificat.getIdEntite());
-            stmt.executeUpdate();
+        try (Connection con = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(c.getDateDebut()));
+            ps.setDate(2, Date.valueOf(c.getDateFin()));
+            ps.setInt(3, c.getDuree());
+            ps.setString(4, c.getNoteMedecin());
+            ps.setTimestamp(5, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            ps.setLong(6, c.getIdCertificat());
+
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la mise à jour du certificat", e);
+            throw new RuntimeException(e);
         }
-        return certificat;
     }
 
     @Override
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM Certificat WHERE idEntite = ?";
-        try (Connection conn = SessionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
+    public void delete(Certificat c) throws SQLException {
+        if (c != null) deleteById(c.getIdCertificat());
+    }
+
+    @Override
+    public void deleteById(Long id) throws SQLException {
+        String sql = "DELETE FROM Certificat WHERE id_certificat = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
         } catch (SQLException e) {
-            throw new RuntimeException("Erreur lors de la suppression du certificat", e);
+            throw new RuntimeException(e);
         }
     }
 
