@@ -36,33 +36,32 @@ public class CertificatRepoImpl implements CertificatRepo {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) return Optional.of(RowMappers.mapCertificat(rs));
-                return null;
+                return Optional.empty();
             }
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
     @Override
     public void create(Certificat c) {
-        String sql = "INSERT INTO certificat (dateDebut, dateFin, duree, noteMedecin, dateCreation) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO certificat (dateDebut, dateFin, duree, noteMedecin) VALUES (?, ?, ?, ?)";
         try (Connection con = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setDate(1, Date.valueOf(c.getDateDebut()));
             ps.setDate(2, Date.valueOf(c.getDateFin()));
             ps.setInt(3, c.getDuree());
             ps.setString(4, c.getNoteMedecin());
-            ps.setDate(5, Date.valueOf(LocalDate.now()));
-            ps.executeUpdate();
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                c.setIdCertificat(rs.getLong(1));
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    c.setIdCertificat(keys.getLong(1));}
             }
+
         } catch (SQLException e)
         { throw new RuntimeException(e); }
     }
 
     @Override
     public void update(Certificat c) {
-        String sql = "UPDATE Certificat SET dateDebut = ?, dateFin = ?, duree = ?, noteMedecin = ?, dateDerniereModification = ? WHERE idEntite = ?";
+        String sql = "UPDATE Certificat SET dateDebut = ?, dateFin = ?, duree = ?, noteMedecin = ? WHERE id_ = ?";
         try (Connection con = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setDate(1, Date.valueOf(c.getDateDebut()));

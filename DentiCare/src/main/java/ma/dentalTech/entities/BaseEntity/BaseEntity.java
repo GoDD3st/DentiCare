@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.dentalTech.entities.Medecin.Medecin;
 
 @Data
 @Builder
@@ -17,4 +18,6 @@ public class BaseEntity {
     private LocalDateTime dateDerniereModification;
     private String modifiePar;
     private String creePar;
+
+    private Medecin medecin;
 }

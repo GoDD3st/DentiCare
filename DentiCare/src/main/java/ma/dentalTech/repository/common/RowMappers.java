@@ -7,11 +7,15 @@ import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.entities.InterventionMedecin.InterventionMedecin;
+import ma.dentalTech.entities.Medicament.Medicament;
+import ma.dentalTech.entities.Notification.Notification;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.Prescription.Prescription;
 import ma.dentalTech.entities.RDV.RDV;
+import ma.dentalTech.entities.Role.Role;
+import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.entities.enums.*;
 import ma.dentalTech.entities.Antecedents.Antecedents;
 import ma.dentalTech.repository.modules.agenda.AgendaUtils;
@@ -201,5 +205,30 @@ public final class RowMappers {
         }
 
         return agenda;
+    }
+
+    public static Utilisateur mapUtilisateur(ResultSet rs) {
+    return null;
+    }
+
+    public static Role mapRole(ResultSet rs) {
+
+        return null;
+    }
+
+    public static DossierMedicale mapDossierMedicale(ResultSet rs) {
+        return null;
+    }
+
+    public static Medicament mapMedicament(ResultSet rs) {
+        return null;
+    }
+
+    public static AgendaMensuel mapAgendaMensuel(ResultSet rs) {
+        return null;
+    }
+
+    public static Notification mapNotification(ResultSet rs) {
+        return null;
     }
 }

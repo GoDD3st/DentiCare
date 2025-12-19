@@ -6,8 +6,6 @@ import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,73 +28,74 @@ public class PatientRepositoryImpl implements PatientRepository {
 
     @Override
     public Optional<Patient> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM patient WHERE idEntite = ?";
+        String sql = "SELECT * FROM patient WHERE id_patient = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(RowMappers.mapPatient(rs));
-                return null;
+                if (rs.next()) {
+                    return Optional.of(RowMappers.mapPatient(rs));
+                }
+                return Optional.empty();
             }
-        } catch (SQLException e) { throw new RuntimeException(e); }
+        }
     }
 
     @Override
     public void create(Patient p) throws SQLException {
-        String sql = "INSERT INTO (nom, sexe, adresse, telephone, dateNaissance, assurance, date_creation) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection c = SessionFactory.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1,p.getNom());
-            ps.setString(2,p.getSexe().name());
-            ps.setString(3,p.getAdresse());
-            ps.setString(4,p.getTelephone());
-            ps.setObject(5, p.getDateNaissance());
-            ps.setString(6,p.getAssurance().name());
-            ps.setObject(7, LocalDateTime.now());  // dateCreaation
-
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
-                    p.setIdPatient(keys.getLong(1));}
-            }
-        } catch (SQLException e)
-        { throw new RuntimeException(e); }
-    }
-
-    @Override
-    public void update(Patient p) throws SQLException{
-        String sql = "UPDATE patient SET nom = ?, sexe = ?, adresse = ?, telephone = ?, dateNaissance = ?," +
-                " assurance = ?, date_derniere_modification = ?  WHERE id_patient = ?";
+        String sql = "INSERT INTO patient (nom, dateNaissance, sexe, adresse, telephone, assurance, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, p.getNom());
-            ps.setString(2, p.getSexe().name());
-            ps.setString(3, p.getAdresse());
-            ps.setString(4, p.getTelephone());
-            ps.setObject(5, p.getDateNaissance());
-            ps.setString(6, p.getAssurance().name());
-            ps.setTimestamp(7, Timestamp.valueOf(java.time.LocalDateTime.now()));
-            ps.setLong(8, p.getIdPatient());
+            ps.setDate(2, p.getDateNaissance() != null ? Date.valueOf(p.getDateNaissance()) : null);
+            ps.setString(3, String.valueOf(p.getSexe()));
+            ps.setString(4, p.getAdresse());
+            ps.setString(5, p.getTelephone());
+            ps.setString(6, String.valueOf(p.getAssurance()));
+            ps.setString(7, p.getCreePar());
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) p.setIdPatient(keys.getLong(1));
+            }
         }
     }
+
     @Override
-    public void delete(Patient p) throws SQLException{
-        if (p != null) deleteById(p.getIdPatient());
+    public void update(Patient p) throws SQLException {
+        String sql = "UPDATE patient SET nom = ?, dateNaissance = ?, sexe = ?, adresse = ?, telephone = ?, assurance = ?, modifie_par = ? WHERE id_patient = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, p.getNom());
+            ps.setDate(2, p.getDateNaissance() != null ? Date.valueOf(p.getDateNaissance()) : null);
+            ps.setString(3, String.valueOf(p.getSexe()));
+            ps.setString(4, p.getAdresse());
+            ps.setString(5, p.getTelephone());
+            ps.setString(6, String.valueOf(p.getAssurance()));
+            ps.setString(7, p.getModifiePar());
+            ps.setLong(8, p.getIdPatient());
+            ps.executeUpdate();
+        }
     }
 
     @Override
-    public void deleteById(Long id) throws SQLException{
+    public void delete(Patient p) throws SQLException{
+        if (p != null && p.getIdPatient() != null ) {
+            deleteById(p.getIdPatient());
+            }
+        }
+
+
+    @Override
+    public void deleteById(Long id) throws SQLException {
         String sql = "DELETE FROM patient WHERE id_patient = ?";
         try (Connection conn = SessionFactory.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
+}
 
     /*
     private Patient update(Patient p) {
@@ -169,7 +168,7 @@ public class PatientRepositoryImpl implements PatientRepository {
         }
         return Optional.empty();
     */
-    }
+
 
 
 
