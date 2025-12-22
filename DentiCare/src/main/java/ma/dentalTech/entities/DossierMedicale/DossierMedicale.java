@@ -15,11 +15,11 @@ import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DossierMedicale extends BaseEntity {
-    private Long idDossier;
-    private LocalDate dateDeCreation;
+    public class DossierMedicale extends BaseEntity {
+        private Long idDossier;
+        private LocalDate dateDeCreation;
 
-    private Patient patient;
-    private SituationFinanciere situationFinanciere;
-    private Medecin medecin;
-}
+        private Patient patient;
+        private SituationFinanciere situationFinanciere;
+        private Medecin medecin;
+    }

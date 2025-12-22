@@ -1,16 +1,16 @@
-package ma.dentalTech.repository.modules.facturation.impl;
+package ma.dentalTech.repository.modules.finance.impl;
 
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
-import ma.dentalTech.repository.modules.facture.api.FactureRepository;
+import ma.dentalTech.repository.modules.finance.api.FactureRepo;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FactureRepoImpl implements FactureRepository {
+public class FactureRepoImpl implements FactureRepo {
 
     @Override
     public List<Facture> findAll() throws SQLException {

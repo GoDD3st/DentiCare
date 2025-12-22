@@ -1,19 +1,19 @@
-package ma.dentalTech.entities.Acte;
+package ma.dentalTech.mvc.dto;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.dentalTech.entities.BaseEntity.BaseEntity;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-    public class Acte extends BaseEntity {
+@AllArgsConstructor
+@Builder
+public class ActeDTO {
         private Long idActe;
         private String libelle;
         private String categorie;
         private Double prixDeBase;
-
     }
+

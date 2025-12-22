@@ -2,16 +2,16 @@ package ma.dentalTech.service.modules.facture.impl;
 
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.service.modules.facture.api.FactureService;
-import ma.dentalTech.repository.modules.facture.api.FactureRepository;
+import ma.dentalTech.repository.modules.finance.api.FactureRepo;
 import java.util.List;
 import java.util.Optional;
 
 public class FactureServiceImpl implements FactureService {
 
-    public FactureServiceImpl(FactureRepository repo) {
+    public FactureServiceImpl(FactureRepo repo) {
         this.repo = repo;
     }
-    private final FactureRepository repo;
+    private final FactureRepo repo;
 
     @Override
     public List<Facture> findAll() throws Exception{

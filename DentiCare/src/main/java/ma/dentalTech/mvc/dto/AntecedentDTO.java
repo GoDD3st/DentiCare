@@ -17,8 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AntecedentDTO{
-    public long id;
+    public long idAntecedent;
     public String nom;
     public String niveauDeRisque;
+    private String description;
     public String categorie;
 }

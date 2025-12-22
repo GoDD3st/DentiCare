@@ -1,7 +1,7 @@
 package ma.dentalTech.repository.modules.patient.impl;
 
 import ma.dentalTech.entities.Patient.Patient;
-import ma.dentalTech.repository.modules.patient.api.PatientRepository;
+import ma.dentalTech.repository.modules.patient.api.patientRepository;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PatientRepositoryImpl implements PatientRepository {
+public class patientRepositoryImpl implements patientRepository {
 
 
     public List<Patient> findAll() throws SQLException{

@@ -15,15 +15,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Facture extends BaseEntity {
-    private Long idFacture;
-    private Double totaleFacture;
-    private Double totalePaye;
-    private Double reste;
-    private FactureStatutEnum statut;
-    private LocalDateTime dateFacture;
+    public class Facture extends BaseEntity {
+        private Long idFacture;
+        private Double totaleFacture;
+        private Double totalePaye;
+        private Double reste;
+        private FactureStatutEnum statut;
+        private LocalDateTime dateFacture;
 
-    private SituationFinanciere situationFinanciere;
-    private Consultation consultation;
+        private SituationFinanciere situationFinanciere;
+        private Consultation consultation;
 
 }
