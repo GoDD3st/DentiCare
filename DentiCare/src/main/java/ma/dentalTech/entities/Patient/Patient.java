@@ -7,15 +7,12 @@ import ma.dentalTech.entities.enums.SexeEnum;
 import ma.dentalTech.entities.enums.AssuranceEnum;
 import java.time.LocalDate;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
+
 public class Patient extends BaseEntity {
     private Long idPatient;
     private String nom;
@@ -28,4 +25,14 @@ public class Patient extends BaseEntity {
     private DossierMedicale dossierMedicale; // Relation (Patient)n--1(dossierMedicale)
     private List<Antecedents> antecedents; // Relation n--n
 
+    public static Patient createTestInstance() {
+        return Patient.builder()
+                .nom("Marouane")
+                .dateNaissance((LocalDate.of(2004, 5, 28)))
+                .sexe(SexeEnum.MASCULIN)
+                .adresse("Rue 123 Rabat")
+                .telephone("0600000000")
+                .assurance(AssuranceEnum.CNSS)
+                .build();
+    }
 }

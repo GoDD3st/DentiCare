@@ -3,15 +3,11 @@ package ma.dentalTech.entities.Log;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Log extends BaseEntity {
     private Long idLog;
     private String action;
@@ -20,4 +16,12 @@ public class Log extends BaseEntity {
     private String status;
 
     private Utilisateur utilisateur;
+    public static Log createTestInstance() {
+        return Log.builder()
+                .action("Action de test")
+                .dateHeure(LocalDateTime.now())
+                .ipAdresse("127.0.0.1")
+                .status("OK")
+                .build();
+    }
 }

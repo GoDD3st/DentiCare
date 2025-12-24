@@ -9,15 +9,11 @@ import ma.dentalTech.entities.enums.ConsultationStatutEnum;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Consultation extends BaseEntity {
     private Long idConsultation;
     private LocalDate dateConsultation;
@@ -28,4 +24,14 @@ public class Consultation extends BaseEntity {
     private DossierMedicale dossierMedicale;
     private List<Ordonnance> ordonnances;
     private Certificat certificat;
+
+    public static Consultation createTestInstance(DossierMedicale dossier) {
+        return Consultation.builder()
+                .dateConsultation(LocalDate.now())
+                .heureConsultation(LocalTime.now())
+                .statut(ConsultationStatutEnum.EN_COURS)
+                .observationMedecin("Patient présente des douleurs dentaires aiguës.")
+                .dossierMedicale(dossier)
+                .build();
+    }
 }

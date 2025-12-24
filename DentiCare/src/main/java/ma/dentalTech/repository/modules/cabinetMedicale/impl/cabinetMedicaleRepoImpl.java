@@ -43,7 +43,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void create(CabinetMedicale cm) throws SQLException {
-        String sql = "INSERT INTO cabinet_medicale (nom, email, logo, rue, ville, code_postal, cin, tel1, tel2, site_web, instagram, facebook, description, id_patient, id_situation, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cabinet_medicale (nom, email, logo, rue, ville, code_postal, tel1, tel2, site_web, instagram, facebook, description, id_patient, id_situation, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -60,17 +60,16 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
             ps.setString(5, cm.getAdresse() != null ? cm.getAdresse().getVille() : null);
             ps.setString(6, cm.getAdresse() != null ? cm.getAdresse().getCodePostal() : null);
 
-            ps.setString(7, cm.getCin());
-            ps.setString(8, cm.getTel1());
-            ps.setString(9, cm.getTel2());
-            ps.setString(10, cm.getSiteWeb());
-            ps.setString(11, cm.getInstagram());
-            ps.setString(12, cm.getFacebook());
-            ps.setString(13, cm.getDescription());
-            ps.setObject(14, idPat);
-            ps.setObject(15, idSit);
-            ps.setObject(16, idMed);
-            ps.setString(17, cm.getCreePar());
+            ps.setString(7, cm.getTel1());
+            ps.setString(8, cm.getTel2());
+            ps.setString(9, cm.getSiteWeb());
+            ps.setString(10, cm.getInstagram());
+            ps.setString(11, cm.getFacebook());
+            ps.setString(12, cm.getDescription());
+            ps.setObject(13, idPat);
+            ps.setObject(14, idSit);
+            ps.setObject(15, idMed);
+            ps.setString(16, cm.getCreePar());
 
             ps.executeUpdate();
 
@@ -84,7 +83,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void update(CabinetMedicale cm) throws SQLException {
-        String sql = "UPDATE cabinet_medicale SET nom = ?, email = ?, logo = ?, rue = ?, ville = ?, code_postal = ?, cin = ?, tel1 = ?, tel2 = ?, site_web = ?, instagram = ?, facebook = ?, description = ?, id_patient = ?, id_situation = ?, id_medecin = ?, modifie_par = ? WHERE id_cabinet = ?";
+        String sql = "UPDATE cabinet_medicale SET nom = ?, email = ?, logo = ?, rue = ?, ville = ?, code_postal = ?, tel1 = ?, tel2 = ?, site_web = ?, instagram = ?, facebook = ?, description = ?, id_patient = ?, id_situation = ?, id_medecin = ?, modifie_par = ? WHERE id_cabinet = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -98,18 +97,17 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
             ps.setString(4, cm.getAdresse() != null ? cm.getAdresse().getRue() : null);
             ps.setString(5, cm.getAdresse() != null ? cm.getAdresse().getVille() : null);
             ps.setString(6, cm.getAdresse() != null ? cm.getAdresse().getCodePostal() : null);
-            ps.setString(7, cm.getCin());
-            ps.setString(8, cm.getTel1());
-            ps.setString(9, cm.getTel2());
-            ps.setString(10, cm.getSiteWeb());
-            ps.setString(11, cm.getInstagram());
-            ps.setString(12, cm.getFacebook());
-            ps.setString(13, cm.getDescription());
-            ps.setObject(14, idPat);
-            ps.setObject(15, idSit);
-            ps.setObject(16, idMed);
-            ps.setString(17, cm.getModifiePar());
-            ps.setLong(18, cm.getIdCabinet());
+            ps.setString(7, cm.getTel1());
+            ps.setString(8, cm.getTel2());
+            ps.setString(9, cm.getSiteWeb());
+            ps.setString(10, cm.getInstagram());
+            ps.setString(11, cm.getFacebook());
+            ps.setString(12, cm.getDescription());
+            ps.setObject(13, idPat);
+            ps.setObject(14, idSit);
+            ps.setObject(15, idMed);
+            ps.setString(16, cm.getModifiePar());
+            ps.setLong(17, cm.getIdCabinet());
 
             ps.executeUpdate();
         }

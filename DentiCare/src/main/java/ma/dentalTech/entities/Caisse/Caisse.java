@@ -10,6 +10,14 @@ import lombok.NoArgsConstructor;
 
 @Data @AllArgsConstructor@NoArgsConstructor@Builder
 public class Caisse {
+    public static Caisse createTestInstance() {
+        return Caisse.builder()
+                .montant(250.5)
+                .dateEncassement(java.time.LocalDateTime.now())
+                .modeEncaissement(null)
+                .reference("REF-2024-01")
+                .build();
+    }
     private Long idCaisse;
     private Double montant;
     private LocalDateTime dateEncassement;

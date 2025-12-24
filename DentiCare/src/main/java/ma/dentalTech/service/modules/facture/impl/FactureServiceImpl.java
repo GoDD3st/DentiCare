@@ -3,44 +3,66 @@ package ma.dentalTech.service.modules.facture.impl;
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.service.modules.facture.api.FactureService;
 import ma.dentalTech.repository.modules.finance.api.FactureRepo;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
 public class FactureServiceImpl implements FactureService {
 
-    public FactureServiceImpl(FactureRepo repo) {
-        this.repo = repo;
-    }
-    private final FactureRepo repo;
+    private final FactureRepo factureRepository;
 
-    @Override
-    public List<Facture> findAll() throws Exception{
-        return repo.findAll();
+    public FactureServiceImpl() {
+        this.factureRepository = ApplicationContext.getBean(FactureRepo.class);
     }
 
     @Override
-    public Optional<Facture> findByID(Long id) throws Exception{
-        return Optional(repo.findById(id));
+    public List<Facture> findAll() throws Exception {
+        return factureRepository.findAll();
     }
 
     @Override
-    public Object create(Object item) {
-        return null;
+    public Optional<Facture> findByID(Long id) throws Exception {
+        return factureRepository.findById(id);
     }
 
     @Override
-    public Object update(Object o, Object item) {
-        return null;
+    public Facture create(Facture item) {
+        try {
+            factureRepository.create(item);
+            return item;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public Object delete(Object item) {
-        return null;
+    public Facture update(Long id, Facture item) {
+        try {
+            item.setIdFacture(id);
+            factureRepository.update(item);
+            return item;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public void deleteByID(Object o) {
+    public Facture delete(Facture item) {
+        try {
+            factureRepository.delete(item);
+            return item;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    @Override
+    public void deleteByID(Long id) {
+        try {
+            factureRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

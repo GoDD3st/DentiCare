@@ -1,17 +1,13 @@
 package ma.dentalTech.entities.Charges;
 
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.time.LocalDateTime; 
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Charges extends BaseEntity {
     private Long idCharge;
     private String titre;

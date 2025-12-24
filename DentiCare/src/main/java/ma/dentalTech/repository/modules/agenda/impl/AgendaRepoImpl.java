@@ -1,4 +1,4 @@
-package ma.dentalTech.repository.modules.personnel.impl;
+package ma.dentalTech.repository.modules.agenda.impl;
 
 import ma.dentalTech.entities.AgendaMensuel.AgendaMensuel;
 import ma.dentalTech.repository.modules.agenda.api.AgendaRepository;

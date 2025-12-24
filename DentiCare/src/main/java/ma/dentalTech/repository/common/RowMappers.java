@@ -30,7 +30,6 @@ import ma.dentalTech.entities.enums.*;
 import ma.dentalTech.entities.Antecedents.Antecedents;
 import ma.dentalTech.common.Adresse;
 
-import java.sql.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -112,7 +111,7 @@ public final class RowMappers {
     }
 
     public static Medecin mapMedecin(ResultSet rs) throws SQLException {
-        Medecin m = new Medecin();
+        Medecin m = Medecin.builder().build();
 
         // Champs spécifiques à Medecin
         m.setIdMedecin(rs.getLong("id_medecin"));
@@ -268,8 +267,9 @@ public final class RowMappers {
     }
 
     public static Admin mapAdmin(ResultSet rs) throws SQLException {
-        Admin ad = new Admin();
-        ad.setIdUser(rs.getLong("id_utilisateur"));
+        Admin ad = Admin.builder()
+                .idUser(rs.getLong("id_utilisateur"))
+                .build();
         return ad;
     }
 

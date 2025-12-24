@@ -1,12 +1,9 @@
 package ma.dentalTech.repository.modules.dossierMedicale.impl;
 
 import ma.dentalTech.entities.Certificat.Certificat;
-import ma.dentalTech.entities.Patient.Patient;
-import ma.dentalTech.repository.common.RowMappers;
 import ma.dentalTech.repository.modules.dossierMedicale.api.CertificatRepo;
 import ma.dentalTech.conf.SessionFactory;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +32,7 @@ public class CertificatRepoImpl implements CertificatRepo {
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(RowMappers.mapCertificat(rs));
+                if (rs.next()) return Optional.of(mapCertificat(rs));
                 return Optional.empty();
             }
         } catch (SQLException e) { throw new RuntimeException(e); }

@@ -7,15 +7,11 @@ import ma.dentalTech.entities.enums.PrioriteEnum;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Notification extends BaseEntity {
     private Long idNotif;
     private NotificationTypeEnum titre;
@@ -26,4 +22,14 @@ public class Notification extends BaseEntity {
     private PrioriteEnum priorite;
 
     private List<Utilisateur> utilisateurs; // Relation n--n
+    public static Notification createTestInstance() {
+        return Notification.builder()
+                .titre(NotificationTypeEnum.RAPPEL)
+                .message("Rendez-vous prévu pour le 15/12/2025")
+                .date(LocalDate.now())
+                .heure(LocalTime.now())
+                .type(NotificationTypeEnum.RAPPEL)
+                .priorite(PrioriteEnum.BASSE)
+                .build();
+    }
 }

@@ -2,16 +2,23 @@ package ma.dentalTech.entities.Medicament;
 
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.enums.FormeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Medicament extends BaseEntity {
+    public static Medicament createTestInstance() {
+        return Medicament.builder()
+                .nom("Paracétamol")
+                .laboratoire("Sanofi")
+                .type("Antalgique")
+                .forme(null)
+                .remboursable(false)
+                .prixUnitaire(12.0)
+                .description("Utilisé contre la douleur et la fièvre.")
+                .build();
+    }
     private Long idMedicament;
     private String nom;
     private String laboratoire;

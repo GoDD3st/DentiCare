@@ -1,20 +1,17 @@
 package ma.dentalTech.entities.DossierMedicale;
 
+import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.Patient.Patient;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
     public class DossierMedicale extends BaseEntity {
         private Long idDossier;
         private LocalDate dateDeCreation;
@@ -22,4 +19,11 @@ import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
         private Patient patient;
         private SituationFinanciere situationFinanciere;
         private Medecin medecin;
+
+    public static DossierMedicale createTestInstance(Patient patient) {
+        return DossierMedicale.builder()
+                .dateDeCreation(LocalDate.now())
+                .patient(patient)
+                .build();
     }
+}

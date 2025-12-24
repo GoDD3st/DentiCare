@@ -3,20 +3,26 @@ package ma.dentalTech.entities.Role;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.entities.enums.RoleEnum;
+
+import java.util.Arrays;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
+
 public class Role extends BaseEntity {
     private Long idRole;
     private RoleEnum libelle;
     private List<String> privileges;
 
     private List<Utilisateur> utilisateurs; // Relation n--n
+
+    public Role createTestInstance() {
+        return Role.builder()
+                .libelle(RoleEnum.ADMIN)
+                .privileges(Arrays.asList("FullPowerr"))
+                .build();
+    }
 }

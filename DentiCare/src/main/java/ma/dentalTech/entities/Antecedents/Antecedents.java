@@ -3,16 +3,14 @@ package ma.dentalTech.entities.Antecedents;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.enums.RisqueEnum;
+
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Antecedents extends BaseEntity {
     private Long idAntecedent;
     private String nom;
@@ -21,4 +19,15 @@ public class Antecedents extends BaseEntity {
     private RisqueEnum niveauDeRisque;
 
     private List<Patient> patients;
+
+    public static Antecedents createTestInstance() {
+        return Antecedents.builder()
+                .idAntecedent(1L)
+                .nom("Hypertension artérielle")
+                .categorie("Cardiovasculaire")
+                .description("Patient sous traitement, vigilance lors de l'anesthésie locale.")
+                .niveauDeRisque(RisqueEnum.MOYEN)
+                .patients(new ArrayList<>())
+                .build();
+    }
 }

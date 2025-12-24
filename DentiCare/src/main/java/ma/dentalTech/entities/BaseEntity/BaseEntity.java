@@ -2,16 +2,12 @@ package ma.dentalTech.entities.BaseEntity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.Medecin.Medecin;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class BaseEntity {
     private Long idEntite;
     private LocalDate dateCreation;

@@ -8,15 +8,12 @@ import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.enums.RDVStatutEnum;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
+
 public class RDV extends BaseEntity {
     private Long idRDV;
     private LocalDate date;
@@ -29,4 +26,13 @@ public class RDV extends BaseEntity {
     private Consultation consultation;
     private Patient patient;
     private Medecin medecin;
+    public static RDV createTestInstance() {
+        return RDV.builder()
+                .date(LocalDate.now())
+                .heure(LocalTime.now())
+                .motif("Rendez-vous de test")
+                .statut(RDVStatutEnum.PLANIFIE)
+                .noteMedecin("Rendez-vous de test")
+                .build();
+    }
 }

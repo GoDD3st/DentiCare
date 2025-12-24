@@ -4,20 +4,26 @@ import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Consultation.Consultation;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Ordonnance extends BaseEntity {
     private Long idOrdonnance;
     private LocalDate date;
 
     private List<DossierMedicale> dossiersMedicales; // n--n
     private List<Consultation> consultations; // n--n
+
+    public static Ordonnance createTestInstance() {
+        return Ordonnance.builder()
+                .date(LocalDate.now())
+
+                .dossiersMedicales(new ArrayList<>())
+                .consultations(new ArrayList<>())
+                .build();
+    }
 }

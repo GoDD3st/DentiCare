@@ -16,7 +16,7 @@ public class ApplicationContext {
     
     private static void loadBeans() {
         try {
-            Properties props = PropertiesExtractor.extractProperties(BEANS_PROPERTIES_FILE);
+            Properties props = PropertiesExtractor.loadConfigFile(BEANS_PROPERTIES_FILE);
             for (String key : props.stringPropertyNames()) {
                 String className = props.getProperty(key);
                 try {
@@ -51,7 +51,7 @@ public class ApplicationContext {
     }
     
     private static String getBeanNameByClass(Class<?> clazz) {
-        Properties props = PropertiesExtractor.extractProperties(BEANS_PROPERTIES_FILE);
+        Properties props = PropertiesExtractor.loadConfigFile(BEANS_PROPERTIES_FILE);
         for (String key : props.stringPropertyNames()) {
             String className = props.getProperty(key);
             if (className.equals(clazz.getName())) {

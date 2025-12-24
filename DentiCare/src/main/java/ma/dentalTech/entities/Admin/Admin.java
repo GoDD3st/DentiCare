@@ -1,14 +1,25 @@
 package ma.dentalTech.entities.Admin;
 
+import lombok.experimental.SuperBuilder;
+import ma.dentalTech.entities.Role.Role;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import ma.dentalTech.entities.enums.RoleEnum;
+
+import java.util.List;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Admin extends Utilisateur {
+    public static Admin createTestInstance() {
+        return Admin.builder()
+                .nom("admin 1")
+                .login("admin")
+                .motDePass("admin")
+                .roles(List.of(Role.builder()
+                        .idRole(1L)
+                        .libelle(RoleEnum.ADMIN)
+                        .build()))
+                .build();
+    }
 }

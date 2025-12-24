@@ -2,18 +2,14 @@ package ma.dentalTech.entities.Statistique;
 
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.enums.StatistiqueCategorieEnum;
 
 import java.time.LocalDate;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder
 public class Statistique extends BaseEntity {
     private Long idStatistique;
     private String nom;
@@ -22,4 +18,12 @@ public class Statistique extends BaseEntity {
     private LocalDate dateCalcul;
 
     private CabinetMedicale cabinetMedicale;
+    public static Statistique createTestInstance() {
+        return Statistique.builder()
+                .nom("Statistique de test")
+                .categorie(StatistiqueCategorieEnum.FINANCIERE)
+                .chiffre(100.0)
+                .dateCalcul(LocalDate.now())
+                .build();
+    }
 }
