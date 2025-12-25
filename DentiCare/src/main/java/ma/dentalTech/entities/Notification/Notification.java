@@ -32,4 +32,7 @@ public class Notification extends BaseEntity {
                 .priorite(PrioriteEnum.BASSE)
                 .build();
     }
+
+    public void setIdNotification(Long id) {
+    }
 }
