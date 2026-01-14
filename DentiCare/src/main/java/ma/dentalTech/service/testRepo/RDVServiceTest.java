@@ -9,9 +9,8 @@ public class RDVServiceTest {
         System.out.println("--- Test : RDVService ---");
         try {
             RDVService service = ApplicationContext.getBean(RDVService.class);
-            RDV rdv = new RDV();
-            rdv.setMotif("Consultation Test");
-            service.create(rdv);
+            RDV rdv = RDV.createTestInstance();
+            rdv = service.create(rdv);
             System.out.println("✅ RDV créé (ID: " + rdv.getIdRDV() + ")");
         } catch (Exception e) { e.printStackTrace(); }
     }

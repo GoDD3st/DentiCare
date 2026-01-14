@@ -4,11 +4,11 @@ import ma.dentalTech.entities.enums.ModeEncaissementEnum;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @AllArgsConstructor@NoArgsConstructor@Builder
+@Data @AllArgsConstructor@NoArgsConstructor@SuperBuilder
 public class Caisse {
     public static Caisse createTestInstance() {
         return Caisse.builder()

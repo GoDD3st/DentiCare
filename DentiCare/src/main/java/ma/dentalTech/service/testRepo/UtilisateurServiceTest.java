@@ -9,11 +9,9 @@ public class UtilisateurServiceTest {
         System.out.println("--- Test : UtilisateurService ---");
         try {
             UtilisateurService service = ApplicationContext.getBean(UtilisateurService.class);
-            Utilisateur u = new Utilisateur();
-            u.setUsername("admin_test");
-            u.setPassword("password123");
-            service.create(u);
-            System.out.println("✅ Utilisateur créé (ID: " + u.getIdUtilisateur() + ")");
+            Utilisateur u = Utilisateur.createTestInstance();
+            u = service.create(u);
+            System.out.println("✅ Utilisateur créé (ID: " + u.getIdUser() + ")");
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

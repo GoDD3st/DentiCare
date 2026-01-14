@@ -1,13 +1,12 @@
 package ma.dentalTech.entities.AgendaMensuel;
 
-import ma.dentalTech.entities.Admin.Admin;
+import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.enums.MoisEnum;
 import ma.dentalTech.entities.enums.JoursEnum;
 
 import java.util.List;
-import lombok.experimental.SuperBuilder;
 import lombok.Data;
 
 @Data

@@ -35,37 +35,42 @@ public class OrdonnanceServiceImpl implements OrdonnanceService {
     }
 
     @Override
-    public Optional<Ordonnance> findById(Long id) throws SQLException {
-        return repository.findById(id); //
+    public Ordonnance create(Ordonnance o) throws SQLException {
+        try {
+            repository.create(o);
+            return o;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la création du cabinet", e);
+        }
     }
 
     @Override
-    public void create(Ordonnance entity) throws SQLException {
-        repository.create(entity); //
+    public Ordonnance update(Long id, Ordonnance o) {
+        try {
+            o.setIdOrdonnance(id); // Utilisation du setter setIdCabinet de l'entité
+            repository.update(o);
+            return o;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la mise à jour du cabinet", e);
+        }    }
+
+
+    @Override
+    public Ordonnance delete(Ordonnance o) throws SQLException {
+        try {
+            repository.delete(o);
+            return o;
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la suppression du cabinet", e);
+        }
     }
 
     @Override
-    public Ordonnance update(Long aLong, Ordonnance item) {
-        return null;
-    }
-
-    @Override
-    public void update(Ordonnance entity) throws SQLException {
-        repository.update(entity); //
-    }
-
-    @Override
-    public void delete(Ordonnance entity) throws SQLException {
-        repository.delete(entity); //
-    }
-
-    @Override
-    public void deleteByID(Long aLong) {
-
-    }
-
-    @Override
-    public void deleteById(Long id) throws SQLException {
-        repository.deleteById(id); //
+    public void deleteByID(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la suppression par ID", e);
+        }
     }
 }

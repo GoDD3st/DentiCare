@@ -1,4 +1,4 @@
-package ma.dentalTech.service.modules.certificat.api;
+package ma.dentalTech.service.modules.dossierMedicale.api;
 
 import ma.dentalTech.entities.Certificat.Certificat;
 import ma.dentalTech.service.common.MainService;

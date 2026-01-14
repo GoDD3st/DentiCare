@@ -1,11 +1,17 @@
 package ma.dentalTech.entities.SituationFinanciere;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import ma.dentalTech.entities.enums.SituationStatutEnum;
 import lombok.Data;
+
 @Data
-@lombok.experimental.SuperBuilder
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class SituationFinanciere extends BaseEntity {
     private Long idSituation;

@@ -26,31 +26,31 @@ public class MedicamentServiceImpl implements MedicamentService {
     }
 
     @Override
-    public Medicament create(Medicament item) {
+    public Medicament create(Medicament m) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(m);
+            return m;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création du médicament", e);
         }
     }
 
     @Override
-    public Medicament update(Long id, Medicament item) {
+    public Medicament update(Long id, Medicament m) {
         try {
-            item.setIdMedicament(id); // Setter spécifique : setIdMedicament
-            repository.update(item);
-            return item;
+            m.setIdMedicament(id);
+            repository.update(m);
+            return m;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour du médicament", e);
         }
     }
 
     @Override
-    public Medicament delete(Medicament item) {
+    public Medicament delete(Medicament m) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(m);
+            return m;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression du médicament", e);
         }

@@ -1,6 +1,6 @@
-package ma.dentalTech.service.modules.certificat.impl;
+package ma.dentalTech.service.modules.dossierMedicale.impl;
 
-import ma.dentalTech.service.modules.certificat.api.CertificatService;
+import ma.dentalTech.service.modules.dossierMedicale.api.CertificatService;
 import ma.dentalTech.repository.modules.dossierMedicale.api.CertificatRepo;
 import ma.dentalTech.entities.Certificat.Certificat;
 import ma.dentalTech.conf.ApplicationContext;
@@ -27,31 +27,31 @@ public class CertificatServiceImpl implements CertificatService {
     }
 
     @Override
-    public Certificat create(Certificat item) {
+    public Certificat create(Certificat c) {
         try {
-            certificatRepository.create(item);
-            return item;
+            certificatRepository.create(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Certificat update(Long id, Certificat item) {
+    public Certificat update(Long id, Certificat c) {
         try {
-            item.setIdCertificat(id);
-            certificatRepository.update(item);
-            return item;
+            c.setIdCertificat(id);
+            certificatRepository.update(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Certificat delete(Certificat item) {
+    public Certificat delete(Certificat c) {
         try {
-            certificatRepository.delete(item);
-            return item;
+            certificatRepository.delete(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

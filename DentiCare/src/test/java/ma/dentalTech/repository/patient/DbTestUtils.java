@@ -1,5 +1,5 @@
 package ma.dentalTech.repository.patient;
-
+/**
 import ma.dentalTech.conf.SessionFactory;
 
 import java.sql.Connection;
@@ -9,7 +9,7 @@ import java.sql.Statement;
 public final class DbTestUtils {
     private DbTestUtils(){}
 
-    /** Nettoie les 3 tables dans l'ordre FK (jointure -> feuilles) */
+     Nettoie les 3 tables dans l'ordre FK (jointure -> feuilles)
     public static void cleanAll() {
         try (Connection c = SessionFactory.getInstance().getConnection();
              Statement st = c.createStatement()) {
@@ -31,10 +31,10 @@ public final class DbTestUtils {
         }
     }
 
-    /**
+
      * Seed complet en une passe : Antecedents (IDs 1..12 par ordre d'insertion),
      * Patients (IDs fixés 1..6), puis liaisons dans Patient_Antecedents.
-     */
+
     public static void seedFullDataset() {
         try (Connection c = SessionFactory.getInstance().getConnection();
              Statement st = c.createStatement()) {
@@ -96,3 +96,4 @@ public final class DbTestUtils {
         }
     }
 }
+**/

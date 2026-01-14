@@ -10,7 +10,6 @@ public class CabinetMedicaleServiceImpl implements CabinetMedicaleService {
 
     private final cabinetMedicaleRepo repository;
 
-    // Injection par constructeur (sans ApplicationContext.getBean)
     public CabinetMedicaleServiceImpl(cabinetMedicaleRepo repository) {
         this.repository = repository;
     }
@@ -26,31 +25,31 @@ public class CabinetMedicaleServiceImpl implements CabinetMedicaleService {
     }
 
     @Override
-    public CabinetMedicale create(CabinetMedicale item) {
+    public CabinetMedicale create(CabinetMedicale c) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création du cabinet", e);
         }
     }
 
     @Override
-    public CabinetMedicale update(Long id, CabinetMedicale item) {
+    public CabinetMedicale update(Long id, CabinetMedicale c) {
         try {
-            item.setIdCabinet(id); // Utilisation du setter setIdCabinet de l'entité
-            repository.update(item);
-            return item;
+            c.setIdCabinet(id); // Utilisation du setter setIdCabinet de l'entité
+            repository.update(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour du cabinet", e);
         }
     }
 
     @Override
-    public CabinetMedicale delete(CabinetMedicale item) {
+    public CabinetMedicale delete(CabinetMedicale c) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression du cabinet", e);
         }

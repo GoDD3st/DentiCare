@@ -5,6 +5,5 @@ import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.service.common.MainService;
 
 public interface DossierMedicaleService extends MainService<DossierMedicale, Long> {
-    interface OrdonnanceService extends MainService<Ordonnance, Long> {
-    }
+
 }

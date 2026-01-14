@@ -1,5 +1,6 @@
 package ma.dentalTech.repository.modules.auth.impl;
 
+import ma.dentalTech.entities.Role.Role;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
@@ -94,5 +95,49 @@ public class UtilisateurRepoImpl implements UtilisateurRepo {
             ps.setLong(1, id);
             ps.executeUpdate();
         }
+    }
+
+    @Override
+    public Optional<Utilisateur> findByLogin(String login) throws SQLException {
+        String sql = "SELECT * FROM utilisateur WHERE login = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, login);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(RowMappers.mapUtilisateur(rs));
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Utilisateur> findByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM utilisateur WHERE email = ?";
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return Optional.of(RowMappers.mapUtilisateur(rs));
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Role> findRolesByUserId(Long userId) throws SQLException {
+        String sql = "SELECT r.* FROM role r " +
+                     "INNER JOIN utilisateur_role ur ON r.id_role = ur.id_role " +
+                     "WHERE ur.id_user = ?";
+        List<Role> roles = new ArrayList<>();
+        try (Connection c = SessionFactory.getInstance().getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    roles.add(RowMappers.mapRole(rs));
+                }
+            }
+        }
+        return roles;
     }
 }

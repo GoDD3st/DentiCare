@@ -9,9 +9,8 @@ public class RoleServiceTest {
         System.out.println("--- Test : RoleService ---");
         try {
             RoleService service = ApplicationContext.getBean(RoleService.class);
-            Role r = new Role();
-            r.setNom("ADMIN");
-            service.create(r);
+            Role r = Role.createTestInstance();
+            r = service.create(r);
             System.out.println("✅ Rôle créé (ID: " + r.getIdRole() + ")");
         } catch (Exception e) { e.printStackTrace(); }
     }

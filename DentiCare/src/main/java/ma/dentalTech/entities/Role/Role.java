@@ -1,5 +1,7 @@
 package ma.dentalTech.entities.Role;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.entities.enums.RoleEnum;
@@ -11,6 +13,8 @@ import lombok.Data;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class Role extends BaseEntity {
     private Long idRole;
@@ -19,10 +23,10 @@ public class Role extends BaseEntity {
 
     private List<Utilisateur> utilisateurs; // Relation n--n
 
-    public Role createTestInstance() {
+    public static Role createTestInstance() {
         return Role.builder()
                 .libelle(RoleEnum.ADMIN)
-                .privileges(Arrays.asList("FullPowerr"))
+                .privileges(Arrays.asList("FullPower"))
                 .build();
     }
 }

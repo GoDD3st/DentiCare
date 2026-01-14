@@ -1,5 +1,7 @@
 package ma.dentalTech.entities.Revenues;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import java.time.LocalDateTime;
 import lombok.experimental.SuperBuilder;
@@ -8,7 +10,8 @@ import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 
 @Data
 @SuperBuilder
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class Revenues extends BaseEntity {
     private Long idRevenue;
     private String titre;

@@ -26,7 +26,9 @@ public final class AgendaUtils {
         for (String part : parts) {
             try {
                 jours.add(JoursEnum.valueOf(part));
-            } catch (IllegalArgumentException _) {}
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid enum values
+            }
         }
         return jours;
     }

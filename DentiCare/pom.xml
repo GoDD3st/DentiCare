@@ -56,6 +56,8 @@
 
         <!-- === Connexion à la base de données MySQL === -->
         <!-- Permet d’utiliser le driver JDBC pour établir la connexion -->
+
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -94,17 +96,19 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
+            <version>1.18.36</version>
             <scope>provided</scope>
         </dependency>
+
 
 
         <!-- === BCrypt (cryptage des mot de passe utilisateur) === -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
-            <version>0.4</version>
+            <version>0.4</version> <!-- Check Maven Central for the latest version -->
         </dependency>
+
 
 
         <!-- === JUnit (tests unitaires) === -->
@@ -168,10 +172,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${plugin.compiler.version}</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <release>${maven.compiler.release}</release>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.36</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 

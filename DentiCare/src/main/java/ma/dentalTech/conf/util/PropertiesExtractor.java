@@ -13,12 +13,42 @@ public class PropertiesExtractor {
         CONFIG_PATH = PROPS_PATH;
         Properties properties = new Properties();
 
-        try (InputStream in = Thread.currentThread()
-                .getContextClassLoader()
-                .getResourceAsStream(PROPS_PATH)) {
-            if (in == null)
-                throw new IllegalStateException("config file not found: " + PROPS_PATH);
+        // Essayer plusieurs chemins possibles
+        String[] possiblePaths = {
+            PROPS_PATH,
+            "/" + PROPS_PATH
+        };
+        
+        InputStream in = null;
+        String foundPath = null;
+        for (String path : possiblePaths) {
+            in = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream(path);
+            if (in != null) {
+                foundPath = path;
+                break;
+            }
+        }
+        
+        if (in == null) {
+            // Dernière tentative : chercher dans le classpath
+            in = PropertiesExtractor.class.getResourceAsStream("/" + PROPS_PATH);
+            if (in != null) {
+                foundPath = "/" + PROPS_PATH;
+            }
+        }
+        
+        if (in == null) {
+            throw new IllegalStateException("config file not found: " + PROPS_PATH + 
+                " (essayé: " + String.join(", ", possiblePaths) + ", /" + PROPS_PATH + ")");
+        }
+        
+        try {
             properties.load(in);
+            if (foundPath != null) {
+                CONFIG_PATH = foundPath;
+            }
             return properties;
 
         } catch (IOException e) {

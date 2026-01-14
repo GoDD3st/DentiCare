@@ -26,31 +26,31 @@ public class SituationFinanciereServiceImpl implements SituationFinanciereServic
     }
 
     @Override
-    public SituationFinanciere create(SituationFinanciere item) {
+    public SituationFinanciere create(SituationFinanciere Sf) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(Sf);
+            return Sf;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création de la situation financière", e);
         }
     }
 
     @Override
-    public SituationFinanciere update(Long id, SituationFinanciere item) {
+    public SituationFinanciere update(Long id, SituationFinanciere Sf) {
         try {
-            item.setIdSituation(id); // Setter spécifique
-            repository.update(item);
-            return item;
+            Sf.setIdSituation(id);
+            repository.update(Sf);
+            return Sf;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour de la situation financière", e);
         }
     }
 
     @Override
-    public SituationFinanciere delete(SituationFinanciere item) {
+    public SituationFinanciere delete(SituationFinanciere Sf) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(Sf);
+            return Sf;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression de la situation financière", e);
         }

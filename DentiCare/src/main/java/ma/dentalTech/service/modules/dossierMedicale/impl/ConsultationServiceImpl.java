@@ -26,31 +26,31 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public Consultation create(Consultation item) {
+    public Consultation create(Consultation c) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création de la consultation", e);
         }
     }
 
     @Override
-    public Consultation update(Long id, Consultation item) {
+    public Consultation update(Long id, Consultation c) {
         try {
-            item.setIdConsultation(id); // Utilisation du setter spécifique
-            repository.update(item);
-            return item;
+            c.setIdConsultation(id);
+            repository.update(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour de la consultation", e);
         }
     }
 
     @Override
-    public Consultation delete(Consultation item) {
+    public Consultation delete(Consultation c) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(c);
+            return c;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression de la consultation", e);
         }

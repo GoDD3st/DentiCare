@@ -9,11 +9,11 @@ public interface MainService<T, ID> {
 
     Optional<T> findByID(ID id) throws Exception;
 
-    T create(T item);
+    T create(T item) throws Exception;
 
-    T update(ID id,T item);
+    T update(ID id,T item) throws Exception;
 
-    T delete(T item);
+    T delete(T item) throws Exception;
 
-    void deleteByID(ID id);
+    void deleteByID(ID id) throws Exception;
 }

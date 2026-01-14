@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.dossierMedicale.impl;
 import ma.dentalTech.service.modules.dossierMedicale.api.DossierMedicaleService;
 import ma.dentalTech.repository.modules.dossierMedicale.api.DossierMedicaleRepo;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +11,9 @@ public class DossierMedicaleServiceImpl implements DossierMedicaleService {
 
     private final DossierMedicaleRepo repository;
 
-    // Injection par constructeur
-    public DossierMedicaleServiceImpl(DossierMedicaleRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public DossierMedicaleServiceImpl() {
+        this.repository = ApplicationContext.getBean(DossierMedicaleRepo.class);
     }
 
     @Override
@@ -26,31 +27,31 @@ public class DossierMedicaleServiceImpl implements DossierMedicaleService {
     }
 
     @Override
-    public DossierMedicale create(DossierMedicale item) {
+    public DossierMedicale create(DossierMedicale Dm) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(Dm);
+            return Dm;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création du dossier médical", e);
         }
     }
 
     @Override
-    public DossierMedicale update(Long id, DossierMedicale item) {
+    public DossierMedicale update(Long id, DossierMedicale Dm) {
         try {
-            item.setIdDossier(id); // Setter spécifique à l'entité DossierMedicale
-            repository.update(item);
-            return item;
+            Dm.setIdDossier(id);
+            repository.update(Dm);
+            return Dm;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour du dossier médical", e);
         }
     }
 
     @Override
-    public DossierMedicale delete(DossierMedicale item) {
+    public DossierMedicale delete(DossierMedicale Dm) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(Dm);
+            return Dm;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression du dossier médical", e);
         }

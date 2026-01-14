@@ -11,7 +11,7 @@ public class AntecedentsServiceTest {
             AntecedentsService service = ApplicationContext.getBean(AntecedentsService.class);
             Antecedents a = Antecedents.createTestInstance();
             service.create(a);
-            System.out.println("✅ Antécédent créé (ID: " + a.getId() + ")");
+            System.out.println("✅ Antécédent créé (ID: " + a.getIdAntecedent() + ")");
         } catch (Exception e) { e.printStackTrace(); }
     }
 }

@@ -1,5 +1,7 @@
 package ma.dentalTech.entities.Staff;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
@@ -8,6 +10,8 @@ import lombok.Data;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Staff extends Utilisateur {
     private Long idStaff;
     private double salaire;

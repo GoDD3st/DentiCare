@@ -19,6 +19,7 @@ public class Patient extends BaseEntity {
     private LocalDate dateNaissance;
     private SexeEnum sexe;
     private String adresse;
+    private String email;
     private String telephone;
     private AssuranceEnum assurance;
 
@@ -29,8 +30,9 @@ public class Patient extends BaseEntity {
         return Patient.builder()
                 .nom("Marouane")
                 .dateNaissance((LocalDate.of(2004, 5, 28)))
-                .sexe(SexeEnum.MASCULIN)
+                .sexe(SexeEnum.HOMME)
                 .adresse("Rue 123 Rabat")
+                .email("email@gmail.com")
                 .telephone("0600000000")
                 .assurance(AssuranceEnum.CNSS)
                 .build();

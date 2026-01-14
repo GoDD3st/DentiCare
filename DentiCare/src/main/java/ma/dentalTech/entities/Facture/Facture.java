@@ -6,10 +6,10 @@ import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;
 import ma.dentalTech.entities.enums.FactureStatutEnum;
 import java.time.LocalDateTime;
 import lombok.Data;
-
+import lombok.experimental.SuperBuilder;
 
 @Data
-@lombok.experimental.SuperBuilder
+@SuperBuilder
 
 public class Facture extends BaseEntity {
     private Long idFacture;

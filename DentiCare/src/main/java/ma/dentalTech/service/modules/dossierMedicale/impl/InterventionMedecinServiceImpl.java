@@ -26,31 +26,31 @@ public class InterventionMedecinServiceImpl implements InterventionMedecinServic
     }
 
     @Override
-    public InterventionMedecin create(InterventionMedecin item) {
+    public InterventionMedecin create(InterventionMedecin Im) {
         try {
-            repository.create(item);
-            return item;
+            repository.create(Im);
+            return Im;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la création de l'intervention", e);
         }
     }
 
     @Override
-    public InterventionMedecin update(Long id, InterventionMedecin item) {
+    public InterventionMedecin update(Long id, InterventionMedecin Im) {
         try {
-            item.setIdIntervention(id); // Setter de l'ID spécifique
-            repository.update(item);
-            return item;
+            Im.setIdIntervention(id);
+            repository.update(Im);
+            return Im;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la mise à jour de l'intervention", e);
         }
     }
 
     @Override
-    public InterventionMedecin delete(InterventionMedecin item) {
+    public InterventionMedecin delete(InterventionMedecin Im) {
         try {
-            repository.delete(item);
-            return item;
+            repository.delete(Im);
+            return Im;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la suppression de l'intervention", e);
         }

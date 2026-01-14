@@ -226,9 +226,9 @@ public final class RowMappers {
                 .tel(rs.getString("tel"))
                 .sexe(rs.getString("sexe") != null ? SexeEnum.valueOf(rs.getString("sexe")) : null)
                 .login(rs.getString("login"))
-                .motDePass(rs.getString("mot_de_pass"))
-                .lastLoginDate(rs.getDate("last_login_date") != null ? rs.getDate("last_login_date").toLocalDate() : null)
-                .dateNaissance(rs.getDate("date_naissance") != null ? rs.getDate("date_naissance").toLocalDate() : null)
+                .motDePass(rs.getString("motDePass"))
+                .lastLoginDate(rs.getDate("lastLoginDate") != null ? rs.getDate("lastLoginDate").toLocalDate() : null)
+                .dateNaissance(rs.getDate("dateNaissance") != null ? rs.getDate("dateNaissance").toLocalDate() : null)
                 .build();
 
         mapBaseFields(u, rs);
@@ -237,9 +237,30 @@ public final class RowMappers {
     }
 
     public static Role mapRole(ResultSet rs) throws SQLException {
+        String libelleStr = rs.getString("libelle");
+        RoleEnum libelle = null;
+        if (libelleStr != null) {
+            try {
+                // Essayer d'abord la conversion directe
+                libelle = RoleEnum.valueOf(libelleStr);
+            } catch (IllegalArgumentException e) {
+                // Si ça échoue, essayer avec une conversion insensible à la casse
+                for (RoleEnum role : RoleEnum.values()) {
+                    if (role.name().equalsIgnoreCase(libelleStr.trim())) {
+                        libelle = role;
+                        break;
+                    }
+                }
+                // Si toujours pas trouvé, logger l'erreur et utiliser null
+                if (libelle == null) {
+                    System.err.println("Rôle inconnu dans la BD: '" + libelleStr + "'. Rôles disponibles: " +
+                        java.util.Arrays.toString(RoleEnum.values()));
+                }
+            }
+        }
         return Role.builder()
                 .idRole(rs.getLong("id_role"))
-                .libelle(rs.getString("libelle") != null ? RoleEnum.valueOf(rs.getString("libelle")) : null)
+                .libelle(libelle)
                 .build();
     }
 

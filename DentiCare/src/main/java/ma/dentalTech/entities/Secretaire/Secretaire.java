@@ -1,11 +1,15 @@
 package ma.dentalTech.entities.Secretaire;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.Staff.Staff;
 import lombok.Data;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Secretaire extends Staff {
     private Long idSecretaire;
     private String numCNSS;

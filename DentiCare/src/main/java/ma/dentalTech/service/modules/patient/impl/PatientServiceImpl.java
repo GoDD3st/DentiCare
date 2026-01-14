@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.patient.impl;
 import ma.dentalTech.service.modules.patient.api.PatientService;
 import ma.dentalTech.repository.modules.patient.api.patientRepository;
 import ma.dentalTech.entities.Patient.Patient;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +11,9 @@ public class PatientServiceImpl implements PatientService {
 
     private final patientRepository repository;
 
-    // Injection par constructeur
-    public PatientServiceImpl(patientRepository repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public PatientServiceImpl() {
+        this.repository = ApplicationContext.getBean(patientRepository.class);
     }
 
     @Override

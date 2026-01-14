@@ -1,5 +1,7 @@
 package ma.dentalTech.entities.Statistique;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 import lombok.experimental.SuperBuilder;
@@ -10,6 +12,8 @@ import java.time.LocalDate;
 
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Statistique extends BaseEntity {
     private Long idStatistique;
     private String nom;

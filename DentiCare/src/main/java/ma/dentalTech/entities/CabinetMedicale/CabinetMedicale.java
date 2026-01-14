@@ -1,11 +1,11 @@
 package ma.dentalTech.entities.CabinetMedicale;
 
+import lombok.experimental.SuperBuilder;
 import ma.dentalTech.common.Adresse;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.Patient.Patient;
 import ma.dentalTech.entities.SituationFinanciere.SituationFinanciere;  
-import lombok.experimental.SuperBuilder;
 import lombok.Data;
 
 @Data

@@ -1,5 +1,7 @@
 package ma.dentalTech.entities.Utilisateur;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Role.Role;
@@ -11,6 +13,8 @@ import lombok.Data;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Utilisateur extends BaseEntity {
     private Long idUser;
     private String nom;
@@ -33,7 +37,7 @@ public class Utilisateur extends BaseEntity {
                 .adresse("Test")
                 .cin("1234567890")
                 .tel("1234567890")
-                .sexe(SexeEnum.MASCULIN)
+                .sexe(SexeEnum.HOMME)
                 .login("test")
                 .motDePass("test")
                 .build();
