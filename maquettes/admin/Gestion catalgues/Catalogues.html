@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Données Référentielles</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar */
+        nav { width: 250px; background: #2c3e50; color: white; padding: 20px; flex-shrink: 0; }
+        nav h2 { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        nav ul { list-style: none; }
+        nav ul li { padding: 12px 0; border-bottom: 1px solid #34495e; cursor: pointer; transition: 0.3s; }
+        nav ul li:hover { color: #3498db; }
+        nav ul li ul { margin-left: 15px; font-size: 0.9rem; color: #bdc3c7; }
+        nav ul li ul li { border: none; padding: 5px 0; }
+
+        /* Main Content */
+        main { flex: 1; padding: 30px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 600; text-decoration: none; display: inline-block; }
+        .btn-add { background: #27ae60; }
+        .btn-edit { background: #f39c12; font-size: 0.8rem; }
+        .btn-delete { background: #e74c3c; font-size: 0.8rem; }
+        
+        /* Cards/Tables */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h3 { margin-bottom: 15px; color: #2c3e50; border-left: 4px solid #3498db; padding-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-size: 0.9rem; color: #7f8c8d; }
+        .actions { display: flex; gap: 5px; }
+
+        /* Grid for multiple sections */
+        .grid-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Admin Panel</h2>
+        <ul>
+            <li>Gérer Utilisateurs</li>
+            <li style="color: #3498db; font-weight: bold;">Données Référentielles</li>
+            <li>Sauvegardes & Sécurité</li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Données Référentielles</h1>
+        </header>
+
+        <div class="card">
+            <h3>Catalogue Médicaments</h3>
+                <button class="btn btn-add" style="background: #3498db;">+ Nouveau Médicament</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Désignation</th>
+                        <th>Dosage</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MED-001</td>
+                        <td>Paracétamol</td>
+                        <td>500mg</td>
+                        <td class="actions">
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED-002</td>
+                        <td>Amoxicilline</td>
+                        <td>1g</td>
+                        <td class="actions">
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid-sections">
+            <div class="card">
+                <h3>Catalogue des Actes</h3>
+                    <button class="btn btn-add">+ Nouvel Acte</button>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Libellé</th>
+                            <th>Code</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Consultation Générale</td>
+                            <td>CSG</td>
+                            <td class="actions">
+                                <button class="btn btn-edit">Mod.</button>
+                                <button class="btn btn-delete">Suppr.</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Électrocardiogramme</td>
+                            <td>ECG</td>
+                            <td class="actions">
+                                <button class="btn btn-edit">Mod.</button>
+                                <button class="btn btn-delete">Suppr.</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Catalogue Antécédents</h3>
+                    <button class="btn btn-add" style="background: #8e44ad;">+ Nouvel Antécédent</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Allergie</td>
+                            <td>Pénicilline</td>
+                            <td class="actions">
+                                <button class="btn btn-edit">Mod.</button>
+                                <button class="btn btn-delete">Suppr.</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Chirurgie</td>
+                            <td>Appendicectomie</td>
+                            <td class="actions">
+                                <button class="btn btn-edit">Mod.</button>
+                                <button class="btn btn-delete">Suppr.</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Gestion des Assurances</h3>
+                <button class="btn btn-add" style="background: #e67e22;">+ Nouvel Organisme</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Organisme</th>
+                        <th>Taux Remboursement</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CNOPS</td>
+                        <td>80%</td>
+                        <td class="actions">
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CNSS</td>
+                        <td>70%</td>
+                        <td class="actions">
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>

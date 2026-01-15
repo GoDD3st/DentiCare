@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Sauvegardes & Sécurité</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar */
+        nav { width: 250px; background: #2c3e50; color: white; padding: 20px; flex-shrink: 0; }
+        nav h2 { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        nav ul { list-style: none; }
+        nav ul li { padding: 12px 0; border-bottom: 1px solid #34495e; cursor: pointer; transition: 0.3s; }
+        nav ul li:hover { color: #3498db; }
+
+        /* Main Content */
+        main { flex: 1; padding: 30px; overflow-y: auto; }
+        header { margin-bottom: 30px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 600; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn-add { background: #27ae60; }
+        .btn-backup { background: #3498db; }
+        .btn-restore { background: #f39c12; }
+        .btn-schedule { background: #9b59b6; }
+        .btn-view { background: #16a085; }
+        .btn-delete { background: #e74c3c; font-size: 0.8rem; }
+        .btn-logout { background: #e67e22; font-size: 0.8rem; }
+        
+        /* Cards/Tables */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h3 { margin-bottom: 15px; color: #2c3e50; border-left: 4px solid #3498db; padding-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-size: 0.9rem; color: #7f8c8d; }
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .status-active { background: #e8f5e9; color: #2e7d32; }
+        .status-scheduled { background: #e3f2fd; color: #1976d2; }
+        .log-entry { font-family: 'Courier New', monospace; font-size: 0.85rem; padding: 8px; background: #f5f5f5; border-left: 3px solid #3498db; margin: 5px 0; }
+        .log-time { color: #7f8c8d; font-size: 0.8rem; }
+        .grid-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Admin Panel</h2>
+        <ul>
+            <li>Gérer Utilisateurs</li>
+            <li>Gérer Rôles</li>
+            <li>Données Référentielles</li>
+            <li style="color: #3498db; font-weight: bold;">Sauvegardes & Sécurité</li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Sauvegardes & Sécurité</h1>
+        </header>
+
+        <!-- Section Sauvegardes -->
+        <div class="card">
+            <h3>Gestion des Sauvegardes</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-backup">Créer Sauvegarde Manuelle</button>
+                <button class="btn btn-schedule">Planifier Sauvegarde Auto</button>
+                <button class="btn btn-restore">Restaurer Sauvegarde</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <th>Type</th>
+                        <th>Taille</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-01-15 14:30:00</td>
+                        <td>Manuelle</td>
+                        <td>2.5 GB</td>
+                        <td><span class="status status-active">Réussie</span></td>
+                        <td class="actions">
+                            <button class="btn btn-restore">Restaurer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-15 02:00:00</td>
+                        <td>Automatique</td>
+                        <td>2.4 GB</td>
+                        <td><span class="status status-active">Réussie</span></td>
+                        <td class="actions">
+                            <button class="btn btn-restore">Restaurer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-14 02:00:00</td>
+                        <td>Automatique</td>
+                        <td>2.3 GB</td>
+                        <td><span class="status status-scheduled">Planifiée</span></td>
+                        <td class="actions">
+                            <button class="btn btn-restore">Restaurer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Sessions Actives -->
+        <div class="card">
+            <h3>Gérer Sessions Actives</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Rôle</th>
+                        <th>Adresse IP</th>
+                        <th>Connexion</th>
+                        <th>Dernière Activité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>admin@cabinet.ma</td>
+                        <td>Administrateur</td>
+                        <td>192.168.1.100</td>
+                        <td>2024-01-15 09:00:00</td>
+                        <td>2024-01-15 14:25:00</td>
+                        <td class="actions">
+                            <button class="btn btn-logout">Déconnecter</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>medecin1@cabinet.ma</td>
+                        <td>Médecin</td>
+                        <td>192.168.1.105</td>
+                        <td>2024-01-15 08:30:00</td>
+                        <td>2024-01-15 14:20:00</td>
+                        <td class="actions">
+                            <button class="btn btn-logout">Déconnecter</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>secretaire1@cabinet.ma</td>
+                        <td>Secrétaire</td>
+                        <td>192.168.1.110</td>
+                        <td>2024-01-15 10:15:00</td>
+                        <td>2024-01-15 14:15:00</td>
+                        <td class="actions">
+                            <button class="btn btn-logout">Déconnecter</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Logs -->
+        <div class="grid-sections">
+            <div class="card">
+                <h3>Consulter Logs Système</h3>
+                <button class="btn btn-view">Consulter Log Système</button>
+                <div style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:30:00]</span> Système démarré avec succès
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:25:00]</span> Sauvegarde automatique terminée
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:20:00]</span> Connexion utilisateur: medecin1@cabinet.ma
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:15:00]</span> Erreur de connexion depuis IP: 192.168.1.200
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:10:00]</span> Mise à jour de la base de données effectuée
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Consulter Log Audit</h3>
+                <button class="btn btn-view">Consulter Log Audit</button>
+                <div style="margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:30:00]</span> ADMIN: Modification du rôle "Médecin"
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:25:00]</span> ADMIN: Création d'un nouvel utilisateur
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:20:00]</span> MEDECIN: Consultation du dossier patient #1234
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:15:00]</span> SECRETAIRE: Modification d'un rendez-vous
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[2024-01-15 14:10:00]</span> ADMIN: Suppression d'un médicament du catalogue
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Consulter Logs (vue générale) -->
+        <div class="card">
+            <h3>Consulter Logs</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-view">Consulter Log Système</button>
+                <button class="btn btn-view">Consulter Log Audit</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <th>Type</th>
+                        <th>Utilisateur</th>
+                        <th>Action</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-01-15 14:30:00</td>
+                        <td>Audit</td>
+                        <td>admin@cabinet.ma</td>
+                        <td>Modification Rôle</td>
+                        <td>Rôle "Médecin" modifié</td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-15 14:25:00</td>
+                        <td>Système</td>
+                        <td>SYSTEM</td>
+                        <td>Sauvegarde</td>
+                        <td>Sauvegarde automatique terminée</td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-15 14:20:00</td>
+                        <td>Audit</td>
+                        <td>medecin1@cabinet.ma</td>
+                        <td>Consultation</td>
+                        <td>Dossier patient #1234 consulté</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
+

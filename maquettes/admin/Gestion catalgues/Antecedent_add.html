@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter Antécédent</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar */
+        nav { width: 250px; background: #2c3e50; color: white; padding: 20px; flex-shrink: 0; }
+        nav h2 { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        nav ul { list-style: none; }
+        nav ul li { padding: 12px 0; border-bottom: 1px solid #34495e; cursor: pointer; transition: 0.3s; }
+        nav ul li:hover { color: #3498db; }
+
+        /* Main Content */
+        main { flex: 1; padding: 30px; }
+        header { margin-bottom: 30px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 600px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-submit { background: #8e44ad; } /* Violet pour Antécédents */
+        .btn-cancel { background: #95a5a6; text-decoration: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Admin Panel</h2>
+        <ul>
+            <li>Gérer Utilisateurs</li>
+            <li>Gérer Rôles</li>
+            <li style="color: #3498db; font-weight: bold;">Données Référentielles</li>
+            <li>Sauvegardes & Sécurité</li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Ajouter un Antécédent Type</h1>
+        </header>
+
+        <div class="card">
+            <form>
+                <div class="form-group">
+                    <label>Type d'Antécédent</label>
+                    <select>
+                        <option>Médical</option>
+                        <option>Chirurgical</option>
+                        <option>Allergique</option>
+                        <option>Familial</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Libellé / Nom</label>
+                    <input type="text" placeholder="Ex: Diabète, Hypertension, Asthme...">
+                </div>
+
+                <div class="form-group">
+                    <label>Description par défaut</label>
+                    <textarea rows="3" placeholder="Informations complémentaires standard..."></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-submit">Enregistrer l'Antécédent</button>
+                    <a href="#" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>

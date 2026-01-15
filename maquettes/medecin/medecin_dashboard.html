@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Médecin - Cabinet Médical</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { display: flex; height: 100vh; background: #f4f7f6; }
+        
+        /* Sidebar */
+        nav { width: 250px; background: #2c3e50; color: white; padding: 20px; flex-shrink: 0; }
+        nav h2 { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        nav ul { list-style: none; }
+        nav ul li { padding: 12px 0; border-bottom: 1px solid #34495e; cursor: pointer; transition: 0.3s; }
+        nav ul li:hover { color: #3498db; }
+
+        /* Main Content */
+        main { flex: 1; padding: 30px; overflow-y: auto; }
+        header { margin-bottom: 30px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 600; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn-add { background: #27ae60; }
+        .btn-edit { background: #f39c12; font-size: 0.8rem; }
+        .btn-delete { background: #e74c3c; font-size: 0.8rem; }
+        .btn-view { background: #3498db; font-size: 0.8rem; }
+        .btn-print { background: #16a085; font-size: 0.8rem; }
+        .btn-start { background: #27ae60; font-size: 0.8rem; }
+        .btn-end { background: #e67e22; font-size: 0.8rem; }
+        
+        /* Cards/Tables */
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h3 { margin-bottom: 15px; color: #2c3e50; border-left: 4px solid #3498db; padding-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-size: 0.9rem; color: #7f8c8d; }
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+        .status-active { background: #e8f5e9; color: #2e7d32; }
+        .status-pending { background: #fff3e0; color: #f57c00; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Médecin Panel</h2>
+        <ul>
+            <li>Dossiers Médicaux</li>
+            <li>Consultations</li>
+            <li>Ordonnances</li>
+            <li>Certificats</li>
+            <li>Actes</li>
+            <li>Caisse</li>
+            <li>Situations Financières</li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <h1>Dashboard Médecin</h1>
+        </header>
+
+        <!-- Section Dossiers Médicaux -->
+        <div class="card">
+            <h3>Gérer les Dossiers Médicaux</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-add">Créer un Dossier</button>
+                <button class="btn btn-view">Chercher et Consulter Dossier</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date Création</th>
+                        <th>Dernière Modification</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ahmed Benali</td>
+                        <td>2024-01-10</td>
+                        <td>2024-01-15</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-add">Charger Document</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fatima Alami</td>
+                        <td>2024-01-08</td>
+                        <td>2024-01-14</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-add">Charger Document</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Consultations -->
+        <div class="card">
+            <h3>Gérer Consultation Cs</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-start">Créer et Commencer une Cs</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ahmed Benali</td>
+                        <td>2024-01-15 10:00</td>
+                        <td><span class="status status-active">En cours</span></td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-end">Terminer</button>
+                            <button class="btn btn-add">Ajouter Observation</button>
+                            <button class="btn btn-add">Ajouter Intervention</button>
+                            <button class="btn btn-add">Générer Facture</button>
+                            <button class="btn btn-add">Créer Certificat</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fatima Alami</td>
+                        <td>2024-01-15 11:00</td>
+                        <td><span class="status status-pending">Planifiée</span></td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-start">Commencer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Ordonnances -->
+        <div class="card">
+            <h3>Gérer les Ordonnances</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-add">Créer Ordonnance</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Date</th>
+                        <th>Médicaments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ahmed Benali</td>
+                        <td>2024-01-15</td>
+                        <td>3 médicaments</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-print">Imprimer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Certificats -->
+        <div class="card">
+            <h3>Gérer les Certificats</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ahmed Benali</td>
+                        <td>Arrêt de travail</td>
+                        <td>2024-01-15</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-print">Imprimer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Actes -->
+        <div class="card">
+            <h3>Gérer les Actes</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-add">Ajouter Acte</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Libellé</th>
+                        <th>Code</th>
+                        <th>Tarif</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Consultation Générale</td>
+                        <td>CSG</td>
+                        <td>200 DH</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-edit">Appliquer Remise</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Caisse -->
+        <div class="card">
+            <h3>Gérer la Caisse</h3>
+            <button class="btn btn-view">Consulter Statistiques Caisse</button>
+        </div>
+
+        <!-- Section Situations Financières -->
+        <div class="card">
+            <h3>Gérer les Situations Financières</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-add">Créer une SF</button>
+                <button class="btn btn-view">Lister les SF de tous les patients</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Montant Total</th>
+                        <th>Payé</th>
+                        <th>Reste</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ahmed Benali</td>
+                        <td>1500 DH</td>
+                        <td>1000 DH</td>
+                        <td>500 DH</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter SF</button>
+                            <button class="btn btn-edit">Réinitialiser</button>
+                            <button class="btn btn-view">Gérer Factures</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section Gérer Tous les Factures -->
+        <div class="card">
+            <h3>Gérer Tous les Factures</h3>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-view">Lister tous les factures</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Patient</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FAC-2024-001</td>
+                        <td>Ahmed Benali</td>
+                        <td>500 DH</td>
+                        <td>2024-01-15</td>
+                        <td class="actions">
+                            <button class="btn btn-view">Consulter</button>
+                            <button class="btn btn-edit">Modifier</button>
+                            <button class="btn btn-print">Imprimer</button>
+                            <button class="btn btn-delete">Supprimer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
+
