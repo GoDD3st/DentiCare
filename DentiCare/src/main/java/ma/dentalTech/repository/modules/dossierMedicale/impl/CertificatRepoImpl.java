@@ -40,13 +40,21 @@ public class CertificatRepoImpl implements CertificatRepo {
 
     @Override
     public void create(Certificat c) {
-        String sql = "INSERT INTO certificat (dateDebut, dateFin, duree, noteMedecin) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO certificat (id_entite, id_dossier_medical, id_consultation, dateDebut, dateFin, duree, noteMedecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setDate(1, Date.valueOf(c.getDateDebut()));
-            ps.setDate(2, Date.valueOf(c.getDateFin()));
-            ps.setInt(3, c.getDuree());
-            ps.setString(4, c.getNoteMedecin());
+            if (c.getIdEntite() != null) {
+                ps.setLong(1, c.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setLong(2, c.getIdDossier());
+            ps.setLong(3, c.getIdConsultation());
+            ps.setDate(4, Date.valueOf(c.getDateDebut()));
+            ps.setDate(5, Date.valueOf(c.getDateFin()));
+            ps.setInt(6, c.getDuree());
+            ps.setString(7, c.getNoteMedecin());
+            ps.setString(8, c.getCreePar());
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     c.setIdCertificat(keys.getLong(1));}
@@ -58,16 +66,18 @@ public class CertificatRepoImpl implements CertificatRepo {
 
     @Override
     public void update(Certificat c) {
-        String sql = "UPDATE Certificat SET dateDebut = ?, dateFin = ?, duree = ?, noteMedecin = ? WHERE id_ = ?";
+        String sql = "UPDATE certificat SET id_dossier_medical = ?, id_consultation = ?, dateDebut = ?, dateFin = ?, duree = ?, noteMedecin = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_certificat = ?";
         try (Connection con = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setDate(1, Date.valueOf(c.getDateDebut()));
-            ps.setDate(2, Date.valueOf(c.getDateFin()));
-            ps.setInt(3, c.getDuree());
-            ps.setString(4, c.getNoteMedecin());
-            ps.setTimestamp(5, Timestamp.valueOf(java.time.LocalDateTime.now()));
-            ps.setLong(6, c.getIdCertificat());
-
+            ps.setLong(1, c.getIdDossier());
+            ps.setLong(2, c.getIdConsultation());
+            ps.setDate(3, Date.valueOf(c.getDateDebut()));
+            ps.setDate(4, Date.valueOf(c.getDateFin()));
+            ps.setInt(5, c.getDuree());
+            ps.setString(6, c.getNoteMedecin());
+            ps.setString(7, c.getModifiePar());
+            ps.setLong(8, c.getIdCertificat());
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

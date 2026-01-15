@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.finance.impl;
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.service.modules.facture.api.FactureService;
 import ma.dentalTech.repository.modules.finance.api.FactureRepo;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,12 @@ public class FactureServiceImpl implements FactureService {
 
     private final FactureRepo factureRepository;
 
-    // Mise à jour : Injection par constructeur au lieu de ApplicationContext.getBean
+    // Constructeur pour ApplicationContext
+    public FactureServiceImpl() {
+        this.factureRepository = ApplicationContext.getBean(FactureRepo.class);
+    }
+
+    // Constructeur pour injection directe (gardé pour compatibilité)
     public FactureServiceImpl(FactureRepo factureRepository) {
         this.factureRepository = factureRepository;
     }

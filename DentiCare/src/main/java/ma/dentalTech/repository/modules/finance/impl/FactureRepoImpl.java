@@ -43,16 +43,20 @@ public class FactureRepoImpl implements FactureRepo {
 
     @Override
     public void create(Facture f) throws SQLException {
-        String sql = "INSERT INTO facture (totaleFacture, totalePaye, reste, statut, dateFacture, id_situation_financiere, id_consultation, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO facture (id_entite, totale_facture, totale_paye, statut, date_facture, id_situation_financiere, id_consultation, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             Long idSit = (f.getSituationFinanciere() != null) ? f.getSituationFinanciere().getIdSituation() : null;
             Long idCons = (f.getConsultation() != null) ? f.getConsultation().getIdConsultation() : null;
 
-            ps.setObject(1, f.getTotaleFacture());
-            ps.setObject(2, f.getTotalePaye());
-            ps.setObject(3, f.getReste());
+            if (f.getIdEntite() != null) {
+                ps.setLong(1, f.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setObject(2, f.getTotaleFacture());
+            ps.setObject(3, f.getTotalePaye());
             ps.setString(4, f.getStatut() != null ? f.getStatut().name() : null);
             ps.setTimestamp(5, f.getDateFacture() != null ? Timestamp.valueOf(f.getDateFacture()) : null);
             ps.setObject(6, idSit);
@@ -71,7 +75,7 @@ public class FactureRepoImpl implements FactureRepo {
 
     @Override
     public void update(Facture f) throws SQLException {
-        String sql = "UPDATE facture SET totaleFacture = ?, totalePaye = ?, reste = ?, statut = ?, dateFacture = ?, id_situation_financiere = ?, id_consultation = ?, modifie_par = ? WHERE id_facture = ?";
+        String sql = "UPDATE facture SET totale_facture = ?, totale_paye = ?, statut = ?, date_facture = ?, id_situation_financiere = ?, id_consultation = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_facture = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -80,13 +84,12 @@ public class FactureRepoImpl implements FactureRepo {
 
             ps.setObject(1, f.getTotaleFacture());
             ps.setObject(2, f.getTotalePaye());
-            ps.setObject(3, f.getReste());
-            ps.setString(4, f.getStatut() != null ? f.getStatut().name() : null);
-            ps.setTimestamp(5, f.getDateFacture() != null ? Timestamp.valueOf(f.getDateFacture()) : null);
-            ps.setObject(6, idSit);
-            ps.setObject(7, idCons);
-            ps.setString(8, f.getModifiePar());
-            ps.setLong(9, f.getIdFacture());
+            ps.setString(3, f.getStatut() != null ? f.getStatut().name() : null);
+            ps.setTimestamp(4, f.getDateFacture() != null ? Timestamp.valueOf(f.getDateFacture()) : null);
+            ps.setObject(5, idSit);
+            ps.setObject(6, idCons);
+            ps.setString(7, f.getModifiePar());
+            ps.setLong(8, f.getIdFacture());
 
             ps.executeUpdate();
         }

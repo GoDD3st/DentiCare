@@ -3,6 +3,7 @@ package ma.dentalTech.entities.Consultation;
 import ma.dentalTech.entities.BaseEntity.BaseEntity;
 import ma.dentalTech.entities.Certificat.Certificat;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
+import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.entities.enums.ConsultationStatutEnum;
 
@@ -22,6 +23,7 @@ public class Consultation extends BaseEntity {
     private String observationMedecin;
 
     private DossierMedicale dossierMedicale;
+    private Medecin medecin;
     private List<Ordonnance> ordonnances;
     private Certificat certificat;
 

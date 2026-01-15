@@ -50,7 +50,7 @@ public final class RowMappers {
         Patient p = Patient.builder()
                 .idPatient(rs.getLong("id_patient"))
                 .nom(rs.getString("nom"))
-                .dateNaissance(rs.getDate("date_naissance") != null ? rs.getDate("date_naissance").toLocalDate() : null)
+                .dateNaissance(rs.getDate("dateNaissance") != null ? rs.getDate("dateNaissance").toLocalDate() : null)
                 .sexe(rs.getString("sexe") != null ? SexeEnum.valueOf(rs.getString("sexe")) : null)
                 .adresse(rs.getString("adresse"))
                 .telephone(rs.getString("telephone"))
@@ -76,11 +76,11 @@ public final class RowMappers {
     public static RDV mapRDV(ResultSet rs) throws SQLException {
         RDV rdv = RDV.builder()
                 .idRDV(rs.getLong("id_rdv"))
-                .date(rs.getDate("date") != null ? rs.getDate("date").toLocalDate() : null)
+                .date(rs.getDate("date_rdv") != null ? rs.getDate("date_rdv").toLocalDate() : null)
                 .heure(rs.getTime("heure") != null ? rs.getTime("heure").toLocalTime() : null)
                 .motif(rs.getString("motif"))
                 .statut(rs.getString("statut") != null ? RDVStatutEnum.valueOf(rs.getString("statut")) : null)
-                .noteMedecin(rs.getString("note_medecin"))
+                .noteMedecin(rs.getString("noteMedecin"))
                 .build();
         mapBaseFields(rdv, rs);
 
@@ -93,7 +93,7 @@ public final class RowMappers {
                 .dateConsultation(rs.getDate("date_consultation") != null ? rs.getDate("date_consultation").toLocalDate() : null)
                 .heureConsultation(rs.getTime("heure_consultation") != null ? rs.getTime("heure_consultation").toLocalTime() : null)
                 .statut(rs.getString("statut") != null ? ConsultationStatutEnum.valueOf(rs.getString("statut")) : null)
-                .observationMedecin(rs.getString("observation_medecin"))
+                .observationMedecin(rs.getString("observationMedecin"))
                 .build();
         mapBaseFields(c, rs);
 
@@ -103,9 +103,14 @@ public final class RowMappers {
     public static DossierMedicale mapDossierMedicale(ResultSet rs) throws SQLException {
         DossierMedicale dm = DossierMedicale.builder()
                 .idDossier(rs.getLong("id_dossier"))
-                .dateDeCreation(rs.getDate("date_de_creation") != null ? rs.getDate("date_de_creation").toLocalDate() : null)
+                .dateDeCreation(rs.getTimestamp("date_de_creation") != null ? rs.getTimestamp("date_de_creation").toLocalDateTime().toLocalDate() : null)
                 .build();
-        mapBaseFields(dm, rs);
+
+        // Map base fields with correct column names for dossier_medical table
+        dm.setIdEntite(rs.getLong("id_entite"));
+        dm.setDateDerniereModification(rs.getTimestamp("date_derniere_modification") != null ? rs.getTimestamp("date_derniere_modification").toLocalDateTime() : null);
+        dm.setCreePar(rs.getString("cree_par"));
+        dm.setModifiePar(rs.getString("modifie_par"));
 
         return dm;
     }
@@ -135,12 +140,12 @@ public final class RowMappers {
     public static Certificat mapCertificat(ResultSet rs) throws SQLException {
         Certificat cert = Certificat.builder()
                 .idCertificat(rs.getLong("id_certificat"))
-                .idDossier(rs.getLong("id_dossier"))
+                .idDossier(rs.getLong("id_dossier_medical"))
                 .idConsultation(rs.getLong("id_consultation"))
-                .dateDebut(rs.getDate("date_debut") != null ? rs.getDate("date_debut").toLocalDate() : null)
-                .dateFin(rs.getDate("date_fin") != null ? rs.getDate("date_fin").toLocalDate() : null)
+                .dateDebut(rs.getDate("dateDebut") != null ? rs.getDate("dateDebut").toLocalDate() : null)
+                .dateFin(rs.getDate("dateFin") != null ? rs.getDate("dateFin").toLocalDate() : null)
                 .duree(rs.getInt("duree"))
-                .noteMedecin(rs.getString("note_medecin"))
+                .noteMedecin(rs.getString("noteMedecin"))
                 .build();
         mapBaseFields(cert, rs);
 
@@ -162,7 +167,7 @@ public final class RowMappers {
     public static Ordonnance mapOrdonnance(ResultSet rs) throws SQLException {
         Ordonnance o = Ordonnance.builder()
                 .idOrdonnance(rs.getLong("id_ordonnance"))
-                .date(rs.getDate("date") != null ? rs.getDate("date").toLocalDate() : null)
+                .date(rs.getDate("date_ord") != null ? rs.getDate("date_ord").toLocalDate() : null)
                 .build();
         mapBaseFields(o, rs);
 

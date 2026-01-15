@@ -2,7 +2,7 @@ package ma.dentalTech.entities.enums;
 
 public enum PrioriteEnum {
     BASSE,
-    NORMALE,
-    URGENTE,
+    MOYENNE,
+    HAUTE,
     CRITIQUE
 }

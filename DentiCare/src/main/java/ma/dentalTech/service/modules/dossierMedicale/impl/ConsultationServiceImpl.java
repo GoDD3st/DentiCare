@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.dossierMedicale.impl;
 import ma.dentalTech.service.modules.dossierMedicale.api.ConsultationService;
 import ma.dentalTech.repository.modules.dossierMedicale.api.ConsultationRepo;
 import ma.dentalTech.entities.Consultation.Consultation;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +11,9 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     private final ConsultationRepo repository;
 
-    // Injection par constructeur (sans ApplicationContext.getBean)
-    public ConsultationServiceImpl(ConsultationRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public ConsultationServiceImpl() {
+        this.repository = ApplicationContext.getBean(ConsultationRepo.class);
     }
 
     @Override

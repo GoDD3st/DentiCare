@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.dossierMedicale.impl;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
 import ma.dentalTech.repository.modules.dossierMedicale.api.OrdonnanceRepo;
 import ma.dentalTech.service.modules.dossierMedicale.api.OrdonnanceService;
+import ma.dentalTech.conf.ApplicationContext;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,6 +16,13 @@ import java.util.Optional;
 public class OrdonnanceServiceImpl implements OrdonnanceService {
 
     private final OrdonnanceRepo repository;
+
+    /**
+     * Constructeur pour ApplicationContext
+     */
+    public OrdonnanceServiceImpl() {
+        this.repository = ApplicationContext.getBean(OrdonnanceRepo.class);
+    }
 
     /**
      * Injection du repository par constructeur pour plus de cohérence.

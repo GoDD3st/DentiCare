@@ -43,25 +43,26 @@ public class RDVRepoImpl implements RDVRepository {
 
     @Override
     public void create(RDV r) throws SQLException {
-        String sql = "INSERT INTO rdv (date_rdv, heure_rdv, motif, statut, note_medecin, id_dossier_medical, id_consultation, id_patient, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO rdv (id_entite, id_dossier_medical, id_consultation, date_rdv, heure, motif, statut, noteMedecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             Long idDossier = (r.getDossierMedicale() != null) ? r.getDossierMedicale().getIdDossier() : null;
             Long idCons = (r.getConsultation() != null) ? r.getConsultation().getIdConsultation() : null;
-            Long idPat = (r.getPatient() != null) ? r.getPatient().getIdPatient() : null;
-            Long idMed = (r.getMedecin() != null) ? r.getMedecin().getIdMedecin() : null;
 
-            ps.setDate(1, r.getDate() != null ? Date.valueOf(r.getDate()) : null);
-            ps.setTime(2, r.getHeure() != null ? Time.valueOf(r.getHeure()) : null);
-            ps.setString(3, r.getMotif());
-            ps.setString(4, r.getStatut() != null ? r.getStatut().name() : null);
-            ps.setString(5, r.getNoteMedecin());
-            ps.setObject(6, idDossier);
-            ps.setObject(7, idCons);
-            ps.setObject(8, idPat);
-            ps.setObject(9, idMed);
-            ps.setString(10, r.getCreePar());
+            if (r.getIdEntite() != null) {
+                ps.setLong(1, r.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setLong(2, idDossier);
+            ps.setLong(3, idCons);
+            ps.setDate(4, r.getDate() != null ? Date.valueOf(r.getDate()) : null);
+            ps.setTime(5, r.getHeure() != null ? Time.valueOf(r.getHeure()) : null);
+            ps.setString(6, r.getMotif());
+            ps.setString(7, r.getStatut() != null ? r.getStatut().name() : null);
+            ps.setString(8, r.getNoteMedecin());
+            ps.setString(9, r.getCreePar());
 
             ps.executeUpdate();
 
@@ -75,26 +76,22 @@ public class RDVRepoImpl implements RDVRepository {
 
     @Override
     public void update(RDV r) throws SQLException {
-        String sql = "UPDATE rdv SET date_rdv = ?, heure_rdv = ?, motif = ?, statut = ?, note_medecin = ?, id_dossier_medical = ?, id_consultation = ?, id_patient = ?, id_medecin = ?, modifie_par = ? WHERE id_rdv = ?";
+        String sql = "UPDATE rdv SET id_dossier_medical = ?, id_consultation = ?, date_rdv = ?, heure = ?, motif = ?, statut = ?, noteMedecin = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_rdv = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             Long idDossier = (r.getDossierMedicale() != null) ? r.getDossierMedicale().getIdDossier() : null;
             Long idCons = (r.getConsultation() != null) ? r.getConsultation().getIdConsultation() : null;
-            Long idPat = (r.getPatient() != null) ? r.getPatient().getIdPatient() : null;
-            Long idMed = (r.getMedecin() != null) ? r.getMedecin().getIdMedecin() : null;
 
-            ps.setDate(1, r.getDate() != null ? Date.valueOf(r.getDate()) : null);
-            ps.setTime(2, r.getHeure() != null ? Time.valueOf(r.getHeure()) : null);
-            ps.setString(3, r.getMotif());
-            ps.setString(4, r.getStatut() != null ? r.getStatut().name() : null);
-            ps.setString(5, r.getNoteMedecin());
-            ps.setObject(6, idDossier);
-            ps.setObject(7, idCons);
-            ps.setObject(8, idPat);
-            ps.setObject(9, idMed);
-            ps.setString(10, r.getModifiePar());
-            ps.setLong(11, r.getIdRDV());
+            ps.setLong(1, idDossier);
+            ps.setLong(2, idCons);
+            ps.setDate(3, r.getDate() != null ? Date.valueOf(r.getDate()) : null);
+            ps.setTime(4, r.getHeure() != null ? Time.valueOf(r.getHeure()) : null);
+            ps.setString(5, r.getMotif());
+            ps.setString(6, r.getStatut() != null ? r.getStatut().name() : null);
+            ps.setString(7, r.getNoteMedecin());
+            ps.setString(8, r.getModifiePar());
+            ps.setLong(9, r.getIdRDV());
 
             ps.executeUpdate();
         }

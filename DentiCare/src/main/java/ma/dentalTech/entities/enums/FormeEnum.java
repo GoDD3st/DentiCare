@@ -4,6 +4,7 @@ public enum FormeEnum {
     COMPRIME,
     CAPSULE,
     SIROP,
+    INJECTION,
     POMMADE,
-    INJECTION
+    AUTRE
 }

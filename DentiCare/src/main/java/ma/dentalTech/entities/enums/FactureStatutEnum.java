@@ -1,7 +1,7 @@
 package ma.dentalTech.entities.enums;
 
 public enum FactureStatutEnum {
-    EN_ATTENTE,
+    PAYEE,
     PARTIELLEMENT_PAYEE,
     IMPAYEE,
     ANNULEE

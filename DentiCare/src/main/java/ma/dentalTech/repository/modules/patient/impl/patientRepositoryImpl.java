@@ -14,7 +14,7 @@ public class patientRepositoryImpl implements patientRepository {
 
 
     public List<Patient> findAll() throws SQLException{
-        String sql = "SELECT * FROM patients ORDER BY id";
+        String sql = "SELECT * FROM patient ORDER BY nom";
         List<Patient> list = new ArrayList<>();
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -43,16 +43,21 @@ public class patientRepositoryImpl implements patientRepository {
 
     @Override
     public void create(Patient p) throws SQLException {
-        String sql = "INSERT INTO patient (nom, dateNaissance, sexe, adresse, telephone, assurance, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO patient (id_entite, nom, dateNaissance, sexe, adresse, telephone, assurance, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, p.getNom());
-            ps.setDate(2, p.getDateNaissance() != null ? Date.valueOf(p.getDateNaissance()) : null);
-            ps.setString(3, String.valueOf(p.getSexe()));
-            ps.setString(4, p.getAdresse());
-            ps.setString(5, p.getTelephone());
-            ps.setString(6, String.valueOf(p.getAssurance()));
-            ps.setString(7, p.getCreePar());
+            if (p.getIdEntite() != null) {
+                ps.setLong(1, p.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setString(2, p.getNom());
+            ps.setDate(3, p.getDateNaissance() != null ? Date.valueOf(p.getDateNaissance()) : null);
+            ps.setString(4, String.valueOf(p.getSexe()));
+            ps.setString(5, p.getAdresse());
+            ps.setString(6, p.getTelephone());
+            ps.setString(7, String.valueOf(p.getAssurance()));
+            ps.setString(8, p.getCreePar());
 
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -63,7 +68,7 @@ public class patientRepositoryImpl implements patientRepository {
 
     @Override
     public void update(Patient p) throws SQLException {
-        String sql = "UPDATE patient SET nom = ?, dateNaissance = ?, sexe = ?, adresse = ?, telephone = ?, assurance = ?, modifie_par = ? WHERE id_patient = ?";
+        String sql = "UPDATE patient SET nom = ?, dateNaissance = ?, sexe = ?, adresse = ?, telephone = ?, assurance = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_patient = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, p.getNom());

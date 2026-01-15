@@ -14,7 +14,13 @@ import lombok.Data;
 public class Ordonnance extends BaseEntity {
     private Long idOrdonnance;
     private LocalDate date;
+    private String note;
 
+    // Simple relationships (matching database schema)
+    private DossierMedicale dossierMedicale;
+    private Consultation consultation;
+
+    // Complex relationships (for future use)
     private List<DossierMedicale> dossiersMedicales; // n--n
     private List<Consultation> consultations; // n--n
 

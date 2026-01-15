@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.dossierMedicale.impl;
 import ma.dentalTech.service.modules.dossierMedicale.api.ActeService;
 import ma.dentalTech.repository.modules.dossierMedicale.api.ActeRepo;
 import ma.dentalTech.entities.Acte.Acte;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,8 +11,9 @@ public class ActeServiceImpl implements ActeService {
 
     private final ActeRepo repository;
 
-    public ActeServiceImpl(ActeRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public ActeServiceImpl() {
+        this.repository = ApplicationContext.getBean(ActeRepo.class);
     }
 
     @Override

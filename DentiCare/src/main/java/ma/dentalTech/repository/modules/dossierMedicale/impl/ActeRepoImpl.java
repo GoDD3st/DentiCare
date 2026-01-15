@@ -47,12 +47,18 @@ public class ActeRepoImpl implements ActeRepo {
 
     @Override
     public void create(Acte a) {
-        String sql = "INSERT INTO acte (libelle, categorie, prix_de_base) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO acte (id_entite, libelle, categorie, prix_de_base, cree_par) VALUES (?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, a.getLibelle());
-            ps.setString(2, a.getCategorie());
-            ps.setDouble(3, a.getPrixDeBase());
+            if (a.getIdEntite() != null) {
+                ps.setLong(1, a.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setString(2, a.getLibelle());
+            ps.setString(3, a.getCategorie());
+            ps.setDouble(4, a.getPrixDeBase());
+            ps.setString(5, a.getCreePar());
 
             ps.executeUpdate(); // CRITICAL: Added this line
 
@@ -68,13 +74,14 @@ public class ActeRepoImpl implements ActeRepo {
 
     @Override
     public void update(Acte a) {
-        String sql = "UPDATE acte SET libelle = ?, categorie = ?, prix_de_base = ? WHERE id_acte = ?";
+        String sql = "UPDATE acte SET libelle = ?, categorie = ?, prix_de_base = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_acte = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, a.getLibelle());
             ps.setString(2, a.getCategorie());
             ps.setDouble(3, a.getPrixDeBase());
-            ps.setLong(4, a.getIdActe());
+            ps.setString(4, a.getModifiePar());
+            ps.setLong(5, a.getIdActe());
 
             ps.executeUpdate();
         } catch (SQLException e) {

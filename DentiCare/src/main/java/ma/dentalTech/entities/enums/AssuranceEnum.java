@@ -1,7 +1,8 @@
 package ma.dentalTech.entities.enums;
 
 public enum AssuranceEnum {
+    CNOPS,
     CNSS,
-    MUTUELLE_PRIVEE,
+    MUTUELLE,
     AUCUNE
 }

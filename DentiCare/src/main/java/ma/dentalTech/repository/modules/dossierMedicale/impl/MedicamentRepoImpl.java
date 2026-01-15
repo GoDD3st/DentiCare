@@ -43,18 +43,23 @@ public class MedicamentRepoImpl implements MedicamentRepo {
 
     @Override
     public void create(Medicament m) throws SQLException {
-        String sql = "INSERT INTO medicament (nom, laboratoire, type, forme, remboursable, prix_unitaire, description, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO medicament (id_entite, nom, laboratoire, type_medicament, forme, remboursable, prix_unitaire, description, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, m.getNom());
-            ps.setString(2, m.getLaboratoire());
-            ps.setString(3, m.getType());
-            ps.setString(4, m.getForme() != null ? m.getForme().name() : null);
-            ps.setBoolean(5, m.isRemboursable());
-            ps.setObject(6, m.getPrixUnitaire());
-            ps.setString(7, m.getDescription());
-            ps.setString(8, m.getCreePar());
+            if (m.getIdEntite() != null) {
+                ps.setLong(1, m.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setString(2, m.getNom());
+            ps.setString(3, m.getLaboratoire());
+            ps.setString(4, m.getType());
+            ps.setString(5, m.getForme() != null ? m.getForme().name() : null);
+            ps.setBoolean(6, m.isRemboursable());
+            ps.setObject(7, m.getPrixUnitaire());
+            ps.setString(8, m.getDescription());
+            ps.setString(9, m.getCreePar());
 
             ps.executeUpdate();
 
@@ -68,7 +73,7 @@ public class MedicamentRepoImpl implements MedicamentRepo {
 
     @Override
     public void update(Medicament m) throws SQLException {
-        String sql = "UPDATE medicament SET nom = ?, laboratoire = ?, type = ?, forme = ?, remboursable = ?, prix_unitaire = ?, description = ?, modifie_par = ? WHERE id_medicament = ?";
+        String sql = "UPDATE medicament SET nom = ?, laboratoire = ?, type_medicament = ?, forme = ?, remboursable = ?, prix_unitaire = ?, description = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_medicament = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
