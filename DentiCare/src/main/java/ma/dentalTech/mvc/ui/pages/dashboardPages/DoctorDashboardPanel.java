@@ -3003,12 +3003,12 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {
             // Fallback to text
-            btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+            btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
             btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         }
 

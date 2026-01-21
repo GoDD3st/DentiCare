@@ -268,7 +268,7 @@ public class UsersPanel extends JPanel {
                     btn.setIcon(new ImageIcon(scaledImage));
                 } else {
                     // Fallback to text if icon not found
-                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : "*");
+                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("add") ? "*" : "?");
                     btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
                 }
             } catch (Exception e) {
@@ -340,7 +340,7 @@ public class UsersPanel extends JPanel {
                     btn.setIcon(new ImageIcon(scaledImage));
                 } else {
                     // Fallback to text if icon not found
-                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : "*");
+                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("add") ? "*" : "?");
                     btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
                 }
             } catch (Exception e) {

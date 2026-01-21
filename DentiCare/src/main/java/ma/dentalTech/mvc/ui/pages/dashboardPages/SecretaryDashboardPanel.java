@@ -349,7 +349,7 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
             }
         } catch (Exception e) {
             // Fallback to text
-            btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+            btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
             btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         }
 
