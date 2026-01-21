@@ -1,9 +1,3 @@
--- ============================================
--- Jeu de données de test pour DentiCare
--- Basé sur le schéma schema.sql (nouvelle version)
--- IMPORTANT: Exécutez ce script APRÈS avoir exécuté schema.sql
--- ============================================
-
 -- Réinitialisation des AUTO_INCREMENT
 ALTER TABLE BaseEntity AUTO_INCREMENT = 1;
 ALTER TABLE utilisateur AUTO_INCREMENT = 1;
@@ -114,7 +108,7 @@ INSERT INTO patient (id_entite, nom, dateNaissance, sexe, adresse, telephone, as
 (13, 'Nour Chafi', '2000-02-02', 'FEMME', 'Témara', '0633333333', 'CNSS', 'admin'),
 (14, 'Youssef Dari', '1992-11-01', 'HOMME', 'Kénitra', '0644444444', 'AUCUNE', 'admin'),
 (15, 'Hiba Zerouali', '2001-03-14', 'FEMME', 'Rabat, Agdal', '0655555555', 'CNSS', 'admin'),
-(16, 'Mahdi ElMidaoui', '1990-07-18', 'HOMME', 'Casablanca', '0666666666', 'MUTUELLE', 'admin');
+(16, 'Mahdi daoui', '1990-07-18', 'HOMME', 'Casablanca', '0666666666', 'MUTUELLE', 'admin');
 
 -- 12. DossierMedicale (dépend de Patient)
 -- id_dossier AUTO_INCREMENT: 1-6
@@ -125,7 +119,7 @@ INSERT INTO dossier_medical (id_entite, id_patient, date_de_creation, cree_par) 
 (19, 3, '2025-10-24', 'admin'), -- Nour Chafi
 (20, 4, '2025-10-23', 'admin'), -- Youssef Dari
 (21, 5, '2025-10-26', 'admin'), -- Hiba Zerouali
-(22, 6, '2025-10-26', 'admin'); -- Mahdi ElMidaoui
+(22, 6, '2025-10-26', 'admin'); -- Mahdi daoui
 
 -- 13. SituationFinanciere (dépend de DossierMedicale)
 -- id_situation AUTO_INCREMENT: 1-6
