@@ -153,7 +153,7 @@ public final class Alert {
         btn.setFont(TEXT_FONT);
         btn.setFocusPainted(false);
         btn.setPreferredSize(new Dimension(110, 34));
-        // ⚠️ On ne touche pas au background/foreground => Look&Feel original conservé
+        // On ne touche pas au background/foreground => Look&Feel original conservé
         return btn;
     }
 

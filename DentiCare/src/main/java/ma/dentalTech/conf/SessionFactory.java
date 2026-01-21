@@ -3,6 +3,7 @@ package ma.dentalTech.conf;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import ma.dentalTech.conf.util.PropertiesExtractor;
 
 public final class SessionFactory {
@@ -80,8 +81,30 @@ public final class SessionFactory {
         if (connection == null || connection.isClosed() || !isValid(connection)) {
             connection = DriverManager.getConnection(url, user, password);
             System.out.println(" Nouvelle connexion JDBC établie avec succès !");
+
+            // Initialiser la base de données si nécessaire (premier lancement)
+            initializeDatabaseIfNeeded();
         }
         return connection;
+    }
+
+    /**
+     * Initialise automatiquement la base de données lors du premier accès
+     */
+    private void initializeDatabaseIfNeeded() {
+        try {
+            // Vérifier si c'est le premier lancement en testant une table
+            try (Statement stmt = connection.createStatement()) {
+                stmt.executeQuery("SELECT 1 FROM cabinet_medical LIMIT 1");
+                // Si on arrive ici, les tables existent déjà
+            } catch (Exception e) {
+                // Les tables n'existent pas, on les crée
+                System.out.println("Première utilisation détectée, initialisation de la base de données...");
+                DatabaseInitializer.initializeIfNeeded(connection);
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'initialisation automatique: " + e.getMessage());
+        }
     }
     /**
      * Vérifie si la connexion est encore valide.

@@ -319,29 +319,10 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
             panel.setOpaque(false);
             
-            // Use regular JButtons instead of ActionButton for better compatibility
-            JButton viewBtn = new JButton("Voir");
-            JButton editBtn = new JButton("Modifier");
-            JButton deleteBtn = new JButton("Supprimer");
-
-            // Style the buttons to look consistent
-            viewBtn.setBackground(new Color(52, 152, 219)); // Blue
-            viewBtn.setForeground(Color.WHITE);
-            viewBtn.setFocusPainted(false);
-            viewBtn.setBorderPainted(false);
-            viewBtn.setPreferredSize(new Dimension(70, 25));
-
-            editBtn.setBackground(new Color(243, 156, 18)); // Orange
-            editBtn.setForeground(Color.WHITE);
-            editBtn.setFocusPainted(false);
-            editBtn.setBorderPainted(false);
-            editBtn.setPreferredSize(new Dimension(70, 25));
-
-            deleteBtn.setBackground(new Color(231, 76, 60)); // Red
-            deleteBtn.setForeground(Color.WHITE);
-            deleteBtn.setFocusPainted(false);
-            deleteBtn.setBorderPainted(false);
-            deleteBtn.setPreferredSize(new Dimension(80, 25));
+            // Create icon buttons (view, edit, delete)
+            JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
+            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             // Add action listeners with correct row context
             final int targetRow = row;
@@ -386,29 +367,10 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
             panel.setOpaque(false);
             
-            // Use regular JButtons instead of ActionButton for better compatibility
-            viewBtn = new JButton("Voir");
-            editBtn = new JButton("Modifier");
-            deleteBtn = new JButton("Supprimer");
-
-            // Style the buttons to look consistent
-            viewBtn.setBackground(new Color(52, 152, 219)); // Blue
-            viewBtn.setForeground(Color.WHITE);
-            viewBtn.setFocusPainted(false);
-            viewBtn.setBorderPainted(false);
-            viewBtn.setPreferredSize(new Dimension(70, 25));
-
-            editBtn.setBackground(new Color(243, 156, 18)); // Orange
-            editBtn.setForeground(Color.WHITE);
-            editBtn.setFocusPainted(false);
-            editBtn.setBorderPainted(false);
-            editBtn.setPreferredSize(new Dimension(70, 25));
-
-            deleteBtn.setBackground(new Color(231, 76, 60)); // Red
-            deleteBtn.setForeground(Color.WHITE);
-            deleteBtn.setFocusPainted(false);
-            deleteBtn.setBorderPainted(false);
-            deleteBtn.setPreferredSize(new Dimension(80, 25));
+            // Create icon buttons (view, edit, delete)
+            viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
+            editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
+            deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             // Add action listeners
             viewBtn.addActionListener(e -> {
@@ -3020,5 +2982,36 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
         public boolean isSaved() {
             return saved;
         }
+    }
+
+    private JButton createIconButton(String iconName, Color bgColor) {
+        JButton btn = new JButton();
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setPreferredSize(new Dimension(32, 32));
+
+        // Load icon from resources
+        try {
+            String iconPath = "/icons/" + iconName + ".png";
+            java.net.URL iconURL = getClass().getResource(iconPath);
+            if (iconURL != null) {
+                ImageIcon icon = new ImageIcon(iconURL);
+                // Scale icon to fit button
+                Image scaledImage = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                btn.setIcon(new ImageIcon(scaledImage));
+            } else {
+                // Fallback to text if icon not found
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+                btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            }
+        } catch (Exception e) {
+            // Fallback to text
+            btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        }
+
+        return btn;
     }
 }

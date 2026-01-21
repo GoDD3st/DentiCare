@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.cabinetMedicale.impl;
 import ma.dentalTech.entities.Statistique.Statistique;
 import ma.dentalTech.repository.modules.cabinetMedicale.api.statistiqueRepo;
 import ma.dentalTech.service.modules.cabinetMedicale.api.StatistiqueService;
+import ma.dentalTech.conf.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +12,9 @@ public class StatistiqueServiceImpl implements StatistiqueService {
 
     private final statistiqueRepo repository;
 
-    // Injection par constructeur (recommandé pour la testabilité)
-    public StatistiqueServiceImpl(statistiqueRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public StatistiqueServiceImpl() {
+        this.repository = ApplicationContext.getBean(statistiqueRepo.class);
     }
 
     @Override

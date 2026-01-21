@@ -14,7 +14,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public List<CabinetMedicale> findAll() throws SQLException {
-        String sql = "SELECT * FROM cabinet_medicale ORDER BY id_cabinet";
+        String sql = "SELECT * FROM cabinet_medical ORDER BY id_cabinet";
         List<CabinetMedicale> list = new ArrayList<>();
         try (Connection c = SessionFactory.getInstance().getConnection();
              Statement stmt = c.createStatement();
@@ -28,7 +28,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public Optional<CabinetMedicale> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM cabinet_medicale WHERE id_cabinet = ?";
+        String sql = "SELECT * FROM cabinet_medical WHERE id_cabinet = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
@@ -43,7 +43,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void create(CabinetMedicale cm) throws SQLException {
-        String sql = "INSERT INTO cabinet_medicale (nom, email, logo, rue, ville, code_postal, tel1, tel2, site_web, instagram, facebook, description, id_patient, id_situation, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cabinet_medical (nom, email, logo, rue, ville, code_postal, tel1, tel2, site_web, instagram, facebook, description, id_patient, id_situation, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -83,7 +83,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void update(CabinetMedicale cm) throws SQLException {
-        String sql = "UPDATE cabinet_medicale SET nom = ?, email = ?, logo = ?, rue = ?, ville = ?, code_postal = ?, tel1 = ?, tel2 = ?, site_web = ?, instagram = ?, facebook = ?, description = ?, id_patient = ?, id_situation = ?, id_medecin = ?, modifie_par = ? WHERE id_cabinet = ?";
+        String sql = "UPDATE cabinet_medical SET nom = ?, email = ?, logo = ?, rue = ?, ville = ?, code_postal = ?, tel1 = ?, tel2 = ?, site_web = ?, instagram = ?, facebook = ?, description = ?, id_patient = ?, id_situation = ?, id_medecin = ?, modifie_par = ? WHERE id_cabinet = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
@@ -122,7 +122,7 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void deleteById(Long id) throws SQLException {
-        String sql = "DELETE FROM cabinet_medicale WHERE id_cabinet = ?";
+        String sql = "DELETE FROM cabinet_medical WHERE id_cabinet = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);

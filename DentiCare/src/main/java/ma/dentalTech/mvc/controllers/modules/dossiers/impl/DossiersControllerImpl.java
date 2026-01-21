@@ -1,11 +1,9 @@
 package ma.dentalTech.mvc.controllers.modules.dossiers.impl;
 
+import ma.dentalTech.conf.ApplicationContext;
 import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import ma.dentalTech.mvc.controllers.modules.dossiers.api.DossiersController;
-import ma.dentalTech.repository.modules.dossierMedicale.api.DossierMedicaleRepo;
-import ma.dentalTech.repository.modules.dossierMedicale.impl.DossierMedicalRepoImpl;
 import ma.dentalTech.service.modules.dossierMedicale.api.DossierMedicaleService;
-import ma.dentalTech.service.modules.dossierMedicale.impl.DossierMedicaleServiceImpl;
 
 import javax.swing.*;
 import java.util.List;
@@ -17,8 +15,7 @@ public class DossiersControllerImpl implements DossiersController {
     private final DossierMedicaleService dossierService;
 
     public DossiersControllerImpl() {
-        DossierMedicaleRepo repo = new DossierMedicalRepoImpl();
-        this.dossierService = new DossierMedicaleServiceImpl(repo);
+        this.dossierService = ApplicationContext.getBean(DossierMedicaleService.class);
     }
 
     @Override

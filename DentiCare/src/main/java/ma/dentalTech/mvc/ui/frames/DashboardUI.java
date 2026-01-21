@@ -85,7 +85,7 @@ public class DashboardUI extends JFrame {
         //    (selon ton design, tu peux aussi juste rafraîchir le header)
         if (principal != null) {
             // On garde l'id/login/roles/privileges existants, on remplace juste nom/email/avatar si souhaité
-            // ⚠️ Ici, UserPrincipal est un record ? sinon adapte.
+            // Ici, UserPrincipal est un record ? sinon adapte.
             principal = new UserPrincipal(
                     principal.id(),
                     (safe(p.prenom()) + " " + safe(p.nom())).trim(),

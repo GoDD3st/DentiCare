@@ -207,67 +207,61 @@ public class DossiersPanel extends JPanel {
 
     // Custom renderer for action buttons
     private class ActionButtonRenderer implements javax.swing.table.TableCellRenderer {
-        private JPanel panel;
-        private ActionButton viewBtn, editBtn, deleteBtn;
-
-        public ActionButtonRenderer() {
-            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
-            panel.setOpaque(false);
-            
-            viewBtn = new ActionButton("Voir", ActionButton.ButtonType.VIEW, true);
-            editBtn = new ActionButton("Modifier", ActionButton.ButtonType.EDIT, true);
-            deleteBtn = new ActionButton("Supprimer", ActionButton.ButtonType.DELETE, true);
-            
-            panel.add(viewBtn);
-            panel.add(editBtn);
-            panel.add(deleteBtn);
-        }
-
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+            panel.setOpaque(false);
+
+            // Create icon buttons (view, edit, delete)
+            JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
+            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
+
+            panel.add(viewBtn);
+            panel.add(editBtn);
+            panel.add(deleteBtn);
+
             return panel;
         }
     }
 
     // Custom editor for action buttons
     private class ActionButtonEditor extends DefaultCellEditor {
-        private JPanel panel;
-        private ActionButton viewBtn, editBtn, deleteBtn;
-        private int currentRow;
-
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
-            panel.setOpaque(false);
-            
-            viewBtn = new ActionButton("Voir", ActionButton.ButtonType.VIEW, true);
-            editBtn = new ActionButton("Modifier", ActionButton.ButtonType.EDIT, true);
-            deleteBtn = new ActionButton("Supprimer", ActionButton.ButtonType.DELETE, true);
-            
-            viewBtn.addActionListener(e -> {
-                fireEditingStopped();
-                handleViewAction(currentRow);
-            });
-            
-            editBtn.addActionListener(e -> {
-                fireEditingStopped();
-                handleEditAction(currentRow);
-            });
-            
-            deleteBtn.addActionListener(e -> {
-                fireEditingStopped();
-                handleDeleteAction(currentRow);
-            });
-            
-            panel.add(viewBtn);
-            panel.add(editBtn);
-            panel.add(deleteBtn);
         }
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            currentRow = row;
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+            panel.setOpaque(false);
+
+            JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
+            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
+
+            final int targetRow = row;
+
+            viewBtn.addActionListener(e -> {
+                fireEditingStopped();
+                handleViewAction(targetRow);
+            });
+
+            editBtn.addActionListener(e -> {
+                fireEditingStopped();
+                handleEditAction(targetRow);
+            });
+
+            deleteBtn.addActionListener(e -> {
+                fireEditingStopped();
+                handleDeleteAction(targetRow);
+            });
+
+            panel.add(viewBtn);
+            panel.add(editBtn);
+            panel.add(deleteBtn);
+
             return panel;
         }
 
@@ -275,5 +269,36 @@ public class DossiersPanel extends JPanel {
         public Object getCellEditorValue() {
             return "";
         }
+    }
+
+    private JButton createIconButton(String iconName, Color bgColor) {
+        JButton btn = new JButton();
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setPreferredSize(new Dimension(32, 32));
+
+        // Load icon from resources
+        try {
+            String iconPath = "/icons/" + iconName + ".png";
+            java.net.URL iconURL = getClass().getResource(iconPath);
+            if (iconURL != null) {
+                ImageIcon icon = new ImageIcon(iconURL);
+                // Scale icon to fit button
+                Image scaledImage = icon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                btn.setIcon(new ImageIcon(scaledImage));
+            } else {
+                // Fallback to text if icon not found
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+                btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            }
+        } catch (Exception e) {
+            // Fallback to text
+            btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        }
+
+        return btn;
     }
 }

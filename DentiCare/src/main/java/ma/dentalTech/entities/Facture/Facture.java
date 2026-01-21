@@ -19,7 +19,7 @@ public class Facture extends BaseEntity {
                 .totaleFacture(500.0)
                 .totalePaye(200.0)
                 .reste(300.0)
-                .statut(FactureStatutEnum.EN_ATTENTE)
+                .statut(FactureStatutEnum.IMPAYEE)
                 .dateFacture(java.time.LocalDateTime.now())
                 .build();
     }

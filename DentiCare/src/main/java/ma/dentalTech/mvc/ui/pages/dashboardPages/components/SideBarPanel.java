@@ -61,7 +61,7 @@ public class SideBarPanel extends JPanel {
                 {"Dashboard", "dashboard"},
                 {"Utilisateurs", "users"},
                 {"Cabinets", "cabinet"},
-                {"Notifications", "notifications"},
+                {"Historique", "notif"},
                 {"Paramètres", "settings"}
             };
             case MEDECIN -> new String[][]{

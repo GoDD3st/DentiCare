@@ -122,17 +122,15 @@ public final class RowMappers {
         m.setIdMedecin(rs.getLong("id_medecin"));
         m.setSpecialite(rs.getString("specialite"));
 
-        // Champs hérités de Staff
+        // Pour l'instant, on ne mappe que les champs disponibles dans la table medecin
+        // Les champs de Staff et Utilisateur nécessiteraient un JOIN avec les tables staff et utilisateur
         m.setIdStaff(rs.getLong("id_staff"));
-        m.setSalaire(rs.getDouble("salaire"));
-        m.setPrime(rs.getDouble("prime"));
-        m.setDateRecrutement(rs.getDate("date_recrutement") != null ? rs.getDate("date_recrutement").toLocalDate() : null);
-        m.setSoldeConge(rs.getInt("solde_conge"));
 
-        // Champs hérités de Utilisateur
-        m.setIdUser(rs.getLong("id_user"));
-
-        mapBaseFields(m, rs);
+        // Champs de BaseEntity (directement dans la table medecin)
+        m.setDateCreation(rs.getDate("date_creation") != null ? rs.getDate("date_creation").toLocalDate() : null);
+        m.setDateDerniereModification(rs.getTimestamp("date_derniere_modification") != null ? rs.getTimestamp("date_derniere_modification").toLocalDateTime() : null);
+        m.setCreePar(rs.getString("cree_par"));
+        m.setModifiePar(rs.getString("modifie_par"));
 
         return m;
     }
@@ -351,16 +349,23 @@ public final class RowMappers {
     }
 
     public static CabinetMedicale mapCabinetMedicale(ResultSet rs) throws SQLException {
+        // Adresse simplifiée - stockée comme une seule chaîne
         Adresse adr = Adresse.builder()
-                .rue(rs.getString("rue"))
-                .ville(rs.getString("ville"))
-                .codePostal(rs.getString("code_postal"))
+                .rue(rs.getString("adresse")) // Utilise la colonne adresse comme rue
+                .ville("")
+                .codePostal("")
                 .build();
         CabinetMedicale cm = CabinetMedicale.builder()
                 .idCabinet(rs.getLong("id_cabinet"))
                 .nom(rs.getString("nom"))
                 .adresse(adr)
                 .email(rs.getString("email"))
+                .tel1(rs.getString("tel1"))
+                .tel2(rs.getString("tel2"))
+                .siteWeb(rs.getString("siteWeb"))
+                .instagram(rs.getString("instagram"))
+                .facebook(rs.getString("facebook"))
+                .description(rs.getString("description"))
                 .build();
         mapBaseFields(cm, rs);
         return cm;

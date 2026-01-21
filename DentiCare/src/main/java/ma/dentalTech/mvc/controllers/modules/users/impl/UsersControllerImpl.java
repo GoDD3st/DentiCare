@@ -1,11 +1,9 @@
 package ma.dentalTech.mvc.controllers.modules.users.impl;
 
+import ma.dentalTech.conf.ApplicationContext;
 import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.mvc.controllers.modules.users.api.UsersController;
-import ma.dentalTech.repository.modules.auth.api.UtilisateurRepo;
-import ma.dentalTech.repository.modules.auth.impl.UtilisateurRepoImpl;
 import ma.dentalTech.service.modules.auth.api.UtilisateurService;
-import ma.dentalTech.service.modules.auth.impl.UtilisateurServiceImpl;
 
 import javax.swing.*;
 import java.util.List;
@@ -17,8 +15,7 @@ public class UsersControllerImpl implements UsersController {
     private final UtilisateurService userService;
 
     public UsersControllerImpl() {
-        UtilisateurRepo repo = new UtilisateurRepoImpl();
-        this.userService = new UtilisateurServiceImpl(repo);
+        this.userService = ApplicationContext.getBean(UtilisateurService.class);
     }
 
     @Override
