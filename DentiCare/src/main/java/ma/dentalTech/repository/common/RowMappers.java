@@ -349,12 +349,19 @@ public final class RowMappers {
     }
 
     public static CabinetMedicale mapCabinetMedicale(ResultSet rs) throws SQLException {
-        // Adresse simplifiée - stockée comme une seule chaîne
-        Adresse adr = Adresse.builder()
-                .rue(rs.getString("adresse")) // Utilise la colonne adresse comme rue
-                .ville("")
-                .codePostal("")
-                .build();
+        // Adresse stockée comme une seule chaîne formatée
+        String adresseStr = rs.getString("adresse");
+        Adresse adr = null;
+        if (adresseStr != null && !adresseStr.trim().isEmpty()) {
+            adr = Adresse.builder()
+                    .rue(adresseStr) // Stocke l'adresse complète dans le champ rue
+                    .ville("")
+                    .codePostal("")
+                    .région("")
+                    .pays("")
+                    .build();
+        }
+
         CabinetMedicale cm = CabinetMedicale.builder()
                 .idCabinet(rs.getLong("id_cabinet"))
                 .nom(rs.getString("nom"))

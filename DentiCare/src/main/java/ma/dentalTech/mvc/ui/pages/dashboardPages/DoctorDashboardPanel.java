@@ -23,12 +23,6 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
     // Table references for refreshing
     private JTable dossiersTable;
     private DefaultTableModel dossiersModel;
-    private JTable consultationsTable;
-    private DefaultTableModel consultationsModel;
-    private JTable ordonnancesTable;
-    private DefaultTableModel ordonnancesModel;
-    private JTable actesTable;
-    private DefaultTableModel actesModel;
 
 
 
@@ -95,27 +89,85 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
 
     @Override
     protected JPanel createSpecificContent() {
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        System.out.println("=== DÉBUT createSpecificContent (DOCTOR DASHBOARD) ===");
+        JPanel content = new JPanel(new BorderLayout());
         content.setOpaque(false);
-        content.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Section Dossiers Médicaux
-        content.add(createDossiersSection());
-        content.add(Box.createVerticalStrut(20));
+        // Header avec bouton de création de dossier médical
+        JPanel headerPanel = createDossiersHeader();
+        content.add(headerPanel, BorderLayout.NORTH);
+        System.out.println("Header dossiers ajouté");
 
-        // Section Consultations
-        content.add(createConsultationsSection());
-        content.add(Box.createVerticalStrut(20));
+        // Contenu principal avec tableau des dossiers médicaux
+        JPanel dossiersContent = createDossiersContent();
+        content.add(dossiersContent, BorderLayout.CENTER);
+        System.out.println("Contenu dossiers ajouté");
 
-        // Section Ordonnances
-        content.add(createOrdonnancesSection());
-        content.add(Box.createVerticalStrut(20));
-
-        // Section Actes
-        content.add(createActesSection());
-
+        System.out.println("=== FIN createSpecificContent (DOCTOR DASHBOARD) ===");
+        System.out.println("Content final - composants: " + content.getComponentCount());
         return content;
+    }
+
+    private JPanel createDossiersHeader() {
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 20, 20, 20)
+        ));
+        headerPanel.setPreferredSize(new Dimension(0, 80));
+
+        // Titre de la section
+        JLabel titleLabel = new JLabel("Gestion des Dossiers Médicaux");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        titleLabel.setForeground(new Color(33, 37, 41));
+
+        // Bouton de création aligné à droite
+        JButton createButton = new JButton("Créer un dossier médical");
+        createButton.setBackground(new Color(46, 204, 113));
+        createButton.setForeground(Color.WHITE);
+        createButton.setFocusPainted(false);
+        createButton.setBorderPainted(false);
+        createButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        createButton.setPreferredSize(new Dimension(200, 36));
+        createButton.addActionListener(e -> showCreateDossierDialog());
+
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+        headerPanel.add(createButton, BorderLayout.EAST);
+
+        return headerPanel;
+    }
+
+    private JPanel createDossiersContent() {
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setOpaque(false);
+        contentPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
+
+        // Tableau des dossiers médicaux
+        String[] columns = {"ID", "Patient", "Date Création", "Médecin", "Statut", "Actions"};
+        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 5; // Actions column is editable
+            }
+        };
+
+        // Charger les données depuis la base de données
+        loadDossiersData(model);
+
+        JTable table = createTableWithActions(model, 5, "DOSSIERS");
+        dossiersTable = table;
+        dossiersModel = model;
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(20, 20, 20, 20)
+        ));
+
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+        return contentPanel;
     }
 
     private JPanel createCard(String title) {
@@ -136,152 +188,7 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
         return card;
     }
 
-    private JPanel createDossiersSection() {
-        JPanel card = createCard("Gérer les Dossiers Médicaux");
-        
-        // Toolbar avec boutons bien dimensionnés
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
-        buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 16, 0));
-        
-        ActionButton btnCreate = new ActionButton("Créer un dossier", ActionButton.ButtonType.ADD);
-        btnCreate.setPreferredSize(new Dimension(160, 36));
-        btnCreate.addActionListener(e -> showCreateDossierDialog());
-        
-        ActionButton btnSearch = new ActionButton("Chercher patient", ActionButton.ButtonType.VIEW);
-        btnSearch.setPreferredSize(new Dimension(160, 36));
-        btnSearch.addActionListener(e -> showSearchPatientDialog());
-        
-        buttonPanel.add(btnCreate);
-        buttonPanel.add(btnSearch);
-        
-        // Table avec actions
-        String[] dossierColumns = {"Patient", "Date Création", "Dernière Modification", "Statistiques", "Actions"};
-        DefaultTableModel model = new DefaultTableModel(dossierColumns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 4; // Actions column is editable to allow button clicks
-            }
-        };
-        
-        // Load real data from service
-        loadDossiersData(model);
-        
-        JTable table = createTableWithActions(model, 4, "DOSSIERS");
-        // Store reference for refreshing
-        dossiersTable = table;
-        dossiersModel = model;
-        
-        card.add(buttonPanel, BorderLayout.NORTH);
-        card.add(new JScrollPane(table), BorderLayout.CENTER);
-        
-        return card;
-    }
 
-    private JPanel createConsultationsSection() {
-        JPanel card = createCard("Gérer Consultations");
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
-        buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 16, 0));
-        
-        ActionButton btnStart = new ActionButton("Créer et Commencer une Consultation", ActionButton.ButtonType.START);
-        btnStart.setPreferredSize(new Dimension(280, 36));
-        btnStart.addActionListener(e -> showCreateConsultationDialog());
-        
-        buttonPanel.add(btnStart);
-        
-        String[] consultationColumns = {"Patient", "Date", "Statut", "Actions"};
-        DefaultTableModel model = new DefaultTableModel(consultationColumns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3; // Actions column is editable to allow button clicks
-            }
-        };
-        
-        // Load real data from service
-        loadConsultationsData(model);
-        
-        JTable table = createTableWithActions(model, 3, "CONSULTATIONS");
-        // Store reference for refreshing
-        consultationsTable = table;
-        consultationsModel = model;
-        
-        card.add(buttonPanel, BorderLayout.NORTH);
-        card.add(new JScrollPane(table), BorderLayout.CENTER);
-        
-        return card;
-    }
-
-    private JPanel createOrdonnancesSection() {
-        JPanel card = createCard("Gérer les Ordonnances");
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
-        buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 16, 0));
-        
-        ActionButton btnCreate = new ActionButton("Créer Ordonnance", ActionButton.ButtonType.ADD);
-        btnCreate.setPreferredSize(new Dimension(180, 36));
-        btnCreate.addActionListener(e -> showCreateOrdonnanceDialog());
-        
-        buttonPanel.add(btnCreate);
-        
-        String[] ordonnanceColumns = {"Patient", "Date", "Médicaments", "Actions"};
-        DefaultTableModel model = new DefaultTableModel(ordonnanceColumns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3; // Actions column is editable to allow button clicks
-            }
-        };
-        
-        // Load real data from service
-        loadOrdonnancesData(model);
-        
-        JTable table = createTableWithActions(model, 3, "ORDONNANCES");
-        // Store reference for refreshing
-        ordonnancesTable = table;
-        ordonnancesModel = model;
-        
-        card.add(buttonPanel, BorderLayout.NORTH);
-        card.add(new JScrollPane(table), BorderLayout.CENTER);
-        
-        return card;
-    }
-
-    private JPanel createActesSection() {
-        JPanel card = createCard("Gérer les Actes");
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
-        buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setBorder(new EmptyBorder(0, 0, 16, 0));
-        
-        ActionButton btnAdd = new ActionButton("Ajouter Acte", ActionButton.ButtonType.ADD);
-        btnAdd.setPreferredSize(new Dimension(150, 36));
-        btnAdd.addActionListener(e -> showAddActeDialog());
-        
-        buttonPanel.add(btnAdd);
-        
-        String[] acteColumns = {"Libellé", "Code", "Tarif", "Actions"};
-        DefaultTableModel model = new DefaultTableModel(acteColumns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3; // Actions column is editable to allow button clicks
-            }
-        };
-        
-        // Load real data from service
-        loadActesData(model);
-        
-        JTable table = createTableWithActions(model, 3, "ACTES");
-        // Store reference for refreshing
-        actesTable = table;
-        actesModel = model;
-        
-        card.add(buttonPanel, BorderLayout.NORTH);
-        card.add(new JScrollPane(table), BorderLayout.CENTER);
-        
-        return card;
-    }
 
     private JTable createTableWithActions(DefaultTableModel model, int actionColumnIndex, String context) {
         JTable table = new JTable(model);
@@ -321,7 +228,7 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
             
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             // Add action listeners with correct row context
@@ -942,22 +849,39 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
             if (ds != null) {
                 java.util.List<ma.dentalTech.entities.DossierMedicale.DossierMedicale> dossiers = ds.findAll();
                 for (ma.dentalTech.entities.DossierMedicale.DossierMedicale dossier : dossiers) {
-                    String patientName = "Patient inconnu"; // Default value
-                    String dateCreation = dossier.getDateDeCreation() != null ?
-                        dossier.getDateDeCreation().toString() : "";
-                    String lastModification = dossier.getDateDerniereModification() != null ?
-                        dossier.getDateDerniereModification().toLocalDate().toString() : dateCreation;
+                    // ID du dossier
+                    String idDossier = String.valueOf(dossier.getIdDossierMedicale());
 
-                    // Since we modified the repo to load patient data via JOIN,
-                    // the patient data should be available through the relationship
+                    // Nom du patient
+                    String patientName = "Patient inconnu";
                     if (dossier.getPatient() != null && dossier.getPatient().getNom() != null) {
                         patientName = dossier.getPatient().getNom();
+                        if (dossier.getPatient().getPrenom() != null) {
+                            patientName += " " + dossier.getPatient().getPrenom();
+                        }
                     }
 
-                    // Add statistics info to the display
-                    String stats = getDossierStats(dossier);
-                    model.addRow(new Object[]{patientName, dateCreation, lastModification, stats});
+                    // Date de création
+                    String dateCreation = dossier.getDateDeCreation() != null ?
+                        dossier.getDateDeCreation().toLocalDate().toString() : "";
+
+                    // Médecin responsable
+                    String medecinName = "Non assigné";
+                    if (dossier.getMedecin() != null && dossier.getMedecin().getNom() != null) {
+                        medecinName = dossier.getMedecin().getNom();
+                        if (dossier.getMedecin().getPrenom() != null) {
+                            medecinName += " " + dossier.getMedecin().getPrenom();
+                        }
+                    }
+
+                    // Statut du dossier
+                    String statut = "Actif"; // Par défaut, on peut ajouter une logique plus complexe
+
+                    // Ajouter la ligne au modèle
+                    model.addRow(new Object[]{idDossier, patientName, dateCreation, medecinName, statut});
                 }
+            } else {
+                System.out.println("Service DossierMedicaleService non disponible");
             }
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement des dossiers: " + e.getMessage());
@@ -3003,7 +2927,7 @@ public class DoctorDashboardPanel extends BaseDashboardPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {

@@ -20,6 +20,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\reposito
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\notification\api\NotificationRepository.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\Statistique\Statistique.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\OrdonnanceDTO.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\pages\otherPages\LogsPanel.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\common\exceptions\AuthException.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\RDVDTO.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\cabinetMedicale\api\statistiqueRepo.java
@@ -52,6 +53,8 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\finance\impl\CaisseServiceImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\enums\FactureStatutEnum.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\Revenues\Revenues.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\log\impl\LogServiceImpl.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\log\api\LogService.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\controllers\modules\parametrage\api\ParametrageController.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\dossierMedicale\api\ActeRepo.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\dossierMedicale\impl\CertificatRepoImpl.java
@@ -92,6 +95,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\pages\otherPages\UsersPanel.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\enums\SituationStatutEnum.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\frames\DashboardUI.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\Log.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\AssuranceDTO.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\facture\impl\FactureServiceImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\AgendaMensuelDTO.java
@@ -118,6 +122,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\pages\otherPages\ParametragePanel.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\patient\impl\AntecedentsServiceImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\InterventionMedecinDTO.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\conf\DatabaseInitializer.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\agenda\api\AgendaRepository.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\controllers\modules\patient\batch_implentation\PatientControllerImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\enums\RDVStatutEnum.java
@@ -132,6 +137,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\reposito
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\Certificat\Certificat.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\finance\api\RevenuesService.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\common\exceptions\ValidationException.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\enums\LogLevel.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\LoginDTO.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\controllers\modules\caisse\impl\CaisseControllerImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\palette\utils\WindowChromeSupport.java
@@ -227,6 +233,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\dto\PatientDTO.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\pages\otherPages\CabinetPanel.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\common\utilitaire\Crypto.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\log\impl\LogRepositoryImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\auth\api\StaffRepo.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\dossierMedicale\impl\OrdonnanceRepositoryImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\testRepo\CaisseServiceTest.java
@@ -281,6 +288,7 @@ C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\cabinetMedicale\impl\StatistiqueServiceImpl.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\service\modules\auth\api\AuthorizationService.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\controllers\modules\users\api\UsersController.java
+C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\log\api\LogRepository.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\mvc\ui\pages\dashboardPages\pageFactory\DashboardPanelFactory.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\entities\Caisse\Caisse.java
 C:\Users\marou\Desktop\New folder\DentiCare\src\main\java\ma\dentalTech\repository\modules\dossierMedicale\impl\ActeRepoImpl.java

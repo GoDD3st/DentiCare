@@ -148,11 +148,17 @@ public class DossiersPanel extends JPanel {
     }
 
     private void showCreateDossierDialog() {
-        JOptionPane.showMessageDialog(this, 
-            "Fonctionnalité de création de dossier médical à implémenter.\n" +
-            "Cette fonction permettra de créer un nouveau dossier médical pour un patient.",
-            "Fonctionnalité à venir",
-            JOptionPane.INFORMATION_MESSAGE);
+        CreateDossierDialog dialog = new CreateDossierDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this)
+        );
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            loadDossiers(); // Recharger les données
+            JOptionPane.showMessageDialog(this,
+                "Dossier médical créé avec succès !",
+                "Succès",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void handleViewAction(int row) {
@@ -160,18 +166,15 @@ public class DossiersPanel extends JPanel {
         try {
             Optional<DossierMedicale> dossierOpt = dossierService.findByID(dossierId);
             if (dossierOpt.isPresent()) {
-                DossierMedicale d = dossierOpt.get();
-                String info = String.format(
-                    "ID: %d\nPatient: %s\nDate Création: %s",
-                    d.getIdDossier(),
-                    d.getPatient() != null ? d.getPatient().getNom() : "N/A",
-                    d.getDateDeCreation() != null ? d.getDateDeCreation().toString() : ""
+                ViewDossierDialog dialog = new ViewDossierDialog(
+                    (Frame) SwingUtilities.getWindowAncestor(this),
+                    dossierOpt.get()
                 );
-                JOptionPane.showMessageDialog(this, info, "Détails Dossier", JOptionPane.INFORMATION_MESSAGE);
+                dialog.setVisible(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Erreur: " + e.getMessage(),
+                "Erreur lors du chargement des détails: " + e.getMessage(),
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -215,7 +218,7 @@ public class DossiersPanel extends JPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -238,7 +241,7 @@ public class DossiersPanel extends JPanel {
             panel.setOpaque(false);
 
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             final int targetRow = row;
@@ -290,7 +293,7 @@ public class DossiersPanel extends JPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {
@@ -300,5 +303,264 @@ public class DossiersPanel extends JPanel {
         }
 
         return btn;
+    }
+
+    // Dialog moderne pour créer un nouveau dossier médical
+    private class CreateDossierDialog extends JDialog {
+        private JComboBox<String> cmbPatient;
+        private JSpinner spinnerDateCreation;
+        private boolean saved = false;
+        private java.util.Map<String, Long> patientMap = new java.util.HashMap<>();
+
+        public CreateDossierDialog(Frame parent) {
+            super(parent, "Créer un nouveau dossier médical", true);
+            initializeDialog();
+        }
+
+        private void initializeDialog() {
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 500);
+            setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
+
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(46, 204, 113));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel("Créer un nouveau dossier médical");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.anchor = GridBagConstraints.WEST;
+
+            // Initialize fields
+            cmbPatient = new JComboBox<>();
+            spinnerDateCreation = new JSpinner(new SpinnerDateModel());
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerDateCreation, "dd/MM/yyyy");
+            spinnerDateCreation.setEditor(dateEditor);
+            spinnerDateCreation.setValue(java.sql.Date.valueOf(java.time.LocalDate.now()));
+
+            // Load patients
+            loadPatients();
+
+            // Fields
+            String[] labels = {"Patient:", "Date de création:"};
+            JComponent[] components = {cmbPatient, spinnerDateCreation};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                if (components[i] instanceof JComboBox || components[i] instanceof JSpinner) {
+                    components[i].setPreferredSize(new Dimension(250, 30));
+                }
+                contentPanel.add(components[i], gbc);
+            }
+
+            // Buttons
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnSave = new JButton("Créer");
+            JButton btnCancel = new JButton("Annuler");
+
+            btnSave.setPreferredSize(new Dimension(100, 35));
+            btnCancel.setPreferredSize(new Dimension(100, 35));
+
+            btnSave.addActionListener(e -> saveDossier());
+            btnCancel.addActionListener(e -> dispose());
+
+            buttonPanel.add(btnCancel);
+            buttonPanel.add(btnSave);
+
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
+
+        private void loadPatients() {
+            try {
+                Object serviceObj = ApplicationContext.getBean("patientService");
+                if (serviceObj instanceof ma.dentalTech.service.modules.patient.api.PatientService) {
+                    ma.dentalTech.service.modules.patient.api.PatientService service =
+                        (ma.dentalTech.service.modules.patient.api.PatientService) serviceObj;
+                    java.util.List<ma.dentalTech.entities.Patient.Patient> patients = service.findAll();
+
+                    cmbPatient.addItem("-- Sélectionner un patient --");
+                    for (ma.dentalTech.entities.Patient.Patient p : patients) {
+                        String displayText = p.getNom() + " (" + (p.getTelephone() != null ? p.getTelephone() : "N/A") + ")";
+                        cmbPatient.addItem(displayText);
+                        patientMap.put(displayText, p.getIdPatient());
+                    }
+                }
+            } catch (Exception e) {
+                cmbPatient.addItem("Erreur de chargement des patients");
+                e.printStackTrace();
+            }
+        }
+
+        private void saveDossier() {
+            // Validation
+            if (cmbPatient.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner un patient", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                // Récupérer l'ID du patient sélectionné
+                String selectedPatient = (String) cmbPatient.getSelectedItem();
+                Long patientId = patientMap.get(selectedPatient);
+
+                // Créer le patient (temporairement pour la relation)
+                ma.dentalTech.entities.Patient.Patient patient = null;
+                try {
+                    Object patientServiceObj = ApplicationContext.getBean("patientService");
+                    if (patientServiceObj instanceof ma.dentalTech.service.modules.patient.api.PatientService) {
+                        ma.dentalTech.service.modules.patient.api.PatientService patientService =
+                            (ma.dentalTech.service.modules.patient.api.PatientService) patientServiceObj;
+                        Optional<ma.dentalTech.entities.Patient.Patient> patientOpt = patientService.findByID(patientId);
+                        if (patientOpt.isPresent()) {
+                            patient = patientOpt.get();
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignore patient loading error for now
+                }
+
+                // Créer le dossier médical
+                DossierMedicale dossier = DossierMedicale.builder()
+                    .dateDeCreation(((java.util.Date) spinnerDateCreation.getValue()).toInstant()
+                        .atZone(java.time.ZoneId.systemDefault()).toLocalDate())
+                    .patient(patient)
+                    .build();
+
+                // Sauvegarder dans la base de données
+                Object serviceObj = ApplicationContext.getBean("dossierMedicaleService");
+                if (serviceObj instanceof ma.dentalTech.service.modules.dossierMedicale.api.DossierMedicaleService) {
+                    ma.dentalTech.service.modules.dossierMedicale.api.DossierMedicaleService service =
+                        (ma.dentalTech.service.modules.dossierMedicale.api.DossierMedicaleService) serviceObj;
+                    service.create(dossier);
+                    saved = true;
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Service de dossier médical non disponible", "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la création du dossier médical: " + e.getMessage(),
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+        public boolean isSaved() {
+            return saved;
+        }
+    }
+
+    // Dialog moderne pour voir les détails d'un dossier médical
+    private class ViewDossierDialog extends JDialog {
+        public ViewDossierDialog(Frame parent, DossierMedicale dossier) {
+            super(parent, "Détails du dossier médical", true);
+            initializeDialog(dossier);
+        }
+
+        private void initializeDialog(DossierMedicale dossier) {
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 500);
+            setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
+
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(52, 152, 219));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel("Détails du dossier médical");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.anchor = GridBagConstraints.WEST;
+
+            // Préparer les données
+            String id = dossier.getIdDossier() != null ? dossier.getIdDossier().toString() : "";
+            String dateCreation = dossier.getDateDeCreation() != null ? dossier.getDateDeCreation().toString() : "";
+            String patientNom = dossier.getPatient() != null ? dossier.getPatient().getNom() : "N/A";
+            String patientTelephone = dossier.getPatient() != null && dossier.getPatient().getTelephone() != null ?
+                dossier.getPatient().getTelephone() : "N/A";
+            String medecinNom = dossier.getMedecin() != null ? dossier.getMedecin().getNom() : "Non assigné";
+
+            // Créer les champs en lecture seule
+            JTextField txtId = new JTextField(id);
+            JTextField txtDateCreation = new JTextField(dateCreation);
+            JTextField txtPatientNom = new JTextField(patientNom);
+            JTextField txtPatientTelephone = new JTextField(patientTelephone);
+            JTextField txtMedecin = new JTextField(medecinNom);
+
+            // Désactiver tous les champs (lecture seule)
+            txtId.setEditable(false);
+            txtDateCreation.setEditable(false);
+            txtPatientNom.setEditable(false);
+            txtPatientTelephone.setEditable(false);
+            txtMedecin.setEditable(false);
+
+            // Fond gris clair pour indiquer qu'ils sont en lecture seule
+            Color readonlyBg = new Color(240, 240, 240);
+            txtId.setBackground(readonlyBg);
+            txtDateCreation.setBackground(readonlyBg);
+            txtPatientNom.setBackground(readonlyBg);
+            txtPatientTelephone.setBackground(readonlyBg);
+            txtMedecin.setBackground(readonlyBg);
+
+            // Fields labels and components
+            String[] labels = {"ID Dossier:", "Date de création:", "Patient:", "Téléphone patient:", "Médecin:"};
+            JComponent[] components = {txtId, txtDateCreation, txtPatientNom, txtPatientTelephone, txtMedecin};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                components[i].setPreferredSize(new Dimension(250, 30));
+                contentPanel.add(components[i], gbc);
+            }
+
+            // Buttons
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnClose = new JButton("Fermer");
+            btnClose.setPreferredSize(new Dimension(100, 35));
+            btnClose.addActionListener(e -> dispose());
+
+            buttonPanel.add(btnClose);
+
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
     }
 }

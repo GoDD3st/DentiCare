@@ -269,7 +269,7 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -292,7 +292,7 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
             panel.setOpaque(false);
 
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             final int targetRow = row;
@@ -349,7 +349,7 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
             }
         } catch (Exception e) {
             // Fallback to text
-            btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
             btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         }
 

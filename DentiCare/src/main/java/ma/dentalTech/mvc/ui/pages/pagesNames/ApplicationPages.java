@@ -6,6 +6,7 @@ public enum ApplicationPages {
     // Général
     PROFILE,
     NOTIFICATIONS,
+    LOGS,
 
     // Métier
     PATIENTS,

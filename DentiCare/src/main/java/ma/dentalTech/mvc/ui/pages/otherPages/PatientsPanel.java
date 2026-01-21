@@ -213,7 +213,7 @@ public class PatientsPanel extends JPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -236,7 +236,7 @@ public class PatientsPanel extends JPanel {
             panel.setOpaque(false);
 
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             final int targetRow = row;
@@ -288,7 +288,7 @@ public class PatientsPanel extends JPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {
@@ -305,22 +305,15 @@ public class PatientsPanel extends JPanel {
         try {
             Optional<Patient> patientOpt = patientService.findByID(patientId);
             if (patientOpt.isPresent()) {
-                Patient p = patientOpt.get();
-                String info = String.format(
-                    "ID: %d\nNom: %s\nDate Naissance: %s\nSexe: %s\nTéléphone: %s\nEmail: %s\nAssurance: %s",
-                    p.getIdPatient(),
-                    p.getNom(),
-                    p.getDateNaissance() != null ? p.getDateNaissance().toString() : "",
-                    p.getSexe() != null ? p.getSexe().name() : "",
-                    p.getTelephone(),
-                    p.getEmail(),
-                    p.getAssurance() != null ? p.getAssurance().name() : ""
+                ViewPatientDialog dialog = new ViewPatientDialog(
+                    (Frame) SwingUtilities.getWindowAncestor(this),
+                    patientOpt.get()
                 );
-                JOptionPane.showMessageDialog(this, info, "Détails Patient", JOptionPane.INFORMATION_MESSAGE);
+                dialog.setVisible(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Erreur: " + e.getMessage(),
+                "Erreur lors du chargement des détails: " + e.getMessage(),
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -342,37 +335,45 @@ public class PatientsPanel extends JPanel {
         }
 
         private void initializeDialog() {
-            setLayout(new BorderLayout(10, 10));
-            setSize(500, 400);
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 650);
             setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
 
-            // Form panel
-            JPanel formPanel = new JPanel(new GridBagLayout());
-            formPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(46, 204, 113));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel(patient == null ? "Ajouter un patient" : "Modifier le patient");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.insets = new Insets(8, 8, 8, 8);
             gbc.anchor = GridBagConstraints.WEST;
 
-            // Fields
-            txtNom = new JTextField(20);
+            // Initialize fields
+            txtNom = new JTextField();
             cmbSexe = new JComboBox<>(SexeEnum.values());
             spinnerDate = new JSpinner(new SpinnerDateModel());
             JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerDate, "dd/MM/yyyy");
             spinnerDate.setEditor(dateEditor);
-            txtTelephone = new JTextField(20);
-            txtEmail = new JTextField(20);
-            txtAdresse = new JTextField(20);
+            txtTelephone = new JTextField();
+            txtEmail = new JTextField();
+            txtAdresse = new JTextField();
             cmbAssurance = new JComboBox<>(AssuranceEnum.values());
 
-            // Add fields
-            int row = 0;
-            addField(formPanel, gbc, "Nom:", txtNom, row++);
-            addField(formPanel, gbc, "Sexe:", cmbSexe, row++);
-            addField(formPanel, gbc, "Date Naissance:", spinnerDate, row++);
-            addField(formPanel, gbc, "Téléphone:", txtTelephone, row++);
-            addField(formPanel, gbc, "Email:", txtEmail, row++);
-            addField(formPanel, gbc, "Adresse:", txtAdresse, row++);
-            addField(formPanel, gbc, "Assurance:", cmbAssurance, row++);
+            // Set default date if creating new patient
+            if (patient == null) {
+                spinnerDate.setValue(java.sql.Date.valueOf(java.time.LocalDate.now().minusYears(25)));
+            }
 
             // Load patient data if editing
             if (patient != null) {
@@ -387,10 +388,34 @@ public class PatientsPanel extends JPanel {
                 if (patient.getAssurance() != null) cmbAssurance.setSelectedItem(patient.getAssurance());
             }
 
+            // Fields
+            String[] labels = {"Nom complet:", "Sexe:", "Date de naissance:", "Téléphone:",
+                             "Email:", "Adresse:", "Assurance:"};
+            JComponent[] components = {txtNom, cmbSexe, spinnerDate, txtTelephone,
+                                    txtEmail, txtAdresse, cmbAssurance};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                if (components[i] instanceof JTextField || components[i] instanceof JComboBox || components[i] instanceof JSpinner) {
+                    components[i].setPreferredSize(new Dimension(250, 30));
+                }
+                contentPanel.add(components[i], gbc);
+            }
+
             // Buttons
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            ActionButton btnSave = new ActionButton("Enregistrer", ActionButton.ButtonType.CONFIRM);
-            ActionButton btnCancel = new ActionButton("Annuler", ActionButton.ButtonType.CANCEL);
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnSave = new JButton(patient == null ? "Ajouter" : "Modifier");
+            JButton btnCancel = new JButton("Annuler");
+
+            btnSave.setPreferredSize(new Dimension(100, 35));
+            btnCancel.setPreferredSize(new Dimension(100, 35));
 
             btnSave.addActionListener(e -> savePatient());
             btnCancel.addActionListener(e -> dispose());
@@ -398,7 +423,8 @@ public class PatientsPanel extends JPanel {
             buttonPanel.add(btnCancel);
             buttonPanel.add(btnSave);
 
-            add(formPanel, BorderLayout.CENTER);
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
             add(buttonPanel, BorderLayout.SOUTH);
         }
 
@@ -467,6 +493,112 @@ public class PatientsPanel extends JPanel {
 
         public boolean isSaved() {
             return saved;
+        }
+    }
+
+    // Dialog moderne pour voir les détails d'un patient
+    private class ViewPatientDialog extends JDialog {
+        public ViewPatientDialog(Frame parent, Patient patient) {
+            super(parent, "Détails du patient", true);
+            initializeDialog(patient);
+        }
+
+        private void initializeDialog(Patient patient) {
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 600);
+            setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
+
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(52, 152, 219));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel("Détails du patient");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.anchor = GridBagConstraints.WEST;
+
+            // Préparer les données
+            String id = patient.getIdPatient() != null ? patient.getIdPatient().toString() : "";
+            String nom = patient.getNom() != null ? patient.getNom() : "";
+            String dateNaissance = patient.getDateNaissance() != null ? patient.getDateNaissance().toString() : "";
+            String sexe = patient.getSexe() != null ? patient.getSexe().name() : "";
+            String telephone = patient.getTelephone() != null ? patient.getTelephone() : "";
+            String email = patient.getEmail() != null ? patient.getEmail() : "";
+            String adresse = patient.getAdresse() != null ? patient.getAdresse() : "";
+            String assurance = patient.getAssurance() != null ? patient.getAssurance().name() : "";
+
+            // Créer les champs en lecture seule
+            JTextField txtId = new JTextField(id);
+            JTextField txtNom = new JTextField(nom);
+            JTextField txtDateNaissance = new JTextField(dateNaissance);
+            JTextField txtSexe = new JTextField(sexe);
+            JTextField txtTelephone = new JTextField(telephone);
+            JTextField txtEmail = new JTextField(email);
+            JTextField txtAdresse = new JTextField(adresse);
+            JTextField txtAssurance = new JTextField(assurance);
+
+            // Désactiver tous les champs (lecture seule)
+            txtId.setEditable(false);
+            txtNom.setEditable(false);
+            txtDateNaissance.setEditable(false);
+            txtSexe.setEditable(false);
+            txtTelephone.setEditable(false);
+            txtEmail.setEditable(false);
+            txtAdresse.setEditable(false);
+            txtAssurance.setEditable(false);
+
+            // Fond gris clair pour indiquer qu'ils sont en lecture seule
+            Color readonlyBg = new Color(240, 240, 240);
+            txtId.setBackground(readonlyBg);
+            txtNom.setBackground(readonlyBg);
+            txtDateNaissance.setBackground(readonlyBg);
+            txtSexe.setBackground(readonlyBg);
+            txtTelephone.setBackground(readonlyBg);
+            txtEmail.setBackground(readonlyBg);
+            txtAdresse.setBackground(readonlyBg);
+            txtAssurance.setBackground(readonlyBg);
+
+            // Fields labels and components
+            String[] labels = {"ID Patient:", "Nom complet:", "Date de naissance:", "Sexe:",
+                             "Téléphone:", "Email:", "Adresse:", "Assurance:"};
+            JComponent[] components = {txtId, txtNom, txtDateNaissance, txtSexe, txtTelephone,
+                                    txtEmail, txtAdresse, txtAssurance};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                components[i].setPreferredSize(new Dimension(250, 30));
+                contentPanel.add(components[i], gbc);
+            }
+
+            // Buttons
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnClose = new JButton("Fermer");
+            btnClose.setPreferredSize(new Dimension(100, 35));
+            btnClose.addActionListener(e -> dispose());
+
+            buttonPanel.add(btnClose);
+
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
         }
     }
 }

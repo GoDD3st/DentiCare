@@ -42,7 +42,17 @@ public final class DashboardPanelFactory {
             case CABINETS -> new CabinetsPanel(principal);
             case DOSSIERS_MEDICAUX -> new DossiersPanel(principal);
             case PARAMETRAGE -> new ParametragePanel(principal);
-            case NOTIFICATIONS -> new NotificationsPanel(principal);
+            case LOGS -> new LogsPanel(principal);
+            case NOTIFICATIONS -> {
+                // Pour les admins, NOTIFICATIONS redirige vers LogsPanel
+                boolean isAdmin = principal != null && principal.roles() != null &&
+                    principal.roles().contains(ma.dentalTech.entities.enums.RoleEnum.ADMIN);
+                if (isAdmin) {
+                    yield new LogsPanel(principal);
+                } else {
+                    yield new NotificationsPanel(principal);
+                }
+            }
             case PROFILE -> {
                 // Create ProfileData from UserPrincipal (limited data available)
                 ProfileData profileData = new ProfileData(

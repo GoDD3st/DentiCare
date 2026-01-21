@@ -48,31 +48,32 @@ public class CabinetPanel extends JPanel {
     }
 
     private JPanel buildHeader() {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setOpaque(false);
+        // Header panel avec titre et bouton alignés horizontalement (comme UsersPanel)
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        headerPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(222, 226, 230), 1),
+            new EmptyBorder(20, 20, 20, 20)
+        ));
 
-        // Titre
-        JLabel lblTitle = new JLabel("Informations du Cabinet");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        lblTitle.setForeground(new Color(44, 62, 80));
+        // Section header avec titre à gauche et bouton à droite
+        JLabel sectionTitle = new JLabel("Gestion du Cabinet");
+        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        sectionTitle.setForeground(new Color(33, 37, 41));
 
-        // Boutons d'action
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-
-        btnRefresh = new MyButton("Actualiser", ImageTools.loadIcon("/static/icons/refresh.png", 16, 16), new Font("Segoe UI", Font.PLAIN, 12));
-        btnRefresh.addActionListener(this::refreshAction);
-
-        btnAddStaff = new MyButton("Ajouter Staff", ImageTools.loadIcon("/static/icons/add.png", 16, 16), new Font("Segoe UI", Font.PLAIN, 12));
+        btnAddStaff = new JButton("Ajouter du Staff");
+        btnAddStaff.setPreferredSize(new Dimension(220, 45));
+        btnAddStaff.setBackground(new Color(46, 204, 113));
+        btnAddStaff.setForeground(Color.WHITE);
+        btnAddStaff.setFocusPainted(false);
+        btnAddStaff.setBorderPainted(false);
+        btnAddStaff.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnAddStaff.addActionListener(this::addStaffAction);
 
-        buttonPanel.add(btnRefresh);
-        buttonPanel.add(btnAddStaff);
+        headerPanel.add(sectionTitle, BorderLayout.WEST);
+        headerPanel.add(btnAddStaff, BorderLayout.EAST);
 
-        header.add(lblTitle, BorderLayout.WEST);
-        header.add(buttonPanel, BorderLayout.EAST);
-
-        return header;
+        return headerPanel;
     }
 
     private JPanel buildContent() {

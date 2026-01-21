@@ -239,7 +239,7 @@ public class UsersPanel extends JPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -268,7 +268,7 @@ public class UsersPanel extends JPanel {
                     btn.setIcon(new ImageIcon(scaledImage));
                 } else {
                     // Fallback to text if icon not found
-                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("add") ? "*" : "?");
+                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("edit") ? "*" : "?");
                     btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
                 }
             } catch (Exception e) {
@@ -292,7 +292,7 @@ public class UsersPanel extends JPanel {
             panel.setOpaque(false);
 
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             final int targetRow = row;
@@ -340,7 +340,7 @@ public class UsersPanel extends JPanel {
                     btn.setIcon(new ImageIcon(scaledImage));
                 } else {
                     // Fallback to text if icon not found
-                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("add") ? "*" : "?");
+                    btn.setText(iconName.equals("see") ? "O" : iconName.equals("delete") ? "X" : iconName.equals("edit") ? "*" : "?");
                     btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
                 }
             } catch (Exception e) {

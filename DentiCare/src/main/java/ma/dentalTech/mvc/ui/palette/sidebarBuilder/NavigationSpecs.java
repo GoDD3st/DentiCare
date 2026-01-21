@@ -23,10 +23,10 @@ public final class NavigationSpecs {
         // -------- Général (commun)
         items.add(item("Général", "Dashboard", "/static/icons/home.png", ApplicationPages.DASHBOARD, null));
         items.add(item("Général", "Profil", "/static/icons/profile.png", ApplicationPages.PROFILE, null));
-        items.add(item("Général", "Notifications", "/static/icons/bell.png", ApplicationPages.NOTIFICATIONS, null));
 
         // -------- Admin
         if (isAdmin) {
+            items.add(item("Administration", "Logs", "/static/icons/notif.png", ApplicationPages.LOGS, null));
             items.add(item("Administration", "Cabinets", "/static/icons/cabinet.png", ApplicationPages.CABINETS, CABINET_ACCESS));
             items.add(item("Administration", "Utilisateurs", "/static/icons/users.png", ApplicationPages.USERS, USERS_ACCESS));
             items.add(item("Système", "Paramètres", "/static/icons/param.png", ApplicationPages.PARAMETRAGE, CABINET_ACCESS));

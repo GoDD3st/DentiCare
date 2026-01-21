@@ -109,30 +109,67 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
     private void initializeServices() {
         try {
             System.out.println("=== INITIALISATION DES SERVICES DASHBOARD ===");
-            cabinetService = ApplicationContext.getBean(CabinetMedicaleService.class);
-            System.out.println("CabinetMedicaleService: " + (cabinetService != null ? "OK" : "NULL"));
 
-            statistiqueService = ApplicationContext.getBean(StatistiqueService.class);
-            System.out.println("StatistiqueService: " + (statistiqueService != null ? "OK" : "NULL"));
+            // Initialisation des services avec gestion d'erreur gracieuse
+            try {
+                cabinetService = ApplicationContext.getBean(CabinetMedicaleService.class);
+                System.out.println("CabinetMedicaleService: " + (cabinetService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("CabinetMedicaleService non disponible: " + e.getMessage());
+                cabinetService = null;
+            }
 
-            patientService = ApplicationContext.getBean(PatientService.class);
-            System.out.println("PatientService: " + (patientService != null ? "OK" : "NULL"));
+            try {
+                statistiqueService = ApplicationContext.getBean(StatistiqueService.class);
+                System.out.println("StatistiqueService: " + (statistiqueService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("StatistiqueService non disponible: " + e.getMessage());
+                statistiqueService = null;
+            }
 
-            consultationService = ApplicationContext.getBean(ConsultationService.class);
-            System.out.println("ConsultationService: " + (consultationService != null ? "OK" : "NULL"));
+            try {
+                patientService = ApplicationContext.getBean(PatientService.class);
+                System.out.println("PatientService: " + (patientService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("PatientService non disponible: " + e.getMessage());
+                patientService = null;
+            }
 
-            medecinService = ApplicationContext.getBean(MedecinService.class);
-            System.out.println("MedecinService: " + (medecinService != null ? "OK" : "NULL"));
+            try {
+                consultationService = ApplicationContext.getBean(ConsultationService.class);
+                System.out.println("ConsultationService: " + (consultationService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("ConsultationService non disponible: " + e.getMessage());
+                consultationService = null;
+            }
 
-            revenuesService = ApplicationContext.getBean(RevenuesService.class);
-            System.out.println("RevenuesService: " + (revenuesService != null ? "OK" : "NULL"));
+            try {
+                medecinService = ApplicationContext.getBean(MedecinService.class);
+                System.out.println("MedecinService: " + (medecinService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("MedecinService non disponible: " + e.getMessage());
+                medecinService = null;
+            }
+
+            try {
+                revenuesService = ApplicationContext.getBean(RevenuesService.class);
+                System.out.println("RevenuesService: " + (revenuesService != null ? "OK" : "NULL"));
+            } catch (Exception e) {
+                System.err.println("RevenuesService non disponible: " + e.getMessage());
+                revenuesService = null;
+            }
 
             // Test de connexion à la base de données
-            testDatabaseConnection();
+            try {
+                testDatabaseConnection();
+            } catch (Exception e) {
+                System.err.println("Erreur de connexion à la base de données: " + e.getMessage());
+            }
 
             System.out.println("=== FIN INITIALISATION ===");
         } catch (Exception e) {
-            System.err.println("Erreur lors de l'initialisation des services: " + e.getMessage());
+            System.err.println("Erreur générale lors de l'initialisation des services: " + e.getMessage());
+            // Ne pas lancer d'exception fatale, permettre à l'application de continuer
             e.printStackTrace();
         }
     }
@@ -415,7 +452,7 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -443,7 +480,7 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             // Add action listeners with correct row context
@@ -1971,7 +2008,11 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
                     // Nombre de médecins par cabinet (via requête directe en base)
                     if (medecinService != null) {
                         try {
-                            // Requête directe pour compter les médecins par cabinet
+                            // D'abord, compter tous les médecins pour vérifier s'il y en a
+                            List<Medecin> allMedecins = medecinService.findAll();
+                            System.out.println("  Total médecins en base: " + allMedecins.size());
+
+                            // Ensuite, essayer la requête avec jointure
                             java.sql.Connection conn = ma.dentalTech.conf.SessionFactory.getInstance().getConnection();
                             String sql = "SELECT COUNT(*) as count FROM medecin m " +
                                         "JOIN staff s ON m.id_staff = s.id_staff " +
@@ -1989,8 +2030,40 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
                             // Ne pas fermer la connexion car elle est gérée par SessionFactory
 
                             System.out.println("  Médecins pour ce cabinet (requête directe): " + nbMedecins);
+
+                            // Si pas de médecins trouvés par jointure, compter tous les médecins pour ce cabinet
+                            if (nbMedecins == 0 && !allMedecins.isEmpty()) {
+                                // Essayer une approche alternative
+                                String sqlAlt = "SELECT COUNT(*) as count FROM staff WHERE id_cabinet = ?";
+                                java.sql.PreparedStatement psAlt = conn.prepareStatement(sqlAlt);
+                                psAlt.setLong(1, cabinetId);
+                                java.sql.ResultSet rsAlt = psAlt.executeQuery();
+
+                                if (rsAlt.next()) {
+                                    int staffCount = rsAlt.getInt("count");
+                                    System.out.println("  Staff trouvé pour ce cabinet: " + staffCount);
+
+                                    // Pour l'instant, on peut estimer ou utiliser une logique temporaire
+                                    // TODO: Implémenter la vraie logique de liaison
+                                }
+                                rsAlt.close();
+                                psAlt.close();
+                            }
+
                         } catch (Exception e) {
                             System.out.println("  Erreur requête médecins: " + e.getMessage());
+                            e.printStackTrace();
+
+                            // Fallback: compter tous les médecins comme temporaire
+                            try {
+                                List<Medecin> allMedecins = medecinService.findAll();
+                                if (!allMedecins.isEmpty()) {
+                                    nbMedecins = allMedecins.size(); // Temporaire pour test
+                                    System.out.println("  Fallback: tous les médecins comptés: " + nbMedecins);
+                                }
+                            } catch (Exception e2) {
+                                System.out.println("  Erreur fallback: " + e2.getMessage());
+                            }
                         }
                     } else {
                         System.out.println("  medecinService est null");
@@ -2293,7 +2366,7 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {

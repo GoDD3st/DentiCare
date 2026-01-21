@@ -2,6 +2,8 @@ package ma.dentalTech.mvc.ui.pages.otherPages;
 
 import ma.dentalTech.conf.ApplicationContext;
 import ma.dentalTech.entities.Caisse.Caisse;
+import ma.dentalTech.entities.Facture.Facture;
+import ma.dentalTech.entities.enums.FactureStatutEnum;
 import ma.dentalTech.mvc.dto.authentificationDtos.UserPrincipal;
 import ma.dentalTech.mvc.ui.palette.buttons.ActionButton;
 import ma.dentalTech.service.modules.finance.api.CaisseService;
@@ -56,6 +58,15 @@ public class CaissePanel extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
         buttonPanel.setOpaque(false);
 
+        JButton btnCreate = new JButton("Créer une facture");
+        btnCreate.setPreferredSize(new Dimension(160, 36));
+        btnCreate.setBackground(new Color(46, 204, 113));
+        btnCreate.setForeground(Color.WHITE);
+        btnCreate.setFocusPainted(false);
+        btnCreate.setBorderPainted(false);
+        btnCreate.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btnCreate.addActionListener(e -> showCreateFactureDialog());
+
         ActionButton btnStats = new ActionButton("Statistiques", ActionButton.ButtonType.VIEW);
         btnStats.setPreferredSize(new Dimension(140, 36));
         btnStats.addActionListener(e -> showStatistics());
@@ -68,6 +79,7 @@ public class CaissePanel extends JPanel {
         btnRefresh.setPreferredSize(new Dimension(120, 36));
         btnRefresh.addActionListener(e -> loadCaisseData());
 
+        buttonPanel.add(btnCreate);
         buttonPanel.add(btnStats);
         buttonPanel.add(btnExport);
         buttonPanel.add(btnRefresh);
@@ -221,20 +233,15 @@ public class CaissePanel extends JPanel {
         try {
             Optional<Caisse> caisseOpt = caisseService.findByID(caisseId);
             if (caisseOpt.isPresent()) {
-                Caisse c = caisseOpt.get();
-                String info = String.format(
-                    "ID: %d\nType: %s\nMontant: %.2f DH\nDate: %s\nRéférence: %s",
-                    c.getIdCaisse(),
-                    c.getModeEncaissement() != null ? c.getModeEncaissement().name() : "Transaction",
-                    c.getMontant() != null ? c.getMontant() : 0.0,
-                    c.getDateEncassement() != null ? c.getDateEncassement().toString() : "",
-                    c.getReference() != null ? c.getReference() : ""
+                ViewCaisseDialog dialog = new ViewCaisseDialog(
+                    (Frame) SwingUtilities.getWindowAncestor(this),
+                    caisseOpt.get()
                 );
-                JOptionPane.showMessageDialog(this, info, "Détails Transaction", JOptionPane.INFORMATION_MESSAGE);
+                dialog.setVisible(true);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Erreur: " + e.getMessage(),
+                "Erreur lors du chargement des détails: " + e.getMessage(),
                 "Erreur",
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -278,7 +285,7 @@ public class CaissePanel extends JPanel {
 
             // Create icon buttons (view, edit, delete)
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             panel.add(viewBtn);
@@ -301,7 +308,7 @@ public class CaissePanel extends JPanel {
             panel.setOpaque(false);
 
             JButton viewBtn = createIconButton("see", new Color(52, 152, 219)); // See icon
-            JButton editBtn = createIconButton("add", new Color(243, 156, 18)); // Edit icon
+            JButton editBtn = createIconButton("edit", new Color(243, 156, 18)); // Edit icon
             JButton deleteBtn = createIconButton("delete", new Color(231, 76, 60)); // Delete icon
 
             final int targetRow = row;
@@ -353,7 +360,7 @@ public class CaissePanel extends JPanel {
                 btn.setIcon(new ImageIcon(scaledImage));
             } else {
                 // Fallback to text if icon not found
-                btn.setText(iconName.equals("see") ? "O" : iconName.equals("add") ? "*" : "X");
+                btn.setText(iconName.equals("see") ? "O" : iconName.equals("edit") ? "*" : "X");
                 btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
             }
         } catch (Exception e) {
@@ -363,5 +370,279 @@ public class CaissePanel extends JPanel {
         }
 
         return btn;
+    }
+
+    private void showCreateFactureDialog() {
+        CreateFactureDialog dialog = new CreateFactureDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this)
+        );
+        dialog.setVisible(true);
+        if (dialog.isSaved()) {
+            loadCaisseData(); // Recharger les données
+            JOptionPane.showMessageDialog(this,
+                "Facture créée avec succès !",
+                "Succès",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Dialog moderne pour créer une nouvelle facture
+    private class CreateFactureDialog extends JDialog {
+        private JTextField txtTotaleFacture, txtTotalePaye;
+        private JComboBox<FactureStatutEnum> cmbStatut;
+        private JSpinner spinnerDateFacture;
+        private JComboBox<String> cmbPatient;
+        private boolean saved = false;
+        private java.util.Map<String, Long> patientMap = new java.util.HashMap<>();
+
+        public CreateFactureDialog(Frame parent) {
+            super(parent, "Créer une nouvelle facture", true);
+            initializeDialog();
+        }
+
+        private void initializeDialog() {
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 650);
+            setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
+
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(46, 204, 113));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel("Créer une nouvelle facture");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.anchor = GridBagConstraints.WEST;
+
+            // Initialize fields
+            txtTotaleFacture = new JTextField();
+            txtTotalePaye = new JTextField();
+            cmbStatut = new JComboBox<>(FactureStatutEnum.values());
+            spinnerDateFacture = new JSpinner(new SpinnerDateModel());
+            JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(spinnerDateFacture, "dd/MM/yyyy");
+            spinnerDateFacture.setEditor(dateEditor);
+            spinnerDateFacture.setValue(java.sql.Date.valueOf(java.time.LocalDate.now()));
+            cmbPatient = new JComboBox<>();
+
+            // Load patients
+            loadPatients();
+
+            // Set default values
+            txtTotalePaye.setText("0.0");
+            cmbStatut.setSelectedItem(FactureStatutEnum.IMPAYEE);
+
+            // Fields
+            String[] labels = {"Patient:", "Montant total:", "Montant payé:", "Statut:", "Date de facture:"};
+            JComponent[] components = {cmbPatient, txtTotaleFacture, txtTotalePaye, cmbStatut, spinnerDateFacture};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                if (components[i] instanceof JTextField || components[i] instanceof JComboBox || components[i] instanceof JSpinner) {
+                    components[i].setPreferredSize(new Dimension(250, 30));
+                }
+                contentPanel.add(components[i], gbc);
+            }
+
+            // Buttons
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnSave = new JButton("Créer");
+            JButton btnCancel = new JButton("Annuler");
+
+            btnSave.setPreferredSize(new Dimension(100, 35));
+            btnCancel.setPreferredSize(new Dimension(100, 35));
+
+            btnSave.addActionListener(e -> saveFacture());
+            btnCancel.addActionListener(e -> dispose());
+
+            buttonPanel.add(btnCancel);
+            buttonPanel.add(btnSave);
+
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
+
+        private void loadPatients() {
+            try {
+                Object serviceObj = ApplicationContext.getBean("patientService");
+                if (serviceObj instanceof ma.dentalTech.service.modules.patient.api.PatientService) {
+                    ma.dentalTech.service.modules.patient.api.PatientService service =
+                        (ma.dentalTech.service.modules.patient.api.PatientService) serviceObj;
+                    java.util.List<ma.dentalTech.entities.Patient.Patient> patients = service.findAll();
+
+                    cmbPatient.addItem("-- Sélectionner un patient --");
+                    for (ma.dentalTech.entities.Patient.Patient p : patients) {
+                        String displayText = p.getNom() + " (" + (p.getTelephone() != null ? p.getTelephone() : "N/A") + ")";
+                        cmbPatient.addItem(displayText);
+                        patientMap.put(displayText, p.getIdPatient());
+                    }
+                }
+            } catch (Exception e) {
+                cmbPatient.addItem("Erreur de chargement des patients");
+                e.printStackTrace();
+            }
+        }
+
+        private void saveFacture() {
+            // Validation
+            if (cmbPatient.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Veuillez sélectionner un patient", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (txtTotaleFacture.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Veuillez saisir le montant total", "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                double totaleFacture = Double.parseDouble(txtTotaleFacture.getText().trim());
+                double totalePaye = Double.parseDouble(txtTotalePaye.getText().trim());
+                double reste = totaleFacture - totalePaye;
+
+                // Créer la facture
+                Facture facture = Facture.builder()
+                    .totaleFacture(totaleFacture)
+                    .totalePaye(totalePaye)
+                    .reste(reste)
+                    .statut((FactureStatutEnum) cmbStatut.getSelectedItem())
+                    .dateFacture(((java.util.Date) spinnerDateFacture.getValue()).toInstant()
+                        .atZone(java.time.ZoneId.systemDefault()).toLocalDateTime())
+                    .build();
+
+                // Sauvegarder dans la base de données
+                Object serviceObj = ApplicationContext.getBean("factureService");
+                if (serviceObj instanceof ma.dentalTech.service.modules.facture.api.FactureService) {
+                    ma.dentalTech.service.modules.facture.api.FactureService service =
+                        (ma.dentalTech.service.modules.facture.api.FactureService) serviceObj;
+                    service.create(facture);
+                    saved = true;
+                    dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Service de facture non disponible", "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Veuillez saisir des montants valides", "Erreur", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Erreur lors de la création de la facture: " + e.getMessage(),
+                    "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+        public boolean isSaved() {
+            return saved;
+        }
+    }
+
+    // Dialog moderne pour voir les détails d'une transaction caisse
+    private class ViewCaisseDialog extends JDialog {
+        public ViewCaisseDialog(Frame parent, Caisse caisse) {
+            super(parent, "Détails de la transaction", true);
+            initializeDialog(caisse);
+        }
+
+        private void initializeDialog(Caisse caisse) {
+            setLayout(new BorderLayout(20, 20));
+            setSize(650, 500);
+            setLocationRelativeTo(getParent());
+            getContentPane().setBackground(new Color(248, 249, 250));
+
+            // Header
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            headerPanel.setBackground(new Color(52, 152, 219));
+            headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JLabel titleLabel = new JLabel("Détails de la transaction");
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            titleLabel.setForeground(Color.WHITE);
+            headerPanel.add(titleLabel, BorderLayout.WEST);
+
+            // Content
+            JPanel contentPanel = new JPanel(new GridBagLayout());
+            contentPanel.setBackground(Color.WHITE);
+            contentPanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(8, 8, 8, 8);
+            gbc.anchor = GridBagConstraints.WEST;
+
+            // Préparer les données
+            String id = caisse.getIdCaisse() != null ? caisse.getIdCaisse().toString() : "";
+            String type = caisse.getModeEncaissement() != null ? caisse.getModeEncaissement().name() : "Transaction";
+            String montant = caisse.getMontant() != null ? String.format("%.2f DH", caisse.getMontant()) : "0.00 DH";
+            String date = caisse.getDateEncassement() != null ? caisse.getDateEncassement().toString() : "";
+            String reference = caisse.getReference() != null ? caisse.getReference() : "";
+
+            // Créer les champs en lecture seule
+            JTextField txtId = new JTextField(id);
+            JTextField txtType = new JTextField(type);
+            JTextField txtMontant = new JTextField(montant);
+            JTextField txtDate = new JTextField(date);
+            JTextField txtReference = new JTextField(reference);
+
+            // Désactiver tous les champs (lecture seule)
+            txtId.setEditable(false);
+            txtType.setEditable(false);
+            txtMontant.setEditable(false);
+            txtDate.setEditable(false);
+            txtReference.setEditable(false);
+
+            // Fond gris clair pour indiquer qu'ils sont en lecture seule
+            Color readonlyBg = new Color(240, 240, 240);
+            txtId.setBackground(readonlyBg);
+            txtType.setBackground(readonlyBg);
+            txtMontant.setBackground(readonlyBg);
+            txtDate.setBackground(readonlyBg);
+            txtReference.setBackground(readonlyBg);
+
+            // Fields labels and components
+            String[] labels = {"ID Transaction:", "Type:", "Montant:", "Date:", "Référence:"};
+            JComponent[] components = {txtId, txtType, txtMontant, txtDate, txtReference};
+
+            for (int i = 0; i < labels.length; i++) {
+                gbc.gridx = 0; gbc.gridy = i;
+                gbc.weightx = 0.0;
+                contentPanel.add(new JLabel(labels[i]), gbc);
+
+                gbc.gridx = 1; gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weightx = 1.0;
+                components[i].setPreferredSize(new Dimension(250, 30));
+                contentPanel.add(components[i], gbc);
+            }
+
+            // Buttons
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttonPanel.setBackground(new Color(248, 249, 250));
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+
+            JButton btnClose = new JButton("Fermer");
+            btnClose.setPreferredSize(new Dimension(100, 35));
+            btnClose.addActionListener(e -> dispose());
+
+            buttonPanel.add(btnClose);
+
+            add(headerPanel, BorderLayout.NORTH);
+            add(new JScrollPane(contentPanel), BorderLayout.CENTER);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
     }
 }

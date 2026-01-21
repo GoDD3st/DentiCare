@@ -66,8 +66,6 @@ public class DashboardUI extends JFrame {
         // default
         navigateTo(ApplicationPages.DASHBOARD);
 
-        showNotificationsCount(5, NotificationLevel.INFO);
-
         setVisible(true);
     }
 
@@ -120,13 +118,6 @@ public class DashboardUI extends JFrame {
         openPage(page);
     }
 
-    public void showNotificationsCount(int count) {
-        if (headerBanner != null) headerBanner.setNotificationCount(count);
-    }
-
-    public void showNotificationsCount(int count, NotificationLevel level) {
-        if (headerBanner != null) headerBanner.setNotificationCount(count, level);
-    }
 
 
 
@@ -192,9 +183,6 @@ public class DashboardUI extends JFrame {
             rightPanel.add(userLabel);
         }
 
-        // Icône notifications avec badge
-        JButton notifButton = createNotificationButton();
-        rightPanel.add(notifButton);
 
         // Séparateur
         JPanel separator = new JPanel();
@@ -215,39 +203,6 @@ public class DashboardUI extends JFrame {
         return topBar;
     }
 
-    private JButton createNotificationButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setToolTipText("Notifications");
-
-        // Icône notification
-        ImageIcon icon = loadIcon("notifications", 20, 20);
-        if (icon != null) {
-            button.setIcon(icon);
-        }
-
-        // Badge (simulé)
-        button.setText("3"); // Nombre de notifications non lues
-        button.setFont(new Font("Segoe UI", Font.BOLD, 10));
-        button.setForeground(Color.WHITE);
-        button.setHorizontalTextPosition(JButton.CENTER);
-        button.setVerticalTextPosition(JButton.CENTER);
-
-        // Style du bouton
-        button.setPreferredSize(new Dimension(32, 32));
-        button.setBackground(new Color(52, 152, 219));
-        button.setOpaque(true);
-
-        button.addActionListener(e -> {
-            // Ouvrir les notifications
-            openPage(ApplicationPages.NOTIFICATIONS);
-        });
-
-        return button;
-    }
 
     private JPanel createWindowControls() {
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 12)); // Centrage vertical
@@ -410,12 +365,15 @@ public class DashboardUI extends JFrame {
 
         sidebar.add(brandPanel);
 
-        // Navigation items
+        // Navigation items - adapter selon le rôle
+        boolean isAdmin = principal != null && principal.roles() != null &&
+            principal.roles().contains(RoleEnum.ADMIN);
+
         String[][] navItems = {
             {"Dashboard", "dashboard"},
             {"Utilisateurs", "users"},
             {"Cabinets", "cabinet"},
-            {"Notifications", "notifications"},
+            {isAdmin ? "Logs" : "Notifications", isAdmin ? "logs" : "notifications"},
             {"Paramètres", "settings"}
         };
 
@@ -473,7 +431,7 @@ public class DashboardUI extends JFrame {
                         case "Dashboard" -> ApplicationPages.DASHBOARD;
                         case "Utilisateurs" -> ApplicationPages.USERS;
                         case "Cabinets" -> ApplicationPages.CABINETS;
-                        case "Notifications" -> ApplicationPages.NOTIFICATIONS;
+                        case "Notifications", "Logs" -> ApplicationPages.NOTIFICATIONS; // Factory gère la redirection
                         case "Paramètres" -> ApplicationPages.PARAMETRAGE;
                         default -> ApplicationPages.DASHBOARD;
                     };

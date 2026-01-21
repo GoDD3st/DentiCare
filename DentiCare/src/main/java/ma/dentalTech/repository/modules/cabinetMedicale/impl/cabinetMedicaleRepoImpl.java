@@ -43,33 +43,48 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void create(CabinetMedicale cm) throws SQLException {
-        String sql = "INSERT INTO cabinet_medical (nom, email, logo, rue, ville, code_postal, tel1, tel2, site_web, instagram, facebook, description, id_patient, id_situation, id_medecin, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cabinet_medical (nom, email, logo, adresse, tel1, tel2, siteWeb, instagram, facebook, description, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            // Extraction des IDs des relations
-            Long idPat = (cm.getPatient() != null) ? cm.getPatient().getIdPatient() : null;
-            Long idSit = (cm.getSituationFinanciere() != null) ? cm.getSituationFinanciere().getIdSituation() : null;
-            Long idMed = (cm.getMedecin() != null) ? cm.getMedecin().getIdMedecin() : null;
 
             ps.setString(1, cm.getNom());
             ps.setString(2, cm.getEmail());
             ps.setString(3, cm.getLogo());
-            // Mapping de l'Adresse
-            ps.setString(4, cm.getAdresse() != null ? cm.getAdresse().getRue() : null);
-            ps.setString(5, cm.getAdresse() != null ? cm.getAdresse().getVille() : null);
-            ps.setString(6, cm.getAdresse() != null ? cm.getAdresse().getCodePostal() : null);
 
-            ps.setString(7, cm.getTel1());
-            ps.setString(8, cm.getTel2());
-            ps.setString(9, cm.getSiteWeb());
-            ps.setString(10, cm.getInstagram());
-            ps.setString(11, cm.getFacebook());
-            ps.setString(12, cm.getDescription());
-            ps.setObject(13, idPat);
-            ps.setObject(14, idSit);
-            ps.setObject(15, idMed);
-            ps.setString(16, cm.getCreePar());
+            // Mapping de l'Adresse - créer une adresse formatée
+            String adresseStr = null;
+            if (cm.getAdresse() != null) {
+                StringBuilder adresseBuilder = new StringBuilder();
+                if (cm.getAdresse().getRue() != null && !cm.getAdresse().getRue().trim().isEmpty()) {
+                    adresseBuilder.append(cm.getAdresse().getRue().trim());
+                }
+                if (cm.getAdresse().getVille() != null && !cm.getAdresse().getVille().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getVille().trim());
+                }
+                if (cm.getAdresse().getCodePostal() != null && !cm.getAdresse().getCodePostal().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(" ");
+                    adresseBuilder.append(cm.getAdresse().getCodePostal().trim());
+                }
+                if (cm.getAdresse().getRégion() != null && !cm.getAdresse().getRégion().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getRégion().trim());
+                }
+                if (cm.getAdresse().getPays() != null && !cm.getAdresse().getPays().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getPays().trim());
+                }
+                adresseStr = adresseBuilder.toString();
+            }
+            ps.setString(4, adresseStr);
+
+            ps.setString(5, cm.getTel1());
+            ps.setString(6, cm.getTel2());
+            ps.setString(7, cm.getSiteWeb());
+            ps.setString(8, cm.getInstagram());
+            ps.setString(9, cm.getFacebook());
+            ps.setString(10, cm.getDescription());
+            ps.setString(11, cm.getCreePar());
 
             ps.executeUpdate();
 
@@ -83,31 +98,49 @@ public class cabinetMedicaleRepoImpl implements cabinetMedicaleRepo {
 
     @Override
     public void update(CabinetMedicale cm) throws SQLException {
-        String sql = "UPDATE cabinet_medical SET nom = ?, email = ?, logo = ?, rue = ?, ville = ?, code_postal = ?, tel1 = ?, tel2 = ?, site_web = ?, instagram = ?, facebook = ?, description = ?, id_patient = ?, id_situation = ?, id_medecin = ?, modifie_par = ? WHERE id_cabinet = ?";
+        String sql = "UPDATE cabinet_medical SET nom = ?, email = ?, logo = ?, adresse = ?, tel1 = ?, tel2 = ?, siteWeb = ?, instagram = ?, facebook = ?, description = ?, modifie_par = ? WHERE id_cabinet = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
-
-            Long idPat = (cm.getPatient() != null) ? cm.getPatient().getIdPatient() : null;
-            Long idSit = (cm.getSituationFinanciere() != null) ? cm.getSituationFinanciere().getIdSituation() : null;
-            Long idMed = (cm.getMedecin() != null) ? cm.getMedecin().getIdMedecin() : null;
 
             ps.setString(1, cm.getNom());
             ps.setString(2, cm.getEmail());
             ps.setString(3, cm.getLogo());
-            ps.setString(4, cm.getAdresse() != null ? cm.getAdresse().getRue() : null);
-            ps.setString(5, cm.getAdresse() != null ? cm.getAdresse().getVille() : null);
-            ps.setString(6, cm.getAdresse() != null ? cm.getAdresse().getCodePostal() : null);
-            ps.setString(7, cm.getTel1());
-            ps.setString(8, cm.getTel2());
-            ps.setString(9, cm.getSiteWeb());
-            ps.setString(10, cm.getInstagram());
-            ps.setString(11, cm.getFacebook());
-            ps.setString(12, cm.getDescription());
-            ps.setObject(13, idPat);
-            ps.setObject(14, idSit);
-            ps.setObject(15, idMed);
-            ps.setString(16, cm.getModifiePar());
-            ps.setLong(17, cm.getIdCabinet());
+
+            // Mapping de l'Adresse - créer une adresse formatée
+            String adresseStr = null;
+            if (cm.getAdresse() != null) {
+                StringBuilder adresseBuilder = new StringBuilder();
+                if (cm.getAdresse().getRue() != null && !cm.getAdresse().getRue().trim().isEmpty()) {
+                    adresseBuilder.append(cm.getAdresse().getRue().trim());
+                }
+                if (cm.getAdresse().getVille() != null && !cm.getAdresse().getVille().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getVille().trim());
+                }
+                if (cm.getAdresse().getCodePostal() != null && !cm.getAdresse().getCodePostal().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(" ");
+                    adresseBuilder.append(cm.getAdresse().getCodePostal().trim());
+                }
+                if (cm.getAdresse().getRégion() != null && !cm.getAdresse().getRégion().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getRégion().trim());
+                }
+                if (cm.getAdresse().getPays() != null && !cm.getAdresse().getPays().trim().isEmpty()) {
+                    if (adresseBuilder.length() > 0) adresseBuilder.append(", ");
+                    adresseBuilder.append(cm.getAdresse().getPays().trim());
+                }
+                adresseStr = adresseBuilder.toString();
+            }
+            ps.setString(4, adresseStr);
+
+            ps.setString(5, cm.getTel1());
+            ps.setString(6, cm.getTel2());
+            ps.setString(7, cm.getSiteWeb());
+            ps.setString(8, cm.getInstagram());
+            ps.setString(9, cm.getFacebook());
+            ps.setString(10, cm.getDescription());
+            ps.setString(11, cm.getModifiePar());
+            ps.setLong(12, cm.getIdCabinet());
 
             ps.executeUpdate();
         }
