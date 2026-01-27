@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.cabinetMedicale.impl;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 import ma.dentalTech.repository.modules.cabinetMedicale.api.cabinetMedicaleRepo;
 import ma.dentalTech.service.modules.cabinetMedicale.api.CabinetMedicaleService;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,8 +11,9 @@ public class CabinetMedicaleServiceImpl implements CabinetMedicaleService {
 
     private final cabinetMedicaleRepo repository;
 
-    public CabinetMedicaleServiceImpl(cabinetMedicaleRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public CabinetMedicaleServiceImpl() {
+        this.repository = ApplicationContext.getBean(cabinetMedicaleRepo.class);
     }
 
     @Override

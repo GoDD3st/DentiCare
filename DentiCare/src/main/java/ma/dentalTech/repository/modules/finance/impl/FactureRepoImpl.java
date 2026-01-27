@@ -14,13 +14,44 @@ public class FactureRepoImpl implements FactureRepo {
 
     @Override
     public List<Facture> findAll() throws SQLException {
-        String sql = "SELECT * FROM facture ORDER BY id_facture";
+        String sql =
+                "SELECT f.*, " +
+                "c.id_dossier_medical, dm.id_patient, p.nom AS patient_nom, p.telephone AS patient_telephone " +
+                "FROM facture f " +
+                "LEFT JOIN consultation c ON f.id_consultation = c.id_consultation " +
+                "LEFT JOIN dossier_medical dm ON c.id_dossier_medical = dm.id_dossier " +
+                "LEFT JOIN patient p ON dm.id_patient = p.id_patient " +
+                "ORDER BY f.id_facture";
         List<Facture> list = new ArrayList<>();
         try (Connection c = SessionFactory.getInstance().getConnection();
              Statement stmt = c.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                list.add(RowMappers.mapFacture(rs));
+                Facture f = RowMappers.mapFacture(rs);
+
+                if (rs.getObject("id_dossier_medical") != null && rs.getObject("id_patient") != null) {
+                    ma.dentalTech.entities.Patient.Patient patient = ma.dentalTech.entities.Patient.Patient.builder()
+                            .idPatient(rs.getLong("id_patient"))
+                            .nom(rs.getString("patient_nom"))
+                            .telephone(rs.getString("patient_telephone"))
+                            .build();
+
+                    ma.dentalTech.entities.DossierMedicale.DossierMedicale dossier =
+                            ma.dentalTech.entities.DossierMedicale.DossierMedicale.builder()
+                                    .idDossier(rs.getLong("id_dossier_medical"))
+                                    .patient(patient)
+                                    .build();
+
+                    ma.dentalTech.entities.Consultation.Consultation consultation =
+                            ma.dentalTech.entities.Consultation.Consultation.builder()
+                                    .idConsultation(rs.getLong("id_consultation"))
+                                    .dossierMedicale(dossier)
+                                    .build();
+
+                    f.setConsultation(consultation);
+                }
+
+                list.add(f);
             }
         }
         return list;

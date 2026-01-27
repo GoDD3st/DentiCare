@@ -176,12 +176,12 @@ public class CabinetsPanel extends JPanel {
                         adresse = cabinet.getAdresse().toString();
                     }
                     String telephone = cabinet.getTel1() != null ? cabinet.getTel1() : "";
-
+                    
                     // Count doctors - you might need to implement this in the service
                     int nombreMedecins = 0; // TODO: Get actual count from service
-
+                    
                     String statut = "Actif"; // You can determine this based on your logic
-
+                    
                     cabinetsModel.addRow(new Object[]{idCabinet, nom, adresse, telephone, String.valueOf(nombreMedecins), statut, ""});
                 }
             }
@@ -341,10 +341,10 @@ public class CabinetsPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isSaved()) {
             loadCabinetsData(); // Recharger les données
-            JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this,
                 "Cabinet créé avec succès !",
                 "Succès",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -371,10 +371,10 @@ public class CabinetsPanel extends JPanel {
                     dialog.setVisible(true);
                     if (dialog.isSaved()) {
                         loadCabinetsData(); // Recharger les données
-                        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this,
                             "Cabinet modifié avec succès !",
                             "Succès",
-                            JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }

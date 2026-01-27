@@ -4,6 +4,7 @@ import ma.dentalTech.entities.Admin.Admin;
 import ma.dentalTech.entities.Medecin.Medecin;
 import ma.dentalTech.repository.modules.auth.api.MedecinRepo;
 import ma.dentalTech.service.modules.auth.api.MedecinService;
+import ma.dentalTech.conf.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,8 +12,9 @@ import java.util.Optional;
 public class MedecinServiceImpl implements MedecinService {
     private final MedecinRepo repository;
 
-    public MedecinServiceImpl(MedecinRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public MedecinServiceImpl() {
+        this.repository = ApplicationContext.getBean(MedecinRepo.class);
     }
 
     @Override

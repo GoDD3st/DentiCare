@@ -1,11 +1,9 @@
 package ma.dentalTech.mvc.controllers.modules.cabinets.impl;
 
+import ma.dentalTech.conf.ApplicationContext;
 import ma.dentalTech.entities.CabinetMedicale.CabinetMedicale;
 import ma.dentalTech.mvc.controllers.modules.cabinets.api.CabinetsController;
-import ma.dentalTech.repository.modules.cabinetMedicale.api.cabinetMedicaleRepo;
-import ma.dentalTech.repository.modules.cabinetMedicale.impl.cabinetMedicaleRepoImpl;
 import ma.dentalTech.service.modules.cabinetMedicale.api.CabinetMedicaleService;
-import ma.dentalTech.service.modules.cabinetMedicale.impl.CabinetMedicaleServiceImpl;
 
 import javax.swing.*;
 import java.util.List;
@@ -17,8 +15,7 @@ public class CabinetsControllerImpl implements CabinetsController {
     private final CabinetMedicaleService cabinetService;
 
     public CabinetsControllerImpl() {
-        cabinetMedicaleRepo repo = new cabinetMedicaleRepoImpl();
-        this.cabinetService = new CabinetMedicaleServiceImpl(repo);
+        this.cabinetService = ApplicationContext.getBean(CabinetMedicaleService.class);
     }
 
     @Override

@@ -17,6 +17,8 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
 
     // Services
     private ma.dentalTech.service.modules.patient.api.PatientService patientService;
+    private ma.dentalTech.service.modules.dossierMedicale.api.ConsultationService consultationService;
+    private ma.dentalTech.service.modules.facture.api.FactureService factureService;
 
     // Table references for refreshing
     private JTable patientsTable;
@@ -41,6 +43,34 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
             }
         }
         return patientService;
+    }
+
+    private ma.dentalTech.service.modules.dossierMedicale.api.ConsultationService getConsultationService() {
+        if (consultationService == null) {
+            try {
+                consultationService = ma.dentalTech.conf.ApplicationContext.getBean(
+                    ma.dentalTech.service.modules.dossierMedicale.api.ConsultationService.class);
+            } catch (Exception e) {
+                System.err.println("Erreur lors du chargement de ConsultationService (dashboard secrétaire): " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return consultationService;
+    }
+
+    private ma.dentalTech.service.modules.facture.api.FactureService getFactureService() {
+        if (factureService == null) {
+            try {
+                Object bean = ma.dentalTech.conf.ApplicationContext.getBean("factureService");
+                if (bean instanceof ma.dentalTech.service.modules.facture.api.FactureService service) {
+                    factureService = service;
+                }
+            } catch (Exception e) {
+                System.err.println("Erreur lors du chargement de FactureService (dashboard secrétaire): " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return factureService;
     }
 
     @Override
@@ -397,17 +427,92 @@ public class SecretaryDashboardPanel extends BaseDashboardPanel {
 
     private void loadRDVData(DefaultTableModel model) {
         model.setRowCount(0); // Clear existing data
-        // TODO: Implement RDV service and data loading
-        // For now, keep some sample data
-        model.addRow(new Object[]{"Ahmed Benali", "2024-01-16 10:00", "Confirmé", ""});
-        model.addRow(new Object[]{"Fatima Alami", "2024-01-16 11:00", "En attente", ""});
+        try {
+            var service = getConsultationService();
+            if (service == null) {
+                return;
+            }
+
+            java.util.List<ma.dentalTech.entities.Consultation.Consultation> consultations = service.findAll();
+            java.time.format.DateTimeFormatter dateFormatter =
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            for (ma.dentalTech.entities.Consultation.Consultation c : consultations) {
+                String patientName = "N/A";
+                if (c.getDossierMedicale() != null
+                        && c.getDossierMedicale().getPatient() != null
+                        && c.getDossierMedicale().getPatient().getNom() != null) {
+                    patientName = c.getDossierMedicale().getPatient().getNom();
+                }
+
+                String dateHeure = "";
+                if (c.getDateConsultation() != null) {
+                    dateHeure = c.getDateConsultation().format(dateFormatter);
+                }
+                if (c.getHeureConsultation() != null) {
+                    dateHeure = dateHeure.isEmpty()
+                        ? c.getHeureConsultation().toString()
+                        : dateHeure + " " + c.getHeureConsultation().toString();
+                }
+
+                String statut = c.getStatut() != null ? c.getStatut().name() : "";
+
+                model.addRow(new Object[]{patientName, dateHeure, statut, ""});
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement des RDV (via consultations): " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void loadFacturesData(DefaultTableModel model) {
         model.setRowCount(0); // Clear existing data
-        // TODO: Implement Facture service and data loading
-        // For now, keep some sample data
-        model.addRow(new Object[]{"FAC-2024-001", "Ahmed Benali", "500 DH", "2024-01-15", "Payée", ""});
+        try {
+            var service = getFactureService();
+            if (service == null) {
+                return;
+            }
+
+            java.util.List<ma.dentalTech.entities.Facture.Facture> factures = service.findAll();
+            java.time.format.DateTimeFormatter formatter =
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+            for (ma.dentalTech.entities.Facture.Facture facture : factures) {
+                String numero = facture.getIdFacture() != null
+                    ? "FAC-" + facture.getIdFacture()
+                    : "";
+
+                String patientName = "N/A";
+                if (facture.getConsultation() != null
+                        && facture.getConsultation().getDossierMedicale() != null
+                        && facture.getConsultation().getDossierMedicale().getPatient() != null
+                        && facture.getConsultation().getDossierMedicale().getPatient().getNom() != null) {
+                    patientName = facture.getConsultation().getDossierMedicale().getPatient().getNom();
+                }
+
+                String montant = facture.getTotaleFacture() != null
+                    ? String.format("%.2f DH", facture.getTotaleFacture())
+                    : "0.00 DH";
+
+                String date = facture.getDateFacture() != null
+                    ? facture.getDateFacture().format(formatter)
+                    : "";
+
+                String statut = facture.getStatut() != null ? facture.getStatut().name() : "";
+
+                model.addRow(new Object[]{
+                    numero,
+                    patientName,
+                    montant,
+                    date,
+                    statut,
+                    ""
+                });
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement des factures (dashboard secrétaire): " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // Dialog methods

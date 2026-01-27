@@ -12,7 +12,7 @@ import ma.dentalTech.entities.DossierMedicale.DossierMedicale;
 import ma.dentalTech.entities.Facture.Facture;
 import ma.dentalTech.entities.FileAttente.FileAttente;
 import ma.dentalTech.entities.InterventionMedecin.InterventionMedecin;
-import ma.dentalTech.entities.Log.Log;
+import ma.dentalTech.entities.LogEntity;
 import ma.dentalTech.entities.Medicament.Medicament;
 import ma.dentalTech.entities.Notification.Notification;
 import ma.dentalTech.entities.Ordonnance.Ordonnance;
@@ -399,6 +399,40 @@ public final class RowMappers {
                 .build();
         mapBaseFields(l, rs);
         return l;
+    }
+
+    public static LogEntity mapLogEntity(ResultSet rs) throws SQLException {
+        // Créer l'utilisateur si id_utilisateur est présent
+        Utilisateur utilisateur = null;
+        if (rs.getObject("id_utilisateur") != null) {
+            utilisateur = Utilisateur.builder()
+                    .idUser(rs.getLong("id_utilisateur"))
+                    .build();
+        }
+
+        LogEntity l = LogEntity.builder()
+                .idLog(rs.getLong("id_log"))
+                .action(rs.getString("action"))
+                .dateHeure(rs.getTimestamp("date_heure") != null ? rs.getTimestamp("date_heure").toLocalDateTime() : null)
+                .ipAdresse(rs.getString("ip_adresse"))
+                .status(rs.getString("statut"))
+                .utilisateur(utilisateur)
+                .build();
+        mapBaseFields(l, rs);
+        return l;
+    }
+
+    public static SituationFinanciere mapSituationFinanciere(ResultSet rs) throws SQLException {
+        SituationFinanciere sf = SituationFinanciere.builder()
+                .idSituation(rs.getLong("id_situation"))
+                .totaleDesActes(rs.getDouble("totale_des_actes"))
+                .totalePaye(rs.getDouble("totale_paye"))
+                .credit(rs.getDouble("credit"))
+                .statut(rs.getString("statut") != null ? ma.dentalTech.entities.enums.SituationStatutEnum.valueOf(rs.getString("statut")) : null)
+                .enPromo(rs.getBoolean("en_promo"))
+                .build();
+        mapBaseFields(sf, rs);
+        return sf;
     }
 
     public static Statistique mapStatistique(ResultSet rs) throws SQLException {

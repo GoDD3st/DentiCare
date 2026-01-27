@@ -2069,9 +2069,40 @@ public class AdminDashboardPanel extends BaseDashboardPanel {
                         System.out.println("  medecinService est null");
                     }
 
-                    // Nombre de patients (difficile à lier directement au cabinet)
-                    // Pour l'instant, on répartit équitablement ou on laisse à 0
-                    nbPatients = 0; // TODO: Implémenter la logique de comptage par cabinet
+                    // Nombre de patients (liés via dossier médical -> consultations -> médecin -> cabinet)
+                    try {
+                        java.sql.Connection conn = ma.dentalTech.conf.SessionFactory.getInstance().getConnection();
+                        String sql = "SELECT COUNT(DISTINCT p.id_patient) as count FROM patient p " +
+                                    "JOIN dossier_medical dm ON p.id_patient = dm.id_patient " +
+                                    "JOIN consultation c ON dm.id_dossier = c.id_dossier_medical " +
+                                    "JOIN medecin m ON c.id_medecin = m.id_medecin " +
+                                    "JOIN staff s ON m.id_staff = s.id_staff " +
+                                    "WHERE s.id_cabinet = ?";
+                        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+                        ps.setLong(1, cabinetId);
+                        java.sql.ResultSet rs = ps.executeQuery();
+
+                        if (rs.next()) {
+                            nbPatients = rs.getInt("count");
+                        }
+
+                        rs.close();
+                        ps.close();
+
+                        System.out.println("  Patients pour ce cabinet: " + nbPatients);
+                    } catch (Exception e) {
+                        System.out.println("  Erreur requête patients: " + e.getMessage());
+                        // Fallback: compter tous les patients et les répartir
+                        try {
+                            List<ma.dentalTech.entities.Patient.Patient> allPatients = patientService.findAll();
+                            if (!allPatients.isEmpty() && !cabinets.isEmpty()) {
+                                nbPatients = allPatients.size() / cabinets.size(); // Répartition simple
+                                System.out.println("  Fallback: patients répartis: " + nbPatients);
+                            }
+                        } catch (Exception e2) {
+                            System.out.println("  Erreur fallback patients: " + e2.getMessage());
+                        }
+                    }
 
                     // Nombre de rendez-vous (consultations du cabinet)
                     if (consultationService != null) {

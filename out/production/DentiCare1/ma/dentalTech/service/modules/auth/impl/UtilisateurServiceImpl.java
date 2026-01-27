@@ -4,6 +4,7 @@ import ma.dentalTech.entities.Utilisateur.Utilisateur;
 import ma.dentalTech.repository.modules.auth.api.UtilisateurRepo;
 import ma.dentalTech.repository.modules.cabinetMedicale.api.cabinetMedicaleRepo;
 import ma.dentalTech.service.modules.auth.api.UtilisateurService;
+import ma.dentalTech.conf.ApplicationContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +13,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     private final UtilisateurRepo repository;
 
-    public UtilisateurServiceImpl(UtilisateurRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public UtilisateurServiceImpl() {
+        this.repository = ApplicationContext.getBean(UtilisateurRepo.class);
     }
 
     @Override

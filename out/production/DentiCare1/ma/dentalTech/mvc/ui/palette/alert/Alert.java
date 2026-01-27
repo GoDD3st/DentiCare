@@ -153,7 +153,7 @@ public final class Alert {
         btn.setFont(TEXT_FONT);
         btn.setFocusPainted(false);
         btn.setPreferredSize(new Dimension(110, 34));
-        // ⚠️ On ne touche pas au background/foreground => Look&Feel original conservé
+        // On ne touche pas au background/foreground => Look&Feel original conservé
         return btn;
     }
 
@@ -172,9 +172,24 @@ public final class Alert {
 
     private static ImageIcon loadIcon(String path, int w, int h) {
         URL url = Alert.class.getResource(path);
-        if (url == null) throw new IllegalArgumentException("Icône introuvable : " + path);
+        if (url == null) {
+            // Créer une icône par défaut si l'icône n'existe pas
+            return createDefaultIcon(w, h);
+        }
 
         Image img = new ImageIcon(url).getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
+    private static ImageIcon createDefaultIcon(int w, int h) {
+        // Créer une icône carrée grise par défaut
+        Image img = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = (Graphics2D) img.getGraphics();
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.fillRect(0, 0, w, h);
+        g2d.setColor(Color.DARK_GRAY);
+        g2d.drawRect(0, 0, w-1, h-1);
+        g2d.dispose();
         return new ImageIcon(img);
     }
 

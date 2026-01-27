@@ -3,6 +3,7 @@ package ma.dentalTech.mvc.ui.palette.sidebarBuilder;
 import ma.dentalTech.mvc.dto.authentificationDtos.UserPrincipal;
 import ma.dentalTech.mvc.ui.palette.alert.Alert;
 import ma.dentalTech.mvc.ui.palette.buttons.PillNavButtonLight;
+import ma.dentalTech.mvc.ui.palette.buttons.NavSectionButton;
 import ma.dentalTech.mvc.ui.palette.utils.ImageTools;
 import ma.dentalTech.service.modules.auth.api.AuthorizationService;
 
@@ -41,69 +42,77 @@ public final class SidebarBuilder {
         title.setBorder(new EmptyBorder(0, 6, 12, 0));
         sidebar.add(title);
 
-        // group by section (garde l’ordre)
+        // group by section (garde l'ordre)
         Map<String, List<NavSpec>> bySection = new LinkedHashMap<>();
 
-        //java.util.List<NavButton> allButtons = new java.util.ArrayList<>();
-
+        // Collections pour gérer l'état des sections
         java.util.List<PillNavButtonLight> allButtons = new java.util.ArrayList<>();
+        Map<String, NavSectionButton> sectionButtons = new HashMap<>();
+        Map<String, List<PillNavButtonLight>> sectionItems = new HashMap<>();
 
         for (NavSpec it : items) {
             bySection.computeIfAbsent(it.section(), k -> new ArrayList<>()).add(it);
         }
 
         for (var entry : bySection.entrySet()) {
-            sidebar.add(sectionTitle(entry.getKey()));
+            String sectionName = entry.getKey();
+            List<NavSpec> sectionSpecs = entry.getValue();
 
-            for (NavSpec spec : entry.getValue()) {
+            // Créer le bouton de section cliquable
+            NavSectionButton sectionBtn = new NavSectionButton(sectionName);
+            sectionButtons.put(sectionName, sectionBtn);
+            sectionItems.put(sectionName, new ArrayList<>());
 
+            sidebar.add(sectionBtn);
+
+            // Créer et ajouter les éléments de navigation pour cette section
+            for (NavSpec spec : sectionSpecs) {
                 boolean allowed = (spec.privilege() == null || spec.privilege().isBlank())
                                   || auth.hasPermission(principal, spec.privilege());
 
                 if (!allowed && hideForbidden) continue;
 
                 ImageIcon icon = safeIcon(spec.iconPath(), 28, 28);
-
-                //old button
-                //MyButton btn = new MyButton(spec.label(), icon, new Font("Optima", Font.BOLD, 16));
-               // NavButton btn = new NavButton(spec.label(), icon);
                 PillNavButtonLight btn = new PillNavButtonLight(spec.label(), icon);
 
                 btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
                 btn.setAlignmentX(Component.LEFT_ALIGNMENT);
-
                 btn.setEnabled(allowed);
-/*
-                btn.addActionListener(e -> {
-                    if (!btn.isEnabled()) {
-                        Alert.warning(parentForAlerts, "Accès refusé : privilège requis = " + spec.privilege());
-                        return;
-                    }
-                    for (NavButton b : allButtons) b.setActive(false);
-                    btn.setActive(true);
-
-                    navigator.go(btn, spec.pageId());
-                });
-
- */
 
                 btn.addActionListener(e -> {
                     if (!btn.isEnabled()) {
                         Alert.warning(parentForAlerts, "Accès refusé : privilège requis = " + spec.privilege());
                         return;
                     }
+                    // Désactiver tous les autres boutons
                     for (PillNavButtonLight b : allButtons) b.setActive(false);
                     btn.setActive(true);
 
-                    navigator.go(null, spec.pageId()); // ou adapte Navigator (voir ci-dessous)
+                    navigator.go(null, spec.pageId());
                 });
-
 
                 sidebar.add(btn);
                 allButtons.add(btn);
+                sectionItems.get(sectionName).add(btn);
 
                 sidebar.add(Box.createVerticalStrut(6));
             }
+
+            // Gestionnaire pour développer/réduire la section
+            final String finalSectionName = sectionName;
+            sectionBtn.addActionListener(e -> {
+                boolean currentlyExpanded = sectionBtn.isExpanded();
+                sectionBtn.setExpanded(!currentlyExpanded);
+
+                // Masquer/afficher tous les boutons de cette section
+                for (PillNavButtonLight btn : sectionItems.get(finalSectionName)) {
+                    btn.setVisible(!currentlyExpanded);
+                }
+
+                // Revalider et repeindre la sidebar
+                sidebar.revalidate();
+                sidebar.repaint();
+            });
 
             sidebar.add(Box.createVerticalStrut(10));
         }
@@ -116,13 +125,7 @@ public final class SidebarBuilder {
         return sp;
     }
 
-    private static JLabel sectionTitle(String text) {
-        JLabel l = new JLabel(text);
-        l.setFont(new Font("Optima", Font.BOLD, 14));
-        l.setForeground(new Color(90, 90, 90));
-        l.setBorder(new EmptyBorder(10, 6, 6, 0));
-        return l;
-    }
+    // Méthode supprimée - remplacée par NavSectionButton
 
     private static ImageIcon safeIcon(String path, int w, int h) {
         try {

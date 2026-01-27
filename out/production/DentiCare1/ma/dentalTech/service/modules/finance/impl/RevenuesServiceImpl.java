@@ -3,6 +3,7 @@ package ma.dentalTech.service.modules.finance.impl;
 import ma.dentalTech.service.modules.finance.api.RevenuesService;
 import ma.dentalTech.repository.modules.finance.api.RevenuesRepo;
 import ma.dentalTech.entities.Revenues.Revenues;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +11,9 @@ public class RevenuesServiceImpl implements RevenuesService {
 
     private final RevenuesRepo repository;
 
-    // Injection par constructeur
-    public RevenuesServiceImpl(RevenuesRepo repository) {
-        this.repository = repository;
+    // Injection via ApplicationContext
+    public RevenuesServiceImpl() {
+        this.repository = ApplicationContext.getBean(RevenuesRepo.class);
     }
 
     @Override

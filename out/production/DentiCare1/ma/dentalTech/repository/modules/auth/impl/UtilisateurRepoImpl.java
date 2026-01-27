@@ -39,19 +39,24 @@ public class UtilisateurRepoImpl implements UtilisateurRepo {
 
     @Override
     public void create(Utilisateur u) throws SQLException {
-        String sql = "INSERT INTO utilisateur (nom, email, adresse, cin, tel, sexe, login, motDePass, dateNaissance, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO utilisateur (id_entite, nom, email, adresse, cin, tel, sexe, login, motDePass, dateNaissance, cree_par) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, u.getNom());
-            ps.setString(2, u.getEmail());
-            ps.setString(3, u.getAdresse());
-            ps.setString(4, u.getCin());
-            ps.setString(5, u.getTel());
-            ps.setString(6, String.valueOf(u.getSexe()));
-            ps.setString(7, u.getLogin());
-            ps.setString(8, u.getMotDePass());
-            ps.setDate(9, u.getDateNaissance() != null ? Date.valueOf(u.getDateNaissance()) : null);
-            ps.setString(10, u.getCreePar());
+            if (u.getIdEntite() != null) {
+                ps.setLong(1, u.getIdEntite());
+            } else {
+                ps.setNull(1, java.sql.Types.BIGINT);
+            }
+            ps.setString(2, u.getNom());
+            ps.setString(3, u.getEmail());
+            ps.setString(4, u.getAdresse());
+            ps.setString(5, u.getCin());
+            ps.setString(6, u.getTel());
+            ps.setString(7, String.valueOf(u.getSexe()));
+            ps.setString(8, u.getLogin());
+            ps.setString(9, u.getMotDePass());
+            ps.setDate(10, u.getDateNaissance() != null ? Date.valueOf(u.getDateNaissance()) : null);
+            ps.setString(11, u.getCreePar());
 
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -62,7 +67,7 @@ public class UtilisateurRepoImpl implements UtilisateurRepo {
 
     @Override
     public void update(Utilisateur u) throws SQLException {
-        String sql = "UPDATE utilisateur SET nom = ?, email = ?, adresse = ?, cin = ?, tel = ?, sexe = ?, login = ?, motDePass = ?, dateNaissance = ?, modifie_par = ? WHERE id_user = ?";
+        String sql = "UPDATE utilisateur SET nom = ?, email = ?, adresse = ?, cin = ?, tel = ?, sexe = ?, login = ?, motDePass = ?, dateNaissance = ?, modifie_par = ?, date_derniere_modification = CURRENT_TIMESTAMP WHERE id_user = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, u.getNom());

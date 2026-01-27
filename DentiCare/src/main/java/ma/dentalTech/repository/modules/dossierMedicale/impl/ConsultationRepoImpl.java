@@ -15,10 +15,16 @@ import static ma.dentalTech.repository.common.RowMappers.mapConsultation;
 public class ConsultationRepoImpl implements ConsultationRepo {
     @Override
     public List<Consultation> findAll() throws SQLException{
-        String sql = "SELECT c.*, dm.id_patient, p.nom as patient_nom, p.telephone as patient_telephone " +
+        String sql = "SELECT c.*, " +
+                     "dm.id_patient, " +
+                     "p.nom as patient_nom, p.telephone as patient_telephone, " +
+                     "m.id_medecin, u.nom as medecin_nom " +
                      "FROM consultation c " +
                      "LEFT JOIN dossier_medical dm ON c.id_dossier_medical = dm.id_dossier " +
                      "LEFT JOIN patient p ON dm.id_patient = p.id_patient " +
+                     "LEFT JOIN medecin m ON c.id_medecin = m.id_medecin " +
+                     "LEFT JOIN staff s ON m.id_staff = s.id_staff " +
+                     "LEFT JOIN utilisateur u ON s.id_user = u.id_user " +
                      "ORDER BY c.id_consultation";
         List<Consultation> list = new ArrayList<>();
         try (Connection conn = SessionFactory.getInstance().getConnection();
@@ -41,6 +47,15 @@ public class ConsultationRepoImpl implements ConsultationRepo {
                     dossier.setPatient(patient);
                     consultation.setDossierMedicale(dossier);
                 }
+
+                // Set medecin (with nom) from joined query
+                if (rs.getObject("id_medecin") != null && rs.getString("medecin_nom") != null) {
+                    ma.dentalTech.entities.Medecin.Medecin medecin = ma.dentalTech.entities.Medecin.Medecin.builder()
+                        .idMedecin(rs.getLong("id_medecin"))
+                        .nom(rs.getString("medecin_nom"))
+                        .build();
+                    consultation.setMedecin(medecin);
+                }
                 list.add(consultation);
             }
         } catch (SQLException e) {
@@ -51,12 +66,49 @@ public class ConsultationRepoImpl implements ConsultationRepo {
 
     @Override
     public Optional<Consultation> findById(Long id) throws SQLException {
-        String sql = "SELECT * FROM consultation WHERE id_consultation = ?";
+        String sql = "SELECT c.*, " +
+                     "dm.id_patient, " +
+                     "p.nom as patient_nom, p.telephone as patient_telephone, " +
+                     "m.id_medecin, u.nom as medecin_nom " +
+                     "FROM consultation c " +
+                     "LEFT JOIN dossier_medical dm ON c.id_dossier_medical = dm.id_dossier " +
+                     "LEFT JOIN patient p ON dm.id_patient = p.id_patient " +
+                     "LEFT JOIN medecin m ON c.id_medecin = m.id_medecin " +
+                     "LEFT JOIN staff s ON m.id_staff = s.id_staff " +
+                     "LEFT JOIN utilisateur u ON s.id_user = u.id_user " +
+                     "WHERE c.id_consultation = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return Optional.of(RowMappers.mapConsultation(rs));
+                if (rs.next()) {
+                    Consultation consultation = mapConsultation(rs);
+
+                    if (rs.getString("patient_nom") != null) {
+                        ma.dentalTech.entities.DossierMedicale.DossierMedicale dossier = ma.dentalTech.entities.DossierMedicale.DossierMedicale.builder()
+                            .idDossier(rs.getLong("id_dossier_medical"))
+                            .build();
+
+                        ma.dentalTech.entities.Patient.Patient patient = ma.dentalTech.entities.Patient.Patient.builder()
+                            .idPatient(rs.getLong("id_patient"))
+                            .nom(rs.getString("patient_nom"))
+                            .telephone(rs.getString("patient_telephone"))
+                            .build();
+
+                        dossier.setPatient(patient);
+                        consultation.setDossierMedicale(dossier);
+                    }
+
+                    if (rs.getObject("id_medecin") != null && rs.getString("medecin_nom") != null) {
+                        ma.dentalTech.entities.Medecin.Medecin medecin = ma.dentalTech.entities.Medecin.Medecin.builder()
+                            .idMedecin(rs.getLong("id_medecin"))
+                            .nom(rs.getString("medecin_nom"))
+                            .build();
+                        consultation.setMedecin(medecin);
+                    }
+
+                    return Optional.of(consultation);
+                }
                 return Optional.empty();
             }
         } catch (SQLException e) { throw new RuntimeException(e); }

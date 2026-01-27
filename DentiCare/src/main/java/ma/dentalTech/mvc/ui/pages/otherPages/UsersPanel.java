@@ -361,10 +361,10 @@ public class UsersPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isSaved()) {
             loadUsersData(); // Recharger les données
-            JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this,
                 "Utilisateur créé avec succès !",
                 "Succès",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -390,10 +390,10 @@ public class UsersPanel extends JPanel {
         dialog.setVisible(true);
         if (dialog.isSaved()) {
             loadUsersData(); // Recharger les données
-            JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(this,
                 "Utilisateur modifié avec succès !",
                 "Succès",
-                JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

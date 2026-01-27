@@ -19,8 +19,7 @@ public class SideBarPanel extends JPanel {
 
     private void initializeLayout() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        // 🎨 Fond blanc ou bleu très clair selon spécifications
-        setBackground(new Color(255, 255, 255)); // Blanc (#FFFFFF)
+        setBackground(new Color(248, 249, 250));
         setBorder(new EmptyBorder(24, 0, 24, 0));
         setPreferredSize(new Dimension(240, 0));
     }
@@ -33,7 +32,7 @@ public class SideBarPanel extends JPanel {
 
         JLabel logo = new JLabel("DentiCare");
         logo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        logo.setForeground(new Color(30, 136, 229)); // #1E88E5 - Bleu principal
+        logo.setForeground(new Color(52, 152, 219));
         brandPanel.add(logo);
 
         add(brandPanel);
@@ -62,7 +61,7 @@ public class SideBarPanel extends JPanel {
                 {"Dashboard", "dashboard"},
                 {"Utilisateurs", "users"},
                 {"Cabinets", "cabinet"},
-                {"Notifications", "notifications"},
+                {"Historique", "notif"},
                 {"Paramètres", "settings"}
             };
             case MEDECIN -> new String[][]{
@@ -100,26 +99,26 @@ public class SideBarPanel extends JPanel {
             item.add(iconLabel);
         }
 
-        // Texte - couleur texte principal
+        // Texte
         JLabel textLabel = new JLabel(text);
         textLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        textLabel.setForeground(new Color(38, 50, 56)); // #263238 - Texte principal
+        textLabel.setForeground(new Color(52, 58, 64));
 
         item.add(textLabel);
 
-        // 🎨 Hover effect moderne SaaS : fond bleu clair, texte bleu principal
+        // Hover effect
         item.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                item.setBackground(new Color(227, 242, 253)); // #E3F2FD - Bleu très clair (hover)
+                item.setBackground(new Color(233, 236, 239));
                 item.setOpaque(true);
-                textLabel.setForeground(new Color(30, 136, 229)); // #1E88E5 - Bleu principal
+                textLabel.setForeground(new Color(52, 152, 219));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 item.setOpaque(false);
-                textLabel.setForeground(new Color(38, 50, 56)); // #263238 - Texte principal
+                textLabel.setForeground(new Color(52, 58, 64));
             }
 
             @Override

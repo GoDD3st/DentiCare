@@ -50,7 +50,7 @@ public final class RowMappers {
         Patient p = Patient.builder()
                 .idPatient(rs.getLong("id_patient"))
                 .nom(rs.getString("nom"))
-                .dateNaissance(rs.getDate("date_naissance") != null ? rs.getDate("date_naissance").toLocalDate() : null)
+                .dateNaissance(rs.getDate("dateNaissance") != null ? rs.getDate("dateNaissance").toLocalDate() : null)
                 .sexe(rs.getString("sexe") != null ? SexeEnum.valueOf(rs.getString("sexe")) : null)
                 .adresse(rs.getString("adresse"))
                 .telephone(rs.getString("telephone"))
@@ -76,11 +76,11 @@ public final class RowMappers {
     public static RDV mapRDV(ResultSet rs) throws SQLException {
         RDV rdv = RDV.builder()
                 .idRDV(rs.getLong("id_rdv"))
-                .date(rs.getDate("date") != null ? rs.getDate("date").toLocalDate() : null)
+                .date(rs.getDate("date_rdv") != null ? rs.getDate("date_rdv").toLocalDate() : null)
                 .heure(rs.getTime("heure") != null ? rs.getTime("heure").toLocalTime() : null)
                 .motif(rs.getString("motif"))
                 .statut(rs.getString("statut") != null ? RDVStatutEnum.valueOf(rs.getString("statut")) : null)
-                .noteMedecin(rs.getString("note_medecin"))
+                .noteMedecin(rs.getString("noteMedecin"))
                 .build();
         mapBaseFields(rdv, rs);
 
@@ -93,7 +93,7 @@ public final class RowMappers {
                 .dateConsultation(rs.getDate("date_consultation") != null ? rs.getDate("date_consultation").toLocalDate() : null)
                 .heureConsultation(rs.getTime("heure_consultation") != null ? rs.getTime("heure_consultation").toLocalTime() : null)
                 .statut(rs.getString("statut") != null ? ConsultationStatutEnum.valueOf(rs.getString("statut")) : null)
-                .observationMedecin(rs.getString("observation_medecin"))
+                .observationMedecin(rs.getString("observationMedecin"))
                 .build();
         mapBaseFields(c, rs);
 
@@ -103,9 +103,14 @@ public final class RowMappers {
     public static DossierMedicale mapDossierMedicale(ResultSet rs) throws SQLException {
         DossierMedicale dm = DossierMedicale.builder()
                 .idDossier(rs.getLong("id_dossier"))
-                .dateDeCreation(rs.getDate("date_de_creation") != null ? rs.getDate("date_de_creation").toLocalDate() : null)
+                .dateDeCreation(rs.getTimestamp("date_de_creation") != null ? rs.getTimestamp("date_de_creation").toLocalDateTime().toLocalDate() : null)
                 .build();
-        mapBaseFields(dm, rs);
+
+        // Map base fields with correct column names for dossier_medical table
+        dm.setIdEntite(rs.getLong("id_entite"));
+        dm.setDateDerniereModification(rs.getTimestamp("date_derniere_modification") != null ? rs.getTimestamp("date_derniere_modification").toLocalDateTime() : null);
+        dm.setCreePar(rs.getString("cree_par"));
+        dm.setModifiePar(rs.getString("modifie_par"));
 
         return dm;
     }
@@ -117,17 +122,15 @@ public final class RowMappers {
         m.setIdMedecin(rs.getLong("id_medecin"));
         m.setSpecialite(rs.getString("specialite"));
 
-        // Champs hérités de Staff
+        // Pour l'instant, on ne mappe que les champs disponibles dans la table medecin
+        // Les champs de Staff et Utilisateur nécessiteraient un JOIN avec les tables staff et utilisateur
         m.setIdStaff(rs.getLong("id_staff"));
-        m.setSalaire(rs.getDouble("salaire"));
-        m.setPrime(rs.getDouble("prime"));
-        m.setDateRecrutement(rs.getDate("date_recrutement") != null ? rs.getDate("date_recrutement").toLocalDate() : null);
-        m.setSoldeConge(rs.getInt("solde_conge"));
 
-        // Champs hérités de Utilisateur
-        m.setIdUser(rs.getLong("id_user"));
-
-        mapBaseFields(m, rs);
+        // Champs de BaseEntity (directement dans la table medecin)
+        m.setDateCreation(rs.getDate("date_creation") != null ? rs.getDate("date_creation").toLocalDate() : null);
+        m.setDateDerniereModification(rs.getTimestamp("date_derniere_modification") != null ? rs.getTimestamp("date_derniere_modification").toLocalDateTime() : null);
+        m.setCreePar(rs.getString("cree_par"));
+        m.setModifiePar(rs.getString("modifie_par"));
 
         return m;
     }
@@ -135,12 +138,12 @@ public final class RowMappers {
     public static Certificat mapCertificat(ResultSet rs) throws SQLException {
         Certificat cert = Certificat.builder()
                 .idCertificat(rs.getLong("id_certificat"))
-                .idDossier(rs.getLong("id_dossier"))
+                .idDossier(rs.getLong("id_dossier_medical"))
                 .idConsultation(rs.getLong("id_consultation"))
-                .dateDebut(rs.getDate("date_debut") != null ? rs.getDate("date_debut").toLocalDate() : null)
-                .dateFin(rs.getDate("date_fin") != null ? rs.getDate("date_fin").toLocalDate() : null)
+                .dateDebut(rs.getDate("dateDebut") != null ? rs.getDate("dateDebut").toLocalDate() : null)
+                .dateFin(rs.getDate("dateFin") != null ? rs.getDate("dateFin").toLocalDate() : null)
                 .duree(rs.getInt("duree"))
-                .noteMedecin(rs.getString("note_medecin"))
+                .noteMedecin(rs.getString("noteMedecin"))
                 .build();
         mapBaseFields(cert, rs);
 
@@ -162,7 +165,7 @@ public final class RowMappers {
     public static Ordonnance mapOrdonnance(ResultSet rs) throws SQLException {
         Ordonnance o = Ordonnance.builder()
                 .idOrdonnance(rs.getLong("id_ordonnance"))
-                .date(rs.getDate("date") != null ? rs.getDate("date").toLocalDate() : null)
+                .date(rs.getDate("date_ord") != null ? rs.getDate("date_ord").toLocalDate() : null)
                 .build();
         mapBaseFields(o, rs);
 
@@ -226,9 +229,9 @@ public final class RowMappers {
                 .tel(rs.getString("tel"))
                 .sexe(rs.getString("sexe") != null ? SexeEnum.valueOf(rs.getString("sexe")) : null)
                 .login(rs.getString("login"))
-                .motDePass(rs.getString("mot_de_pass"))
-                .lastLoginDate(rs.getDate("last_login_date") != null ? rs.getDate("last_login_date").toLocalDate() : null)
-                .dateNaissance(rs.getDate("date_naissance") != null ? rs.getDate("date_naissance").toLocalDate() : null)
+                .motDePass(rs.getString("motDePass"))
+                .lastLoginDate(rs.getDate("lastLoginDate") != null ? rs.getDate("lastLoginDate").toLocalDate() : null)
+                .dateNaissance(rs.getDate("dateNaissance") != null ? rs.getDate("dateNaissance").toLocalDate() : null)
                 .build();
 
         mapBaseFields(u, rs);
@@ -237,9 +240,30 @@ public final class RowMappers {
     }
 
     public static Role mapRole(ResultSet rs) throws SQLException {
+        String libelleStr = rs.getString("libelle");
+        RoleEnum libelle = null;
+        if (libelleStr != null) {
+            try {
+                // Essayer d'abord la conversion directe
+                libelle = RoleEnum.valueOf(libelleStr);
+            } catch (IllegalArgumentException e) {
+                // Si ça échoue, essayer avec une conversion insensible à la casse
+                for (RoleEnum role : RoleEnum.values()) {
+                    if (role.name().equalsIgnoreCase(libelleStr.trim())) {
+                        libelle = role;
+                        break;
+                    }
+                }
+                // Si toujours pas trouvé, logger l'erreur et utiliser null
+                if (libelle == null) {
+                    System.err.println("Rôle inconnu dans la BD: '" + libelleStr + "'. Rôles disponibles: " +
+                        java.util.Arrays.toString(RoleEnum.values()));
+                }
+            }
+        }
         return Role.builder()
                 .idRole(rs.getLong("id_role"))
-                .libelle(rs.getString("libelle") != null ? RoleEnum.valueOf(rs.getString("libelle")) : null)
+                .libelle(libelle)
                 .build();
     }
 
@@ -325,16 +349,30 @@ public final class RowMappers {
     }
 
     public static CabinetMedicale mapCabinetMedicale(ResultSet rs) throws SQLException {
-        Adresse adr = Adresse.builder()
-                .rue(rs.getString("rue"))
-                .ville(rs.getString("ville"))
-                .codePostal(rs.getString("code_postal"))
-                .build();
+        // Adresse stockée comme une seule chaîne formatée
+        String adresseStr = rs.getString("adresse");
+        Adresse adr = null;
+        if (adresseStr != null && !adresseStr.trim().isEmpty()) {
+            adr = Adresse.builder()
+                    .rue(adresseStr) // Stocke l'adresse complète dans le champ rue
+                    .ville("")
+                    .codePostal("")
+                    .région("")
+                    .pays("")
+                    .build();
+        }
+
         CabinetMedicale cm = CabinetMedicale.builder()
                 .idCabinet(rs.getLong("id_cabinet"))
                 .nom(rs.getString("nom"))
                 .adresse(adr)
                 .email(rs.getString("email"))
+                .tel1(rs.getString("tel1"))
+                .tel2(rs.getString("tel2"))
+                .siteWeb(rs.getString("siteWeb"))
+                .instagram(rs.getString("instagram"))
+                .facebook(rs.getString("facebook"))
+                .description(rs.getString("description"))
                 .build();
         mapBaseFields(cm, rs);
         return cm;
@@ -373,5 +411,17 @@ public final class RowMappers {
                 .build();
         mapBaseFields(s, rs);
         return s;
+    }
+
+    public static LogEntity mapLogEntity(ResultSet rs) throws SQLException {
+        LogEntity l = LogEntity.builder()
+                .idLog(rs.getLong("id_log"))
+                .action(rs.getString("action"))
+                .dateHeure(rs.getTimestamp("date_heure") != null ? rs.getTimestamp("date_heure").toLocalDateTime() : null)
+                .ipAdresse(rs.getString("ip_adresse"))
+                .status(rs.getString("status"))
+                .build();
+        mapBaseFields(l, rs);
+        return l;
     }
 }

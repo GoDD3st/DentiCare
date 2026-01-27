@@ -1,7 +1,7 @@
 package ma.dentalTech.repository.modules.finance.impl;
 
 import ma.dentalTech.entities.Caisse.Caisse;
-import ma.dentalTech.repository.modules.finance.api.CaisseRepo;
+import ma.dentalTech.repository.modules.finance.api.CaisseRepository;
 import ma.dentalTech.conf.SessionFactory;
 import ma.dentalTech.repository.common.RowMappers;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CaisseRepoImpl implements CaisseRepo {
+public class CaisseRepoImpl implements CaisseRepository {
 
     @Override
     public List<Caisse> findAll() throws SQLException {
@@ -42,46 +42,46 @@ public class CaisseRepoImpl implements CaisseRepo {
     }
 
     @Override
-    public void create(Caisse ca) throws SQLException {
+    public void create(Caisse caisse) throws SQLException {
         String sql = "INSERT INTO caisse (montant, date_encaissement, mode_encaissement, reference) VALUES (?, ?, ?, ?)";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setObject(1, ca.getMontant());
-            ps.setTimestamp(2, ca.getDateEncassement() != null ? Timestamp.valueOf(ca.getDateEncassement()) : null);
-            ps.setString(3, ca.getModeEncaissement() != null ? ca.getModeEncaissement().name() : null);
-            ps.setString(4, ca.getReference());
+            ps.setDouble(1, caisse.getMontant());
+            ps.setTimestamp(2, Timestamp.valueOf(caisse.getDateEncassement()));
+            ps.setString(3, caisse.getModeEncaissement() != null ? caisse.getModeEncaissement().name() : null);
+            ps.setString(4, caisse.getReference());
 
             ps.executeUpdate();
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
-                    ca.setIdCaisse(keys.getLong(1));
+                    caisse.setIdCaisse(keys.getLong(1));
                 }
             }
         }
     }
 
     @Override
-    public void update(Caisse ca) throws SQLException {
+    public void update(Caisse caisse) throws SQLException {
         String sql = "UPDATE caisse SET montant = ?, date_encaissement = ?, mode_encaissement = ?, reference = ? WHERE id_caisse = ?";
         try (Connection c = SessionFactory.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
-            ps.setObject(1, ca.getMontant());
-            ps.setTimestamp(2, ca.getDateEncassement() != null ? Timestamp.valueOf(ca.getDateEncassement()) : null);
-            ps.setString(3, ca.getModeEncaissement() != null ? ca.getModeEncaissement().name() : null);
-            ps.setString(4, ca.getReference());
-            ps.setLong(5, ca.getIdCaisse());
+            ps.setDouble(1, caisse.getMontant());
+            ps.setTimestamp(2, Timestamp.valueOf(caisse.getDateEncassement()));
+            ps.setString(3, caisse.getModeEncaissement() != null ? caisse.getModeEncaissement().name() : null);
+            ps.setString(4, caisse.getReference());
+            ps.setLong(5, caisse.getIdCaisse());
 
             ps.executeUpdate();
         }
     }
 
     @Override
-    public void delete(Caisse ca) throws SQLException {
-        if (ca != null && ca.getIdCaisse() != null) {
-            deleteById(ca.getIdCaisse());
+    public void delete(Caisse caisse) throws SQLException {
+        if (caisse != null && caisse.getIdCaisse() != null) {
+            deleteById(caisse.getIdCaisse());
         }
     }
 

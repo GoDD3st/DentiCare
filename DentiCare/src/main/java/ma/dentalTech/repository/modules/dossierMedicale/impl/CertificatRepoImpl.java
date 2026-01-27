@@ -13,12 +13,37 @@ import static ma.dentalTech.repository.common.RowMappers.mapCertificat;
 public class CertificatRepoImpl implements CertificatRepo {
     @Override
     public List<Certificat> findAll() throws SQLException{
-        String sql = "SELECT * FROM certificat";
+        String sql =
+                "SELECT ctf.*, " +
+                "dm.id_patient, p.nom AS patient_nom, p.telephone AS patient_telephone " +
+                "FROM certificat ctf " +
+                "LEFT JOIN dossier_medical dm ON ctf.id_dossier_medical = dm.id_dossier " +
+                "LEFT JOIN patient p ON dm.id_patient = p.id_patient";
         List<Certificat> list = new ArrayList<>();
         try (Connection conn = SessionFactory.getInstance().getConnection();
              Statement ps = conn.createStatement();
              ResultSet rs = ps.executeQuery(sql)) {
-            while (rs.next()) list.add(mapCertificat(rs));
+            while (rs.next()) {
+                Certificat cert = mapCertificat(rs);
+
+                if (rs.getObject("id_dossier_medical") != null && rs.getObject("id_patient") != null) {
+                    ma.dentalTech.entities.Patient.Patient patient = ma.dentalTech.entities.Patient.Patient.builder()
+                            .idPatient(rs.getLong("id_patient"))
+                            .nom(rs.getString("patient_nom"))
+                            .telephone(rs.getString("patient_telephone"))
+                            .build();
+
+                    ma.dentalTech.entities.DossierMedicale.DossierMedicale dossier =
+                            ma.dentalTech.entities.DossierMedicale.DossierMedicale.builder()
+                                    .idDossier(rs.getLong("id_dossier_medical"))
+                                    .patient(patient)
+                                    .build();
+
+                    cert.setDossierMedicale(dossier);
+                }
+
+                list.add(cert);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

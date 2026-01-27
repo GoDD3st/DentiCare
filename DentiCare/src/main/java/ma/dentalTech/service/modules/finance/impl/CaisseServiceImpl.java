@@ -1,18 +1,18 @@
 package ma.dentalTech.service.modules.finance.impl;
 
-import ma.dentalTech.service.modules.finance.api.CaisseService;
-import ma.dentalTech.repository.modules.finance.api.CaisseRepo;
 import ma.dentalTech.entities.Caisse.Caisse;
+import ma.dentalTech.service.modules.finance.api.CaisseService;
+import ma.dentalTech.repository.modules.finance.api.CaisseRepository;
+import ma.dentalTech.conf.ApplicationContext;
 import java.util.List;
 import java.util.Optional;
 
 public class CaisseServiceImpl implements CaisseService {
 
-    private final CaisseRepo repository;
+    private final CaisseRepository repository;
 
-    // Injection par constructeur
-    public CaisseServiceImpl(CaisseRepo repository) {
-        this.repository = repository;
+    public CaisseServiceImpl() {
+        this.repository = ApplicationContext.getBean(CaisseRepository.class);
     }
 
     @Override
@@ -26,42 +26,26 @@ public class CaisseServiceImpl implements CaisseService {
     }
 
     @Override
-    public Caisse create(Caisse item) {
-        try {
-            repository.create(item);
-            return item;
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la création de l'enregistrement de caisse", e);
-        }
+    public Caisse create(Caisse caisse) throws Exception {
+        repository.create(caisse);
+        return caisse;
     }
 
     @Override
-    public Caisse update(Long id, Caisse item) {
-        try {
-            item.setIdCaisse(id);
-            repository.update(item);
-            return item;
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la mise à jour de l'enregistrement de caisse", e);
-        }
+    public Caisse update(Long id, Caisse caisse) throws Exception {
+        caisse.setIdCaisse(id);
+        repository.update(caisse);
+        return caisse;
     }
 
     @Override
-    public Caisse delete(Caisse item) {
-        try {
-            repository.delete(item);
-            return item;
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la suppression de l'enregistrement de caisse", e);
-        }
+    public Caisse delete(Caisse caisse) throws Exception {
+        repository.delete(caisse);
+        return caisse;
     }
 
     @Override
-    public void deleteByID(Long id) {
-        try {
-            repository.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la suppression par ID", e);
-        }
+    public void deleteByID(Long id) throws Exception {
+        repository.deleteById(id);
     }
 }

@@ -131,14 +131,16 @@ public class PatientsPanel extends JPanel {
                     : "";
                 String sexe = patient.getSexe() != null ? patient.getSexe().name() : "";
                 String assurance = patient.getAssurance() != null ? patient.getAssurance().name() : "";
+                String telephone = patient.getTelephone() != null ? patient.getTelephone() : "";
+                String email = patient.getEmail() != null ? patient.getEmail() : "";
                 
                 tableModel.addRow(new Object[]{
                     patient.getIdPatient(),
                     patient.getNom(),
                     dateNaissance,
                     sexe,
-                    patient.getTelephone(),
-                    patient.getEmail(),
+                    telephone,
+                    email,
                     assurance,
                     ""
                 });

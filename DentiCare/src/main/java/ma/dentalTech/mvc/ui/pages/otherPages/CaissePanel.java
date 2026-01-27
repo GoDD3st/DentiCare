@@ -22,6 +22,9 @@ public class CaissePanel extends JPanel {
     private final CaisseService caisseService;
     private JTable caisseTable;
     private DefaultTableModel tableModel;
+    private JLabel totalEntreesLabel;
+    private JLabel totalSortiesLabel;
+    private JLabel soldeLabel;
 
     public CaissePanel(UserPrincipal principal) {
         this.principal = principal;
@@ -141,21 +144,24 @@ public class CaissePanel extends JPanel {
         statsPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
 
         // Card 1: Total Entrées
-        JPanel card1 = createStatCard("Total Entrées", "0.00 DH", new Color(39, 174, 96));
+        totalEntreesLabel = new JLabel("0.00 DH");
+        JPanel card1 = createStatCard("Total Entrées", totalEntreesLabel, new Color(39, 174, 96));
         statsPanel.add(card1);
 
         // Card 2: Total Sorties
-        JPanel card2 = createStatCard("Total Sorties", "0.00 DH", new Color(231, 76, 60));
+        totalSortiesLabel = new JLabel("0.00 DH");
+        JPanel card2 = createStatCard("Total Sorties", totalSortiesLabel, new Color(231, 76, 60));
         statsPanel.add(card2);
 
         // Card 3: Solde
-        JPanel card3 = createStatCard("Solde Actuel", "0.00 DH", new Color(52, 152, 219));
+        soldeLabel = new JLabel("0.00 DH");
+        JPanel card3 = createStatCard("Solde Actuel", soldeLabel, new Color(52, 152, 219));
         statsPanel.add(card3);
 
         return statsPanel;
     }
 
-    private JPanel createStatCard(String title, String value, Color color) {
+    private JPanel createStatCard(String title, JLabel valueLabel, Color color) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -167,7 +173,6 @@ public class CaissePanel extends JPanel {
         titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         titleLabel.setForeground(new Color(127, 140, 141));
 
-        JLabel valueLabel = new JLabel(value);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         valueLabel.setForeground(color);
 
@@ -182,6 +187,9 @@ public class CaissePanel extends JPanel {
         try {
             List<Caisse> caisseList = caisseService.findAll();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+            double totalEntrees = 0.0;
+            double totalSorties = 0.0; // Pour l'instant, la table caisse ne gère que les entrées
             
             for (Caisse caisse : caisseList) {
                 String date = caisse.getDateEncassement() != null 
@@ -191,6 +199,10 @@ public class CaissePanel extends JPanel {
                     ? String.format("%.2f DH", caisse.getMontant())
                     : "0.00 DH";
                 String description = caisse.getReference() != null ? caisse.getReference() : "Transaction";
+
+                if (caisse.getMontant() != null) {
+                    totalEntrees += caisse.getMontant();
+                }
                 
                 tableModel.addRow(new Object[]{
                     caisse.getIdCaisse(),
@@ -200,6 +212,17 @@ public class CaissePanel extends JPanel {
                     description,
                     ""
                 });
+            }
+
+            double solde = totalEntrees - totalSorties;
+            if (totalEntreesLabel != null) {
+                totalEntreesLabel.setText(String.format("%.2f DH", totalEntrees));
+            }
+            if (totalSortiesLabel != null) {
+                totalSortiesLabel.setText(String.format("%.2f DH", totalSorties));
+            }
+            if (soldeLabel != null) {
+                soldeLabel.setText(String.format("%.2f DH", solde));
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 

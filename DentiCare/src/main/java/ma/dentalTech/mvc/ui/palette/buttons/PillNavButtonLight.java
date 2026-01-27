@@ -13,6 +13,7 @@ public class PillNavButtonLight extends JButton {
 
     private boolean active = false;
     private boolean hover  = false;
+    private boolean pressed = false;
 
     private final ImageIcon normalIcon;
     private final ImageIcon hoverIcon;
@@ -46,7 +47,8 @@ public class PillNavButtonLight extends JButton {
         setForeground(new Color(35, 35, 35)); // texte sombre (fond clair)
 
         setFocusPainted(false);
-        setBorderPainted(false);
+        setBorderPainted(true);
+        setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         setContentAreaFilled(false);
         setOpaque(false);
         setFocusable(false);
@@ -76,10 +78,23 @@ public class PillNavButtonLight extends JButton {
 
             @Override public void mouseExited(MouseEvent e) {
                 hover = false;
+                pressed = false;
                 if (!active && isEnabled()) {
                     setIcon(normalIcon);
                     setForeground(new Color(35, 35, 35));
                 }
+                repaint();
+            }
+
+            @Override public void mousePressed(MouseEvent e) {
+                if (isEnabled()) {
+                    pressed = true;
+                    repaint();
+                }
+            }
+
+            @Override public void mouseReleased(MouseEvent e) {
+                pressed = false;
                 repaint();
             }
         });
@@ -106,9 +121,19 @@ public class PillNavButtonLight extends JButton {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // 1) Overlay (hover/active) sous forme de rectangle arrondi
-        if (active || hover) {
-            g2.setColor(active ? overlayActive : overlayHover);
+        // 1) Bordure subtile pour indiquer que c'est un bouton cliquable
+        g2.setColor(new Color(200, 200, 200, 50));
+        g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, radius, radius);
+
+        // 2) Overlay (hover/active/pressed) sous forme de rectangle arrondi
+        if (active || hover || pressed) {
+            Color overlayColor;
+            if (pressed) {
+                overlayColor = new Color(accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue(), 120);
+            } else {
+                overlayColor = active ? overlayActive : overlayHover;
+            }
+            g2.setColor(overlayColor);
             g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, radius, radius);
         }
 
@@ -116,6 +141,19 @@ public class PillNavButtonLight extends JButton {
         if (active) {
             g2.setColor(accentColor);
             g2.fillRoundRect(6, 10, 6, getHeight() - 20, 6, 6);
+        }
+
+        // 4) Bordure plus visible au hover pour renforcer l'effet bouton
+        if (hover) {
+            g2.setColor(new Color(accentColor.getRed(), accentColor.getGreen(), accentColor.getBlue(), 100));
+            g2.drawRoundRect(2, 2, getWidth() - 5, getHeight() - 5, radius-2, radius-2);
+        }
+
+        // 5) Petit indicateur "cliquable" (point discret à droite)
+        if (isEnabled()) {
+            g2.setColor(new Color(150, 150, 150, 80));
+            int centerY = getHeight() / 2;
+            g2.fillOval(getWidth() - 20, centerY - 2, 4, 4);
         }
 
         g2.dispose();

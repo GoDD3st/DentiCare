@@ -3,6 +3,8 @@ package ma.dentalTech.mvc.ui.frames;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -325,28 +327,11 @@ public class DashboardUI extends JFrame {
     }
 
     private JComponent buildSideBar() {
-        // Pour les admins, utiliser la nouvelle sidebar moderne
-        if (principal != null && principal.rolePrincipal() == RoleEnum.ADMIN) {
-            return createModernAdminSidebar();
-        }
-
-        // Pour les autres rôles, utiliser l'ancienne sidebar
-        var items = NavigationSpecs.forPrincipal(principal);
-
-        return SidebarBuilder.build(
-                this, // parentForAlerts
-                principal,
-                authorizationService,
-                items,
-                (source, pageId) -> {
-                    ApplicationPages page = ApplicationPages.valueOf(pageId);
-                    openPage(page);
-                },
-                true // hideForbidden : true = cacher, false = désactiver
-        );
+        // Utiliser la nouvelle sidebar moderne pour tous les rôles
+        return createModernSidebar();
     }
 
-    private JComponent createModernAdminSidebar() {
+    private JComponent createModernSidebar() {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(new Color(248, 249, 250));
@@ -368,17 +353,59 @@ public class DashboardUI extends JFrame {
         // Navigation items - adapter selon le rôle
         boolean isAdmin = principal != null && principal.roles() != null &&
             principal.roles().contains(RoleEnum.ADMIN);
+        boolean isMedecin = principal != null && principal.roles() != null &&
+            principal.roles().contains(RoleEnum.MEDECIN);
+        boolean isSecretaire = principal != null && principal.roles() != null &&
+            principal.roles().contains(RoleEnum.SECRETAIRE);
 
-        String[][] navItems = {
-            {"Dashboard", "dashboard"},
-            {"Utilisateurs", "users"},
-            {"Cabinets", "cabinet"},
-            {isAdmin ? "Logs" : "Notifications", isAdmin ? "logs" : "notifications"},
-            {"Paramètres", "settings"}
-        };
+        // Éléments de navigation selon le rôle
+        List<String[]> navItemsList = new ArrayList<>();
+
+        // Dashboard commun à tous
+        navItemsList.add(new String[]{"Dashboard", "dashboard"});
+
+        if (isAdmin) {
+            // Navigation pour Admin
+            navItemsList.add(new String[]{"Utilisateurs", "users"});
+            navItemsList.add(new String[]{"Cabinets", "cabinet"});
+            navItemsList.add(new String[]{"Logs", "logs"});
+            navItemsList.add(new String[]{"Paramètres", "settings"});
+        } else if (isMedecin) {
+            // Navigation pour Médecin
+            navItemsList.add(new String[]{"Patients", "patient"});
+            navItemsList.add(new String[]{"Dossiers médicaux", "dossier"});
+            navItemsList.add(new String[]{"Consultations", "consultation"});
+            navItemsList.add(new String[]{"Ordonnances", "ordonnance"});
+            navItemsList.add(new String[]{"Certificats", "certificat"});
+            navItemsList.add(new String[]{"Actes dentaires", "acte"});
+            navItemsList.add(new String[]{"Interventions", "intervention"});
+            navItemsList.add(new String[]{"Situations financières", "finance"});
+            navItemsList.add(new String[]{"Factures", "facture"});
+            navItemsList.add(new String[]{"Caisse", "caisse"});
+            navItemsList.add(new String[]{"Cabinet", "cabinet"});
+            navItemsList.add(new String[]{"Paramètres", "settings"});
+        } else if (isSecretaire) {
+            // Navigation pour Secrétaire (à adapter selon les besoins)
+            navItemsList.add(new String[]{"Patients", "patient"});
+            navItemsList.add(new String[]{"Dossiers médicaux", "dossier"});
+            navItemsList.add(new String[]{"Consultations", "consultation"});
+            navItemsList.add(new String[]{"Rendez-vous", "rdv"});
+            navItemsList.add(new String[]{"Caisse", "caisse"});
+        }
+
+        // Ajouter Notifications pour non-admin et non-secretaire
+        if (!isAdmin && !isSecretaire) {
+            navItemsList.add(new String[]{"Notifications", "notifications"});
+        }
+
+        // Convertir la liste en tableau
+        String[][] navItems = navItemsList.toArray(new String[0][]);
+
+        // Show icons only for admin
+        boolean showIcons = isAdmin;
 
         for (String[] item : navItems) {
-            sidebar.add(createNavItem(item[0], item[1]));
+            sidebar.add(createNavItem(item[0], item[1], showIcons));
             sidebar.add(Box.createVerticalStrut(4)); // Espacement
         }
 
@@ -388,17 +415,19 @@ public class DashboardUI extends JFrame {
         return sidebar;
     }
 
-    private JComponent createNavItem(String text, String iconName) {
+    private JComponent createNavItem(String text, String iconName, boolean showIcons) {
         JPanel item = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 12));
         item.setOpaque(false);
         item.setCursor(new Cursor(Cursor.HAND_CURSOR));
         item.setBorder(new EmptyBorder(4, 8, 4, 8));
 
-        // Icône
-        ImageIcon icon = loadIcon(iconName, 20, 20);
-        if (icon != null) {
-            JLabel iconLabel = new JLabel(icon);
-            item.add(iconLabel);
+        // Icône - seulement si showIcons est true
+        if (showIcons) {
+            ImageIcon icon = loadIcon(iconName, 20, 20);
+            if (icon != null) {
+                JLabel iconLabel = new JLabel(icon);
+                item.add(iconLabel);
+            }
         }
 
         // Texte
@@ -427,14 +456,7 @@ public class DashboardUI extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 // Navigation logic
                 try {
-                    ApplicationPages page = switch (text) {
-                        case "Dashboard" -> ApplicationPages.DASHBOARD;
-                        case "Utilisateurs" -> ApplicationPages.USERS;
-                        case "Cabinets" -> ApplicationPages.CABINETS;
-                        case "Notifications", "Logs" -> ApplicationPages.NOTIFICATIONS; // Factory gère la redirection
-                        case "Paramètres" -> ApplicationPages.PARAMETRAGE;
-                        default -> ApplicationPages.DASHBOARD;
-                    };
+                    ApplicationPages page = getPageForText(text);
                     openPage(page);
                 } catch (Exception ex) {
                     System.err.println("Erreur navigation: " + ex.getMessage());
@@ -443,6 +465,29 @@ public class DashboardUI extends JFrame {
         });
 
         return item;
+    }
+
+    private ApplicationPages getPageForText(String text) {
+        return switch (text) {
+            case "Dashboard" -> ApplicationPages.DASHBOARD;
+            case "Utilisateurs" -> ApplicationPages.USERS;
+            case "Cabinets" -> ApplicationPages.CABINETS;
+            case "Logs" -> ApplicationPages.LOGS;
+            case "Notifications" -> ApplicationPages.NOTIFICATIONS;
+            case "Paramètres" -> ApplicationPages.PARAMETRAGE;
+            case "Patients" -> ApplicationPages.PATIENTS;
+            case "Dossiers médicaux" -> ApplicationPages.DOSSIERS_MEDICAUX;
+            case "Consultations" -> ApplicationPages.CONSULTATIONS;
+            case "Ordonnances" -> ApplicationPages.ORDONNANCES;
+            case "Certificats" -> ApplicationPages.CERTIFICATS;
+            case "Actes dentaires" -> ApplicationPages.ACTES_DENTAIRES;
+            case "Interventions" -> ApplicationPages.INTERVENTIONS;
+            case "Situations financières" -> ApplicationPages.SITUATIONS_FINANCIERES;
+            case "Factures" -> ApplicationPages.FACTURES;
+            case "Caisse" -> ApplicationPages.CAISSE;
+            case "Rendez-vous" -> ApplicationPages.CONSULTATIONS;
+            default -> ApplicationPages.DASHBOARD;
+        };
     }
 
     private ImageIcon loadIcon(String iconName, int width, int height) {
