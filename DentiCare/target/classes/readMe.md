@@ -5,8 +5,8 @@
 
 ---
 
-> Projet de fin d’année – EMSI Rabat  
-> Réalisé par une équipe de 4 étudiants sous la supervision de **Pr. Omar EL MIDAOUI**
+> Projet de JAVA – EMSI Rabat  
+> Réalisé par une équipe de 2 étudiants sous la supervision de **Pr. Omar EL MIDAOUI**
 
 ---
 
